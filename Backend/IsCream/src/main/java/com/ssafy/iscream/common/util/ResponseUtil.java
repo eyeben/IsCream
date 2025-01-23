@@ -14,6 +14,15 @@ public class ResponseUtil {
         return ResponseEntity.ok(ResponseData.<T>builder().code("S0000").message(message).data(data).build());
     }
 
+    public static <T> ResponseEntity<ResponseData<T>> success(T data) {
+        return ResponseEntity.ok(
+                ResponseData.<T>builder()
+                        .code("S0000")
+                        .message("정상적으로 처리되었습니다.")
+                        .data(data)
+                        .build());
+    }
+
     public static <T> ResponseEntity<ResponseData<T>> failure(GlobalException e) {
         return ResponseEntity.status(e.getStatus())
                 .body(ResponseData.<T>builder()

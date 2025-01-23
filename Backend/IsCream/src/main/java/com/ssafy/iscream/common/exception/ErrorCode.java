@@ -13,6 +13,7 @@ public enum ErrorCode {
     DATA_SAVE_FAILED("E4002", "데이터 저장, 업데이트에 실패했습니다."),
     DATA_DELETE_FAILED("E4003", "데이터 삭제에 실패했습니다."),
     DATA_FORBIDDEN_ACCESS("E4004", "데이터에 대한 접근 권한이 없습니다."),
+    INVALID_PARAMETER("E4005", "파라미터 형식이 잘못되었습니다."),
 
     DUPLICATE_EMAIL("E5001", "이미 존재하는 이메일입니다."),
     DUPLICATE_NICKNAME("E5002", "이미 존재하는 닉네임입니다."),
@@ -21,10 +22,12 @@ public enum ErrorCode {
     DUPLICATE_USER("E5005", "이미 가입된 회원입니다."),
     JOIN_SOCIAL_FAILED("E5006", "간편 회원가입 실패"),
     MEMBER_NOT_FOUND("E5007", "존재하지 않는 회원입니다."),
+    INVALID_EMAIL_FORMAT("E5008", "이메일 형식이 잘못되었습니다."),
+    INVALID_PASSWORD_FORMAT("E5009", "비밀번호 형식이 잘못되었습니다."),
 
     LOGIN_FAILED("E6001", "로그인에 실패하였습니다."),
     LOGIN_SOCIAL_FAILED("E6002", "간편 로그인 실패"),
-    INVALID_PASSWORD("E6003", "현재 비밀번호가 올바르지 않습니다."),
+    INCORRECT_PASSWORD("E6003", "현재 비밀번호가 올바르지 않습니다."),
     SAME_PASSWORD("E6004", "현재 비밀번호와 동일한 비밀번호입니다."),
 
     IMAGE_UPLOAD_FAILED("E7001", "이미지 업로드 실패"),
