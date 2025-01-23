@@ -30,7 +30,8 @@ public enum ErrorCode {
     IMAGE_UPLOAD_FAILED("E7001", "이미지 업로드 실패"),
     IMAGE_ANALYZE_FAILED("E7002", "이미지 분석 실패"),
     FILE_URL_CONVERSION_FAILED("E7003", "파일 URL 변환 실패"),
-    FILE_URL_NOT_FOUND("E7004", "파일 URL 조회 실패");
+    FILE_URL_NOT_FOUND("E7004", "파일 URL 조회 실패"),
+    INVALID_FILE_URL_FORMAT("E7005", "잘못된 형식의 이미지 URL입니다.");
 
     private final String code;
     private final String message;

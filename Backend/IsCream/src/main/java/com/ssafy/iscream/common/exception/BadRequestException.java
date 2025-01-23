@@ -10,7 +10,7 @@ public class BadRequestException extends GlobalException {
 
     public static class ImageBadRequestException extends BadRequestException {
         public ImageBadRequestException() {
-            super(ResponseData.builder().code("E7004").message("잘못된 형식의 이미지 URL입니다.").build());
+            super(ResponseData.builder().code("E7005").message("잘못된 형식의 이미지 URL입니다.").build());
         }
     }
 }
