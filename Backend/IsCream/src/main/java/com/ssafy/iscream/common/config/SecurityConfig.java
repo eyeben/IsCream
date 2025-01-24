@@ -1,10 +1,14 @@
 package com.ssafy.iscream.common.config;
 
+import com.ssafy.iscream.security.JwtFilter;
+import com.ssafy.iscream.security.JwtUtil;
+import com.ssafy.iscream.security.LoginFilter;
+import com.ssafy.iscream.security.LogoutFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,6 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -26,7 +31,7 @@ public class SecurityConfig {
 
     // AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
-//    private final JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     // AuthenticationManager Bean 등록
     @Bean
@@ -41,7 +46,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
                 .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                     @Override
@@ -75,9 +79,18 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
+//                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/users/join").permitAll()
+                        .requestMatchers(("/users/login")).permitAll()
                         .requestMatchers("/test/**").permitAll()
                         .anyRequest().authenticated());
+
+        // 예외 처리
+//        http.exceptionHandling((exceptionConfig) ->
+//            exceptionConfig.authenticationEntryPoint(un)
+//        );
 
 //        http
 //                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
@@ -87,7 +100,7 @@ public class SecurityConfig {
 //                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 //
 //        http
-//                .addFilterBefore(new CustomLogoutFilter(jwtUtil), LogoutFilter.class);
+//                .addFilterBefore(new LogoutFilter(jwtUtil), LogoutFilter.class);
 
         // 세션 설정
         http
