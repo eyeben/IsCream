@@ -31,15 +31,15 @@ public class TestController {
     }
 
     // 파일 업로드
-    @PostMapping("/s3/upload")
+    @PostMapping("/s3/upload1")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        return ResponseUtil.success(s3Service.uploadFile(file));
+        return ResponseUtil.success(s3Service.uploadImage(file));
     }
 
     // 여러 파일 업로드
-    @PostMapping("/s3/upload")
+    @PostMapping("/s3/upload2")
     public ResponseEntity<?> uploadFileList(@RequestParam("files") List<MultipartFile> file) throws IOException {
-        return ResponseUtil.success(s3Service.uploadFile(file));
+        return ResponseUtil.success(s3Service.uploadImage(file));
     }
 
     // 파일 삭제

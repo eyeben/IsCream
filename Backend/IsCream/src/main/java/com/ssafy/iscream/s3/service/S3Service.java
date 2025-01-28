@@ -1,11 +1,14 @@
 package com.ssafy.iscream.s3.service;
 
 import com.ssafy.iscream.common.util.FileUtil;
+import com.ssafy.iscream.s3.exception.S3Exception.*;
 import io.awspring.cloud.s3.S3Exception;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -18,8 +21,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ssafy.iscream.common.exception.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3Service {
 
     @Value("${cloud.aws.s3.bucket}")
@@ -37,9 +43,14 @@ public class S3Service {
     private final S3Client s3Client;
 
     // TODO: pdf 파일 업로드
+    public String uploadPdfFile() throws IOException {
+        String fileKey = resultDir + "생성된 파일 이름";
+
+        return "";
+    }
 
     // 단일 파일 업로드
-    public String uploadFile(MultipartFile multipartFile) throws IOException {
+    public String uploadImage(MultipartFile multipartFile) throws IOException {
         String fileKey = imageDir + FileUtil.createFileName(multipartFile);
 
         // 임시 파일 생성
@@ -52,6 +63,8 @@ public class S3Service {
                     PutObjectRequest.builder().bucket(bucket).key(fileKey).build(),
                     RequestBody.fromFile(tempFile)
             );
+        } catch (SdkClientException e) {
+            throw new S3UploadException(FILE_UPLOAD_FAILED);
         } finally {
             tempFile.delete(); // 임시 파일 삭제
         }
@@ -60,11 +73,11 @@ public class S3Service {
     }
 
     // 여러 파일 업로드
-    public List<String> uploadFile(List<MultipartFile> files) throws IOException {
+    public List<String> uploadImage(List<MultipartFile> files) throws IOException {
         List<String> result = new ArrayList<>();
 
         for (MultipartFile file : files) {
-            result.add(uploadFile(file));
+            result.add(uploadImage(file));
         }
 
         return result;
@@ -77,13 +90,18 @@ public class S3Service {
 
             if (fileExists(fileKey)) {
                 s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucket).key(fileKey).build());
-                System.out.println("파일이 성공적으로 삭제되었습니다: " + fileKey);
+                log.info("파일이 성공적으로 삭제되었습니다: {}", fileKey);
             } else {
-                System.out.println("파일이 존재하지 않습니다: " + fileKey);
+                throw new S3UploadException(FILE_DOES_NOT_EXIST);
             }
+        } catch (SdkClientException e) {
+            log.error("AWS SDK client error : {}", e.getMessage());
+            throw new S3UploadException(INVALID_FILE_REQUEST);
         } catch (S3Exception e) {
-            System.err.println("파일 삭제 중 오류 발생: " + e.getMessage());
+            log.error("File delete fail error : {}", e.getMessage());
+            throw new S3UploadException(FILE_DELETE_IS_FAILED);
         }
+
     }
 
     // 파일 존재 여부 확인

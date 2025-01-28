@@ -1,33 +1,37 @@
 package com.ssafy.iscream.common.util;
 
+import com.ssafy.iscream.s3.exception.S3Exception.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static com.ssafy.iscream.common.exception.ErrorCode.*;
+
 public class FileUtil {
 
+    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "png", "jpeg", "gif", "pdf");
+
     public static String createFileName(MultipartFile file) {
-        String extension = getFileExtension(file.getOriginalFilename());
+        String extension = validateExtension(file.getOriginalFilename());
 
         return UUID.randomUUID() + "_" + System.currentTimeMillis() + (extension.isEmpty() ? "" : "." + extension);
     }
 
-    // 허용된 파일 확장자 리스트
-    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "png", "jpeg", "gif", "pdf");
-
     // 파일 확장자 체크 메서드
-    public static boolean isValidExtension(String fileName) {
+    public static String validateExtension(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
-            return false;
+            throw new S3UploadException(INVALID_FILE_REQUEST);
         }
 
-        // 파일 확장자 추출
         String extension = getFileExtension(fileName);
 
-        // 확장자가 허용된 리스트에 포함되어 있는지 확인
-        return ALLOWED_EXTENSIONS.contains(extension.toLowerCase());
+        if (!ALLOWED_EXTENSIONS.contains(extension.toLowerCase())) {
+            throw new S3UploadException(UNSUPPORTED_EXTENSION);
+        }
+
+        return extension;
     }
 
     // 파일 확장자 추출 메서드

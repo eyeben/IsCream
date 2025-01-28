@@ -30,11 +30,12 @@ public enum ErrorCode {
     INCORRECT_PASSWORD("E6003", "현재 비밀번호가 올바르지 않습니다."),
     SAME_PASSWORD("E6004", "현재 비밀번호와 동일한 비밀번호입니다."),
 
-    IMAGE_UPLOAD_FAILED("E7001", "이미지 업로드 실패"),
+    FILE_UPLOAD_FAILED("E7001", "파일 업로드 실패"),
     IMAGE_ANALYZE_FAILED("E7002", "이미지 분석 실패"),
-    FILE_URL_CONVERSION_FAILED("E7003", "파일 URL 변환 실패"),
-    FILE_URL_NOT_FOUND("E7004", "파일 URL 조회 실패"),
-    INVALID_FILE_URL_FORMAT("E7005", "잘못된 형식의 이미지 URL입니다.");
+    FILE_DELETE_IS_FAILED("E7003", "파일 삭제에 실패하였습니다."),
+    FILE_DOES_NOT_EXIST("E7004", "파일이 존재하지 않습니다."),
+    UNSUPPORTED_EXTENSION("E7005", "지원하지 않는 파일 형식입니다."),
+    INVALID_FILE_REQUEST("E7006", "잘못된 형식의 파일 요청입니다.");
 
     private final String code;
     private final String message;

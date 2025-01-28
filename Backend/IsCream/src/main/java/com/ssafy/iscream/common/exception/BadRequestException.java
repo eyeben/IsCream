@@ -22,8 +22,8 @@ public class BadRequestException extends GlobalException {
     public static class ImageBadRequestException extends BadRequestException {
         public ImageBadRequestException() {
             super(ResponseData.builder()
-                    .code(ErrorCode.INVALID_FILE_URL_FORMAT.getCode())
-                    .message(ErrorCode.INVALID_FILE_URL_FORMAT.getMessage())
+                    .code(ErrorCode.INVALID_FILE_REQUEST.getCode())
+                    .message(ErrorCode.INVALID_FILE_REQUEST.getMessage())
                     .build());
         }
     }
