@@ -27,9 +27,8 @@ public class SwaggerConfig {
                 .version("v1").contact(new io.swagger.v3.oas.models.info.Contact().name("minchae")
                         .email("minchae075@naver.com").url("http://edu.ssafy.com"));
 
-        // /login 엔드포인트에 대한 설명 추가
         Paths paths = new Paths();
-        paths.addPathItem("/login", new PathItem()
+        paths.addPathItem("/users/login", new PathItem()
                 .post(new io.swagger.v3.oas.models.Operation()
                         .summary("로그인")
                         .addTagsItem("users")
@@ -47,7 +46,7 @@ public class SwaggerConfig {
                         )
                 ));
 
-        paths.addPathItem("/logout", new PathItem()
+        paths.addPathItem("/users/logout", new PathItem()
                 .post(new io.swagger.v3.oas.models.Operation()
                         .summary("로그아웃")
                         .addTagsItem("users")
@@ -82,10 +81,15 @@ public class SwaggerConfig {
     }
 
     @Bean
+    GroupedOpenApi userApi() {
+        return GroupedOpenApi.builder().group("users").pathsToMatch("/users/**").build();
+    }
+
+    @Bean
     GroupedOpenApi allApi() {
         return GroupedOpenApi.builder()
                 .group("all") // 그룹 이름 지정
-                .pathsToMatch("/test/**", "/board/**")
+                .pathsToMatch("/test/**", "/users/**")
                 .build();
     }
 }

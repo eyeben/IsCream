@@ -1,5 +1,5 @@
 package com.ssafy.iscream.user.domain;
 
-public enum UserStatus {
+public enum Status {
     ACTIVE, INACTIVE, BANNED
 }

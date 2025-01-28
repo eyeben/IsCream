@@ -1,6 +1,5 @@
-package com.ssafy.iscream.security;
+package com.ssafy.iscream.auth;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,17 +33,11 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getExpiration().before(new Date());
     }
 
-    public String createJwt(String category, int userId, String loginId, String role, Long expiredMs) {
-        Claims claims = Jwts.claims();
-
-        claims.put("userId", userId);
-        claims.put("email", loginId);
-        claims.put("role", role);
-
+    public String createJwt(String category, int userId, String email, String role, Long expiredMs) {
         return Jwts.builder()
                 .claim("category", category)
                 .claim("userId", userId)
-                .claim("email", loginId)
+                .claim("email", email)
                 .claim("role", role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiredMs))

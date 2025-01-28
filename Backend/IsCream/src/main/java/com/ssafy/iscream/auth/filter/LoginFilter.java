@@ -1,10 +1,12 @@
-package com.ssafy.iscream.security;
+package com.ssafy.iscream.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.iscream.auth.service.CustomUserDetails;
+import com.ssafy.iscream.auth.JwtUtil;
+import com.ssafy.iscream.auth.dto.LoginReq;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,10 +19,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.util.Collection;
 import java.util.Iterator;
 
-@RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+
+    public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+        super.setFilterProcessesUrl("/users/login"); // 기본 경로 변경
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -28,13 +35,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             // 요청 본문에서 LoginReq 객체를 파싱
             // 클라이언트 요청에서 loginId, password 추출 -> json 형식으로 받음
             ObjectMapper objectMapper = new ObjectMapper();
-//            LoginReq loginReq = objectMapper.readValue(request.getInputStream(), LoginReq.class);
+            LoginReq loginReq = objectMapper.readValue(request.getInputStream(), LoginReq.class);
 
-//            String email = loginReq.getLoginId();
-//            String password = loginReq.getPassword();
-
-            String email = "";
-            String password = "";
+            String email = loginReq.getEmail();
+            String password = loginReq.getPassword();
 
             // 스프링 시큐리티에서 loginId과 password를 검증하기 위해서는 token에 담아야 함
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password);
@@ -50,7 +54,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     // 로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
-        String email = authentication.getName();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        // 유저 정보
+        int userId = userDetails.getUserId();
+        String email = userDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -58,15 +66,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-//        UserJwt userDetails = (UserJwt) authentication.getPrincipal();
-//        int userId = userDetails.getUserId();
-        int userId = 0;
-
         // 토큰 생성
-        String access = jwtUtil.createJwt("x-access-token", userId, email, role, 6000000L);
+        String access = jwtUtil.createJwt("access", userId, email, role, 6000000L);
         String refresh = jwtUtil.createJwt("refresh", userId, email, role, 86400000L);
 
-        response.setHeader("x-access-token", access);
+        response.setHeader("access", access);
         response.addHeader("Set-Cookie", createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
     }

@@ -1,12 +1,11 @@
 package com.ssafy.iscream.common.config;
 
-import com.ssafy.iscream.security.JwtFilter;
-import com.ssafy.iscream.security.JwtUtil;
-import com.ssafy.iscream.security.LoginFilter;
-import com.ssafy.iscream.security.LogoutFilter;
+import com.ssafy.iscream.auth.filter.JwtFilter;
+import com.ssafy.iscream.auth.JwtUtil;
+import com.ssafy.iscream.auth.filter.LoginFilter;
+import com.ssafy.iscream.auth.filter.CustomLogoutFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -82,8 +82,7 @@ public class SecurityConfig {
 //                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/users/join").permitAll()
-                        .requestMatchers(("/users/login")).permitAll()
+                        .requestMatchers("/users/join", "/users/login").permitAll()
                         .requestMatchers("/test/**").permitAll()
                         .anyRequest().authenticated());
 
@@ -92,15 +91,15 @@ public class SecurityConfig {
 //            exceptionConfig.authenticationEntryPoint(un)
 //        );
 
-//        http
-//                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
-//
-//        // 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
-//        http
-//                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
-//
-//        http
-//                .addFilterBefore(new LogoutFilter(jwtUtil), LogoutFilter.class);
+        http
+                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
+
+        // 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
+        http
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil), LogoutFilter.class);
 
         // 세션 설정
         http

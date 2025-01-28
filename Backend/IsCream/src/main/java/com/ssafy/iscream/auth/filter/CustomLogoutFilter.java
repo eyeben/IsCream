@@ -1,5 +1,6 @@
-package com.ssafy.iscream.security;
+package com.ssafy.iscream.auth.filter;
 
+import com.ssafy.iscream.auth.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,7 +15,7 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class LogoutFilter extends GenericFilterBean {
+public class CustomLogoutFilter extends GenericFilterBean {
     private final JwtUtil jwtUtil;
 
     @Override
