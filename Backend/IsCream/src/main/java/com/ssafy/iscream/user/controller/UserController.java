@@ -68,7 +68,7 @@ public class UserController {
             return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
         }
 
-        Boolean isExist = refreshTokenRepository.existsById(refresh);
+        boolean isExist = refreshTokenRepository.existsById(refresh);
 
         if (!isExist) {
             return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
