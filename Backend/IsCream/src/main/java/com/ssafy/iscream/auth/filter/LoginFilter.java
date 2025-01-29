@@ -1,6 +1,8 @@
 package com.ssafy.iscream.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.iscream.auth.domain.RefreshToken;
+import com.ssafy.iscream.auth.domain.RefreshTokenRepository;
 import com.ssafy.iscream.auth.service.CustomUserDetails;
 import com.ssafy.iscream.auth.JwtUtil;
 import com.ssafy.iscream.auth.dto.LoginReq;
@@ -22,11 +24,14 @@ import java.util.Iterator;
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
         super.setFilterProcessesUrl("/users/login"); // 기본 경로 변경
+
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     @Override
@@ -69,6 +74,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // 토큰 생성
         String access = jwtUtil.createJwt("access", userId, email, role, 6000000L);
         String refresh = jwtUtil.createJwt("refresh", userId, email, role, 86400000L);
+
+        // redis에 refresh token 저장
+        RefreshToken redis = new RefreshToken(refresh, userId);
+        refreshTokenRepository.save(redis);
 
         response.setHeader("access", access);
         response.addHeader("Set-Cookie", createCookie("refresh", refresh));

@@ -1,6 +1,8 @@
 package com.ssafy.iscream.user.controller;
 
 import com.ssafy.iscream.auth.JwtUtil;
+import com.ssafy.iscream.auth.domain.RefreshToken;
+import com.ssafy.iscream.auth.domain.RefreshTokenRepository;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.dto.request.UserCreateReq;
 import com.ssafy.iscream.user.service.UserService;
@@ -25,6 +27,7 @@ public class UserController {
 
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @PostMapping("/join")
     @Operation(summary = "회원가입", tags = "users")
@@ -62,7 +65,12 @@ public class UserController {
         String category = jwtUtil.getCategory(refresh);
 
         if (!category.equals("refresh")) {
-            // response status code
+            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+        }
+
+        Boolean isExist = refreshTokenRepository.existsById(refresh);
+
+        if (!isExist) {
             return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
         }
 
@@ -73,6 +81,13 @@ public class UserController {
         // make new JWT
         String newAccess = jwtUtil.createJwt("access", userId, email, role, 6000000L);
         String newRefresh = jwtUtil.createJwt("refresh", userId, email, role, 86400000L);
+
+        // 기존 토큰 삭제
+        refreshTokenRepository.deleteById(refresh);
+
+        // redis에 refresh token 저장
+        RefreshToken redis = new RefreshToken(refresh, userId);
+        refreshTokenRepository.save(redis);
 
         // response
         response.setHeader("access", newAccess);

@@ -1,5 +1,6 @@
 package com.ssafy.iscream.common.config;
 
+import com.ssafy.iscream.auth.domain.RefreshTokenRepository;
 import com.ssafy.iscream.auth.filter.JwtFilter;
 import com.ssafy.iscream.auth.JwtUtil;
 import com.ssafy.iscream.auth.filter.LoginFilter;
@@ -32,6 +33,7 @@ public class SecurityConfig {
     // AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // AuthenticationManager Bean 등록
     @Bean
@@ -96,10 +98,10 @@ public class SecurityConfig {
 
         // 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class);
 
         http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil), LogoutFilter.class);
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
 
         // 세션 설정
         http
