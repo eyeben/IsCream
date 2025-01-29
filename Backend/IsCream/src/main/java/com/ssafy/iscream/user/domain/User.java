@@ -1,10 +1,12 @@
 package com.ssafy.iscream.user.domain;
 
+import com.ssafy.iscream.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,52 +17,41 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @DynamicInsert
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "username", nullable = false)
+    @Column(nullable = false)
     private String username;
 
-    @Column(name = "email", unique = true, nullable = false, length = 50)
+    @Column(unique = true, nullable = false, length = 50)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "birth_date")
     private LocalDate birthDate;
 
-    @Column(name = "phone", unique = true, length = 50)
+    @Column(unique = true, length = 50)
     private String phone;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(nullable = false)
     private Status status;
 
-    @Column(name = "nickname", unique = true, length = 50)
+    @Column(unique = true, length = 50)
     private String nickname;
 
-    @Column(name = "image_url", length = 1024)
+    @Column(length = 1024)
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "relation", nullable = false)
+    @Column(nullable = false)
     private Relation relation;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
     private Role role;
 
 }
