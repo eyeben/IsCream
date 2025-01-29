@@ -74,12 +74,6 @@ public class SwaggerConfig {
                 .addSecurityItem(securityRequirement)
                 .components(components);
     }
-
-    @Bean
-    GroupedOpenApi testApi() {
-        return GroupedOpenApi.builder().group("test").pathsToMatch("/test/**").build();
-    }
-
     @Bean
     GroupedOpenApi userApi() {
         return GroupedOpenApi.builder().group("users").pathsToMatch("/users/**").build();
@@ -89,7 +83,7 @@ public class SwaggerConfig {
     GroupedOpenApi allApi() {
         return GroupedOpenApi.builder()
                 .group("all") // 그룹 이름 지정
-                .pathsToMatch("/test/**", "/users/**")
+                .pathsToMatch( "/users/**")
                 .build();
     }
 }

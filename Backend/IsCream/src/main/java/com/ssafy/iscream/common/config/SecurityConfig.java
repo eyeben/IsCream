@@ -85,11 +85,9 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
-                        .requestMatchers("/test/**").permitAll()
                         .anyRequest().authenticated());
 
         http
