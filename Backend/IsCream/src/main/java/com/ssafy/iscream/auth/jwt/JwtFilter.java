@@ -1,7 +1,8 @@
-package com.ssafy.iscream.auth.filter;
+package com.ssafy.iscream.auth.jwt;
 
-import com.ssafy.iscream.auth.service.CustomUserDetails;
-import com.ssafy.iscream.auth.JwtUtil;
+import com.ssafy.iscream.auth.user.AuthUserDetails;
+import com.ssafy.iscream.common.exception.BadRequestException;
+import com.ssafy.iscream.common.exception.UnauthorizedException.*;
 import com.ssafy.iscream.user.domain.Role;
 import com.ssafy.iscream.user.domain.User;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -10,18 +11,19 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final TokenProvider tokenProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -44,44 +46,26 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         try {
-            jwtUtil.isExpired(accessToken);
+            if (!tokenProvider.validateToken(accessToken)) {
+                throw new TokenExpiredException();
+            }
         } catch (ExpiredJwtException e) {
-            // response body
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
-
-            // response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-            return;
+            log.error("Access token expired");
+            throw new InvalidTokenException();
         }
 
         // 토큰이 access인지 확인 (발급시 페이로드에 명시)
-        String category = jwtUtil.getCategory(accessToken);
-
-        if (!category.equals("access")) {
-            // response body
-            PrintWriter writer = response.getWriter();
-            writer.print("invalid access token");
-
-            // response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+        if (!"access".equals(tokenProvider.getCategory(accessToken))) {
+            log.error("Invalid access token");
+            throw new BadRequestException.TokenRequestException();
         }
 
-        // email, loginId, role 값을 획득
-        int userId = jwtUtil.getUserId(accessToken);
-        String email = jwtUtil.getEmail(accessToken);
-        String role = jwtUtil.getRole(accessToken);
-
         User user = new User();
+        user.setUserId(tokenProvider.getUserId(accessToken));
+        user.setEmail(tokenProvider.getEmail(accessToken));
+        user.setRole(Role.valueOf(tokenProvider.getRole(accessToken)));
 
-        user.setUserId(userId);
-        user.setEmail(email);
-        user.setRole(Role.valueOf(role));
-
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
-
+        AuthUserDetails customUserDetails = new AuthUserDetails(user);
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 

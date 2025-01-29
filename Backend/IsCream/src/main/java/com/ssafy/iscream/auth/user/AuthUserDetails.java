@@ -1,6 +1,5 @@
-package com.ssafy.iscream.auth.service;
+package com.ssafy.iscream.auth.user;
 
-import com.ssafy.iscream.oauth.dto.OAuth2Response;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,7 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails, OAuth2User {
+public class AuthUserDetails implements UserDetails, OAuth2User {
 
     private final User user;
 

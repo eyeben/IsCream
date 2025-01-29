@@ -1,27 +1,29 @@
 package com.ssafy.iscream.auth.filter;
 
-import com.ssafy.iscream.auth.JwtUtil;
-import com.ssafy.iscream.auth.domain.RefreshTokenRepository;
+import com.ssafy.iscream.auth.jwt.JwtUtil;
+import com.ssafy.iscream.auth.jwt.TokenProvider;
+import com.ssafy.iscream.auth.service.TokenService;
+import com.ssafy.iscream.common.exception.BadRequestException.*;
+import com.ssafy.iscream.common.exception.UnauthorizedException.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
-public class CustomLogoutFilter extends GenericFilterBean {
+public class AuthLogoutFilter extends GenericFilterBean {
 
-    private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenProvider tokenProvider;
+    private final TokenService tokenService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -43,53 +45,42 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         // get refresh token
-        String refresh = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
-            }
-        }
+        String refresh = JwtUtil.extractTokenFromCookie(request, "refresh");
 
         // refresh null check
         if (refresh == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new TokenRequestException();
         }
 
         // expired check
         try {
-            jwtUtil.isExpired(refresh);
+            if (!tokenProvider.validateToken(refresh)) {
+                throw new TokenExpiredException();
+            }
         } catch (ExpiredJwtException e) {
-            // response status code
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            throw new TokenExpiredException();
         }
 
         // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
-        String category = jwtUtil.getCategory(refresh);
+        String category = tokenProvider.getCategory(refresh);
         if (!category.equals("refresh")) {
-            //response status code
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            log.error("Invalid refresh token");
+            throw new TokenRequestException();
         }
 
-        //로그아웃 진행
-        Boolean isExist = refreshTokenRepository.existsById(refresh);
+        // 로그아웃 진행
+        boolean isExist = tokenService.existRefreshToken(refresh);
 
         if (!isExist) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            log.error("refresh token does not exist");
+            throw new TokenRequestException();
         }
 
-        refreshTokenRepository.deleteById(refresh);
+        tokenService.deleteRefreshToken(refresh);
 
-        //Refresh 토큰 Cookie 값 0
-        Cookie cookie = new Cookie("refresh", null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-
-        response.addCookie(cookie);
+        // Refresh 토큰 Cookie 값 0
+        response.addHeader("Set-Cookie", JwtUtil.createCookie("refresh", ""));
         response.setStatus(HttpServletResponse.SC_OK);
+        JwtUtil.writeJsonResponse(response, "S0000", "정상적으로 처리되었습니다.");
     }
 }

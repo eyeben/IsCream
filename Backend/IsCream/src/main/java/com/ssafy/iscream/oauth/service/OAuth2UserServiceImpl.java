@@ -1,11 +1,11 @@
 package com.ssafy.iscream.oauth.service;
 
-import com.ssafy.iscream.auth.service.CustomUserDetails;
+import com.ssafy.iscream.auth.user.AuthUserDetails;
 import com.ssafy.iscream.oauth.dto.GoogleResponse;
 import com.ssafy.iscream.oauth.dto.OAuth2Response;
 import com.ssafy.iscream.user.domain.Role;
 import com.ssafy.iscream.user.domain.User;
-import com.ssafy.iscream.user.repository.UserRepository;
+import com.ssafy.iscream.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
 
@@ -48,6 +48,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userRepository.save(user);
         }
 
-        return new CustomUserDetails(user);
+        return new AuthUserDetails(user);
     }
 }

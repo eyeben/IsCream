@@ -1,7 +1,8 @@
 package com.ssafy.iscream.auth.service;
 
+import com.ssafy.iscream.auth.user.AuthUserDetails;
 import com.ssafy.iscream.user.domain.User;
-import com.ssafy.iscream.user.repository.UserRepository;
+import com.ssafy.iscream.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
@@ -20,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         if (userData != null) {
             //UserDetails에 담아서 return하면 AutneticationManager가 검증 함
-            return new CustomUserDetails(userData);
+            return new AuthUserDetails(userData);
         }
 
         return null;

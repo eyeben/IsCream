@@ -4,7 +4,7 @@ import com.ssafy.iscream.user.domain.Relation;
 import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.dto.request.UserCreateReq;
 import com.ssafy.iscream.user.exception.UserException.*;
-import com.ssafy.iscream.user.repository.UserRepository;
+import com.ssafy.iscream.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

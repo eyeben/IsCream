@@ -1,18 +1,17 @@
 package com.ssafy.iscream.common.config;
 
-import com.ssafy.iscream.auth.domain.RefreshTokenRepository;
-import com.ssafy.iscream.auth.filter.JwtFilter;
-import com.ssafy.iscream.auth.JwtUtil;
+import com.ssafy.iscream.auth.jwt.TokenProvider;
+import com.ssafy.iscream.auth.jwt.JwtFilter;
 import com.ssafy.iscream.auth.filter.LoginFilter;
-import com.ssafy.iscream.auth.filter.CustomLogoutFilter;
-import com.ssafy.iscream.oauth.CustomSuccessHandler;
-import com.ssafy.iscream.oauth.service.CustomOAuth2UserService;
+import com.ssafy.iscream.auth.filter.AuthLogoutFilter;
+import com.ssafy.iscream.auth.service.TokenService;
+import com.ssafy.iscream.oauth.AuthSuccessHandler;
+import com.ssafy.iscream.oauth.service.OAuth2UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,10 +34,10 @@ public class SecurityConfig {
 
     // AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final CustomSuccessHandler customSuccessHandler;
+    private final TokenProvider tokenProvider;
+    private final TokenService tokenService;
+    private final OAuth2UserServiceImpl customOAuth2UserService;
+    private final AuthSuccessHandler customSuccessHandler;
 
     // AuthenticationManager Bean 등록
     @Bean
@@ -106,14 +105,14 @@ public class SecurityConfig {
 //        );
 
         http
-                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JwtFilter(tokenProvider), LoginFilter.class);
 
         // 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), tokenProvider, tokenService), UsernamePasswordAuthenticationFilter.class);
 
         http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
+                .addFilterBefore(new AuthLogoutFilter(tokenProvider, tokenService), LogoutFilter.class);
 
         // 세션 설정
         http

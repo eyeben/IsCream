@@ -8,6 +8,7 @@ public enum ErrorCode {
 
     INVALID_TOKEN("E3001", "토큰 유효성 검증에 실패하였습니다."),
     TOKEN_EXPIRED("E3002", "토큰 유효기간이 만료되었습니다."),
+    INVALID_TOKEN_REQUEST("E3003", "토큰 요청 형식이 잘못되었습니다."),
 
     DATA_NOT_FOUND("E4001", "데이터 조회에 실패했습니다."),
     DATA_SAVE_FAILED("E4002", "데이터 저장, 업데이트에 실패했습니다."),

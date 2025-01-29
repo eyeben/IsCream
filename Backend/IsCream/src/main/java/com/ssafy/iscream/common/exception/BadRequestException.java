@@ -18,6 +18,15 @@ public class BadRequestException extends GlobalException {
         }
     }
 
+    public static class TokenRequestException extends BadRequestException {
+        public TokenRequestException() {
+            super(ResponseData.builder()
+                    .code(ErrorCode.INVALID_TOKEN_REQUEST.getCode())
+                    .message(ErrorCode.INVALID_TOKEN_REQUEST.getMessage())
+                    .build());
+        }
+    }
+
     // 파일 URL 잘못되었음
     public static class ImageBadRequestException extends BadRequestException {
         public ImageBadRequestException() {
