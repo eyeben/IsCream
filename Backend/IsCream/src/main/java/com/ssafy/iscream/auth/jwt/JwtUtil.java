@@ -28,7 +28,7 @@ public class JwtUtil {
         AuthUserDetails userDetails = (AuthUserDetails) authentication.getPrincipal();
 
         // 유저 정보 추출
-        int userId = userDetails.getUserId();
+        Integer userId = userDetails.getUserId();
         String email = userDetails.getUsername();
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
 

@@ -18,7 +18,7 @@ public class UserService {
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public int joinProcess(UserCreateReq userReq) {
+    public Integer joinProcess(UserCreateReq userReq) {
         String email = userReq.getEmail();
         String password = userReq.getPassword();
 

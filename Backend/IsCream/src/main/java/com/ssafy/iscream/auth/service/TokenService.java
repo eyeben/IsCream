@@ -21,7 +21,7 @@ public class TokenService {
         refreshTokenRepository.deleteById(refreshToken);
     }
 
-    public void addRefreshToken(String refreshToken, int userId) {
+    public void addRefreshToken(String refreshToken, Integer userId) {
         RefreshToken redis = new RefreshToken(refreshToken, userId);
         refreshTokenRepository.save(redis);
     }

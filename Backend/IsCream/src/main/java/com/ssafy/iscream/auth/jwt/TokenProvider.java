@@ -32,17 +32,17 @@ public class TokenProvider {
     }
 
     // access token 생성
-    public String createAccessToken(int userId, String email, String role) {
+    public String createAccessToken(Integer userId, String email, String role) {
         return createToken("access", userId, email, role, accessTokenValidity);
     }
 
     // refresh token 생성
-    public String createRefreshToken(int userId, String email, String role) {
+    public String createRefreshToken(Integer userId, String email, String role) {
         return createToken("refresh", userId, email, role, refreshTokenValidity);
     }
 
     // 토큰 생성
-    private String createToken(String category, int userId, String email, String role, long validity) {
+    private String createToken(String category, Integer userId, String email, String role, long validity) {
         return Jwts.builder()
                 .claim("category", category)
                 .claim("userId", userId)
@@ -80,7 +80,7 @@ public class TokenProvider {
         return getClaims(token).get("email", String.class);
     }
 
-    public int getUserId(String token) {
+    public Integer getUserId(String token) {
         return getClaims(token).get("userId", Integer.class);
     }
 

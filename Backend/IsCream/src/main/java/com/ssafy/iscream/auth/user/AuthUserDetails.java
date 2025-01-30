@@ -38,7 +38,7 @@ public class AuthUserDetails implements UserDetails, OAuth2User {
         return user.getEmail();
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return user.getUserId();
     }
 

@@ -65,7 +65,7 @@ public class UserController {
             throw new TokenRequestException();
         }
 
-        int userId = tokenProvider.getUserId(refresh);
+        Integer userId = tokenProvider.getUserId(refresh);
         String email = tokenProvider.getEmail(refresh);
         String role = tokenProvider.getRole(refresh);
 
