@@ -22,7 +22,7 @@ public enum ErrorCode {
     EMAIL_CERTIFICATION_FAILED("E5004", "이메일 인증 실패"),
     DUPLICATE_USER("E5005", "이미 가입된 회원입니다."),
     JOIN_SOCIAL_FAILED("E5006", "간편 회원가입 실패"),
-    MEMBER_NOT_FOUND("E5007", "존재하지 않는 회원입니다."),
+    USER_NOT_FOUND("E5007", "존재하지 않는 회원입니다."),
     INVALID_EMAIL_FORMAT("E5008", "이메일 형식이 잘못되었습니다."),
     INVALID_PASSWORD_FORMAT("E5009", "비밀번호 형식이 잘못되었습니다."),
 

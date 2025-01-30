@@ -35,4 +35,8 @@ public class UserService {
         return userRepository.save(user).getUserId();
     }
 
+    public User getUser(Integer userId) {
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    }
+
 }

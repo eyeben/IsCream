@@ -1,11 +1,14 @@
 package com.ssafy.iscream.user.controller;
 
+import com.ssafy.iscream.auth.domain.LoginUser;
 import com.ssafy.iscream.auth.jwt.JwtUtil;
 import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.service.TokenService;
+import com.ssafy.iscream.auth.user.Login;
 import com.ssafy.iscream.common.exception.BadRequestException.*;
 import com.ssafy.iscream.common.exception.UnauthorizedException.*;
 import com.ssafy.iscream.common.util.ResponseUtil;
+import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.dto.request.UserCreateReq;
 import com.ssafy.iscream.user.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -15,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,6 +88,19 @@ public class UserController {
         response.addHeader("Set-Cookie", JwtUtil.createCookie("refresh", newRefresh));
 
         return ResponseUtil.success();
+    }
+
+//    @GetMapping()
+//    @Operation(summary = "사용자 정보 조회", tags = "users")
+//    public ResponseEntity<?> getUserInfo(@Login User user) {
+//        return ResponseUtil.success(userService.getUser(user.getUserId()));
+//    }
+
+    @GetMapping()
+    @Operation(summary = "사용자 정보 조회", tags = "users")
+    public ResponseEntity<?> getUserInfo(@Login LoginUser user) {
+        System.out.println(user.toString());
+        return ResponseUtil.success(userService.getUser(user.getUserId()));
     }
 
 }
