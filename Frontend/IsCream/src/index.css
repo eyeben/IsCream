@@ -5,8 +5,8 @@
   src: url("./assets/fonts/MyFont.ttf") format("truetype");
 }
 
-/* @layer base {
+@layer base {
   html {
     font-family: "MyFont", sans-serif;
   }
-} */
+}
