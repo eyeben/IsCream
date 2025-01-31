@@ -33,4 +33,13 @@ public class UserException {
         }
     }
 
+    public static class PasswordException extends MinorException {
+        public PasswordException(ErrorCode errorCode) {
+            super(ResponseData.builder()
+                    .code(errorCode.getCode())
+                    .message(errorCode.getMessage())
+                    .build());
+        }
+    }
+
 }

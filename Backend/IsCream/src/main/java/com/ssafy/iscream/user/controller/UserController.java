@@ -1,29 +1,17 @@
 package com.ssafy.iscream.user.controller;
 
 import com.ssafy.iscream.auth.domain.LoginUser;
-import com.ssafy.iscream.auth.jwt.JwtUtil;
-import com.ssafy.iscream.auth.jwt.TokenProvider;
-import com.ssafy.iscream.auth.service.TokenService;
 import com.ssafy.iscream.auth.user.Login;
-import com.ssafy.iscream.common.exception.BadRequestException.*;
-import com.ssafy.iscream.common.exception.UnauthorizedException.*;
 import com.ssafy.iscream.common.util.ResponseUtil;
-import com.ssafy.iscream.user.domain.User;
-import com.ssafy.iscream.user.dto.request.UserCreateReq;
 import com.ssafy.iscream.user.dto.request.UserInfoReq;
+import com.ssafy.iscream.user.dto.request.UserUpdateReq;
 import com.ssafy.iscream.user.service.UserService;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -61,8 +49,23 @@ public class UserController {
         return ResponseUtil.success(userService.existUserInfo(userInfoReq, user.getUserId()));
     }
 
-    // TODO: 비밀번호 재설정/변경
+    @Operation(summary = "비밀번호 재설정", tags = "users")
+    @PostMapping("/password")
+    public ResponseEntity<?> changePassword(@Login LoginUser user,
+            @Schema(example = "{\"password\": \"string\", \"newPassword\": \"string\"}")
+            @RequestBody Map<String, String> map) {
+        return ResponseUtil.success(
+                userService.changePassword(user.getUserId(), map.get("password"), map.get("newPassword")));
+    }
 
-    // TODO: 회원 정보 수정 (닉네임, 생일, 전화번호, 아이와의 관계, 프로필 사진)
+    @Operation(summary = "회원 정보 수정 (닉네임, 생일, 전화번호, 아이와의 관계, 프로필 사진)", tags = "users")
+    @PutMapping("/info")
+    public ResponseEntity<?> changePassword(@Login LoginUser user,
+                                            @RequestBody UserUpdateReq userUpdateReq) {
+        userService.updateUserInfo(user.getUserId(), userUpdateReq);
+        return ResponseUtil.success();
+    }
+    
+    // TODO: 회원 탈퇴 API 추가
 
 }
