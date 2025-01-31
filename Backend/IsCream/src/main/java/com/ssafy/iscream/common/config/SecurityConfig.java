@@ -88,6 +88,7 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/users/email/check", "/users/nickname/check").permitAll()
                         .anyRequest().authenticated());
 
         http

@@ -13,6 +13,7 @@ import com.ssafy.iscream.user.dto.request.UserCreateReq;
 import com.ssafy.iscream.user.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +40,20 @@ public class UserController {
         return ResponseUtil.success(userService.getUser(user.getUserId()));
     }
 
-    // TODO: 이메일 중복 확인
-    @PostMapping
+    @PostMapping("/email/check")
     @Operation(summary = "이메일 중복 확인", tags = "users")
-    public ResponseEntity<?> duplicateEmail(@RequestBody Map<String, String> map) {
-        return null;
+    public ResponseEntity<?> duplicateEmail(
+            @Schema(example = "{\"email\": \"test@naver.com\"}") @RequestBody Map<String, String> map) {
+        return ResponseUtil.success("사용 가능한 이메일입니다.", userService.duplicateEmail(map.get("email")));
     }
 
-    // TODO: 닉네임 중복 확인
+    @PostMapping("/nickname/check")
+    @Operation(summary = "닉네임 중복 확인", tags = "users")
+    public ResponseEntity<?> duplicateNickname(
+            @Schema(example = "{\"nickname\": \"test1\"}") @RequestBody Map<String, String> map) {
+        userService.duplicateNickname(map.get("nickname"));
+        return ResponseUtil.success("사용 가능한 닉네임입니다.", null);
+    }
 
     // TODO: 사용자 정보 확인 (이메일, 이름, 전화번호)
 

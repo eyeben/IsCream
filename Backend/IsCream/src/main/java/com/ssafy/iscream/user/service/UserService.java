@@ -46,7 +46,24 @@ public class UserService {
 
     // 이메일 중복 확인
     public Boolean duplicateEmail(String email) {
-        return userRepository.existsByEmail(email);
+        Boolean exist = userRepository.existsByEmail(email);
+
+        if (exist) {
+            throw new EmailException();
+        }
+
+        return true;
+    }
+
+    // 닉네임 중복 확인
+    public Boolean duplicateNickname(String nickname) {
+        Boolean exist = userRepository.existsByNickname(nickname);
+
+        if (exist) {
+            throw new NicknameException();
+        }
+
+        return true;
     }
 
 }
