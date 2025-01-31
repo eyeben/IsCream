@@ -1,8 +1,10 @@
 package com.ssafy.iscream.user.service;
 
+import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.user.domain.Relation;
 import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.dto.request.UserCreateReq;
+import com.ssafy.iscream.user.dto.request.UserInfoReq;
 import com.ssafy.iscream.user.dto.response.UserInfo;
 import com.ssafy.iscream.user.exception.UserException.*;
 import com.ssafy.iscream.auth.exception.AuthException.*;
@@ -25,11 +27,13 @@ public class UserService {
         String email = userReq.getEmail();
         String password = userReq.getPassword();
 
-        Boolean isExist = duplicateEmail(email);
+        Boolean isExist = userRepository.existsByEmail(email);
 
         if (isExist) {
             throw new UserExistException();
         }
+
+        duplicatePhone(userReq.getPhone()); // 전화번호 중복 확인
 
         User user = modelMapper.map(userReq, User.class);
         user.setRelation(Relation.valueOf(userReq.getRelation()));
@@ -40,7 +44,8 @@ public class UserService {
 
     // 사용자 정보 조회
     public UserInfo getUser(Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         return new UserInfo(user);
     }
 
@@ -61,6 +66,29 @@ public class UserService {
 
         if (exist) {
             throw new NicknameException();
+        }
+
+        return true;
+    }
+
+    // 전화번호 중복 확인
+    private Boolean duplicatePhone(String phone) {
+        Boolean exist = userRepository.existsByPhone(phone);
+
+        if (exist) {
+            throw new UserExistException();
+        }
+
+        return true;
+    }
+
+    // 사용자 정보 확인 (이메일, 이름, 전화번호)
+    public Boolean existUserInfo(UserInfoReq req, Integer userId) {
+        User user = userRepository.findByEmailAndUsernameAndPhone(req.getEmail(), req.getUsername(), req.getPhone())
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        if (!userId.equals(user.getUserId())) {
+            throw new UserNotFoundException(ErrorCode.INVALID_USER_INFO);
         }
 
         return true;

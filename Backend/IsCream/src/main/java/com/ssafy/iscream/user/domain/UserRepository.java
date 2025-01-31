@@ -3,6 +3,8 @@ package com.ssafy.iscream.user.domain;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
@@ -13,5 +15,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Boolean existsByNickname(String nickname);
 
     Boolean existsByPhone(String phone);
+
+    Optional<User> findByEmailAndUsernameAndPhone(String email, String username, String phone);
 
 }

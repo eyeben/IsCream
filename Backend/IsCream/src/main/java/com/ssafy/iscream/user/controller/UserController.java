@@ -10,6 +10,7 @@ import com.ssafy.iscream.common.exception.UnauthorizedException.*;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.dto.request.UserCreateReq;
+import com.ssafy.iscream.user.dto.request.UserInfoReq;
 import com.ssafy.iscream.user.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,7 +55,11 @@ public class UserController {
         return ResponseUtil.success("사용 가능한 닉네임입니다.", userService.duplicateNickname(map.get("nickname")));
     }
 
-    // TODO: 사용자 정보 확인 (이메일, 이름, 전화번호)
+    @PostMapping("/info/check")
+    @Operation(summary = "사용자 정보 확인 (이메일, 이름, 전화번호)", tags = "users")
+    public ResponseEntity<?> checkUserInfo(@RequestBody UserInfoReq userInfoReq, @Login LoginUser user) {
+        return ResponseUtil.success(userService.existUserInfo(userInfoReq, user.getUserId()));
+    }
 
     // TODO: 비밀번호 재설정/변경
 

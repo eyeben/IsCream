@@ -7,10 +7,10 @@ import com.ssafy.iscream.common.response.ResponseData;
 public class UserException {
 
     public static class UserNotFoundException extends MinorException {
-        public UserNotFoundException() {
+        public UserNotFoundException(ErrorCode errorCode) {
             super(ResponseData.builder()
-                    .code(ErrorCode.USER_NOT_FOUND.getCode())
-                    .message(ErrorCode.USER_NOT_FOUND.getMessage())
+                    .code(errorCode.getCode())
+                    .message(errorCode.getMessage())
                     .build());
         }
     }

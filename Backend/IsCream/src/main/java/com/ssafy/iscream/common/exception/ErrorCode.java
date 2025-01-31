@@ -25,6 +25,7 @@ public enum ErrorCode {
     USER_NOT_FOUND("E5007", "존재하지 않는 회원입니다."),
     INVALID_EMAIL_FORMAT("E5008", "이메일 형식이 잘못되었습니다."),
     INVALID_PASSWORD_FORMAT("E5009", "비밀번호 형식이 잘못되었습니다."),
+    INVALID_USER_INFO("E5010", "잘못된 사용자 요청입니다. 입력한 정보를 다시 확인해주세요."),
 
     LOGIN_FAILED("E6001", "로그인에 실패하였습니다."),
     LOGIN_SOCIAL_FAILED("E6002", "간편 로그인 실패"),
