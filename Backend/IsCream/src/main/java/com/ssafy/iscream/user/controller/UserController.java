@@ -32,7 +32,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping()
+    @GetMapping("/info")
     @Operation(summary = "사용자 정보 조회", tags = "users")
     public ResponseEntity<?> getUserInfo(@Login LoginUser user) {
         System.out.println(user.toString());
