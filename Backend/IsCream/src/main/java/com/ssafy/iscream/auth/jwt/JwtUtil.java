@@ -36,8 +36,6 @@ public class JwtUtil {
         String access = tokenProvider.createAccessToken(userId, email, role);
         String refresh = tokenProvider.createRefreshToken(userId, email, role);
 
-        System.out.println("refresh: " + refresh);
-
         // Redis에 refresh token 저장
         tokenService.addRefreshToken(refresh, userId);
 
