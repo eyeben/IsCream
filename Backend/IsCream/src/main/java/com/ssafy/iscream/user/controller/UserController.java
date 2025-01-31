@@ -51,8 +51,7 @@ public class UserController {
     @Operation(summary = "닉네임 중복 확인", tags = "users")
     public ResponseEntity<?> duplicateNickname(
             @Schema(example = "{\"nickname\": \"test1\"}") @RequestBody Map<String, String> map) {
-        userService.duplicateNickname(map.get("nickname"));
-        return ResponseUtil.success("사용 가능한 닉네임입니다.", null);
+        return ResponseUtil.success("사용 가능한 닉네임입니다.", userService.duplicateNickname(map.get("nickname")));
     }
 
     // TODO: 사용자 정보 확인 (이메일, 이름, 전화번호)
