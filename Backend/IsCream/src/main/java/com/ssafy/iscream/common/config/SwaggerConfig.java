@@ -1,5 +1,7 @@
 package com.ssafy.iscream.common.config;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
@@ -18,6 +20,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@OpenAPIDefinition(servers = {
+//        @Server(url = "https://{deployServerUrl}", description = "deploy server"),
+        @Server(url = "http://localhost:8080", description = "local server")
+})
 public class SwaggerConfig {
 
     @Bean
@@ -27,11 +33,47 @@ public class SwaggerConfig {
                 .version("v1").contact(new io.swagger.v3.oas.models.info.Contact().name("minchae")
                         .email("minchae075@naver.com").url("http://edu.ssafy.com"));
 
+        return new OpenAPI()
+                .info(info)
+                .components(securityComponents())
+                .addSecurityItem(new SecurityRequirement().addList("access"))
+                .paths(customPaths());
+    }
+
+    @Bean
+    GroupedOpenApi userApi() {
+        return GroupedOpenApi.builder().group("users").pathsToMatch("/users/**").build();
+    }
+
+    @Bean
+    GroupedOpenApi authApi() {
+        return GroupedOpenApi.builder().group("auth").pathsToMatch("/users/join", "/users/reissue", "/users/login", "/users/logout").build();
+    }
+
+    @Bean
+    GroupedOpenApi allApi() {
+        return GroupedOpenApi.builder()
+                .group("all") // 그룹 이름 지정
+                .pathsToMatch( "/users/**")
+                .build();
+    }
+
+    private Components securityComponents() {
+        return new Components()
+                .addSecuritySchemes("access", new SecurityScheme()
+                        .type(SecurityScheme.Type.APIKEY)
+                        .in(SecurityScheme.In.HEADER)
+                        .name("access"));
+    }
+
+    // 로그인, 로그아웃
+    private Paths customPaths() {
         Paths paths = new Paths();
+
         paths.addPathItem("/users/login", new PathItem()
                 .post(new io.swagger.v3.oas.models.Operation()
                         .summary("로그인")
-                        .addTagsItem("users")
+                        .addTagsItem("auth")
                         .requestBody(new RequestBody()
                                 .content(new Content().addMediaType("application/json", new MediaType()
                                         .schema(new Schema<>().type("object")
@@ -49,41 +91,13 @@ public class SwaggerConfig {
         paths.addPathItem("/users/logout", new PathItem()
                 .post(new io.swagger.v3.oas.models.Operation()
                         .summary("로그아웃")
-                        .addTagsItem("users")
+                        .addTagsItem("auth")
                         .responses(new ApiResponses()
                                 .addApiResponse("200", new ApiResponse().description("로그아웃 성공").content(new Content().addMediaType("application/json", new MediaType().schema(new Schema<String>().type("string")))))
                                 .addApiResponse("401", new ApiResponse().description("인증 실패"))
                         )
                 ));
 
-        String key = "x-access-token";  // 헤더 이름을 "access"로 사용
-
-        // JWT 인증 설정
-        SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList(key);
-
-        SecurityScheme accessTokenSecurityScheme = new SecurityScheme()
-                .type(SecurityScheme.Type.APIKEY)  // 인증 방식으로 APIKEY를 사용
-                .in(SecurityScheme.In.HEADER)      // 헤더에 위치
-                .name(key);  // 헤더 이름을 "x-access-token"로 설정
-
-        Components components = new Components()
-                .addSecuritySchemes(key, accessTokenSecurityScheme);
-
-        return new OpenAPI().components(new Components()).info(info).paths(paths)
-                .addSecurityItem(securityRequirement)
-                .components(components);
-    }
-    @Bean
-    GroupedOpenApi userApi() {
-        return GroupedOpenApi.builder().group("users").pathsToMatch("/users/**").build();
-    }
-
-    @Bean
-    GroupedOpenApi allApi() {
-        return GroupedOpenApi.builder()
-                .group("all") // 그룹 이름 지정
-                .pathsToMatch( "/users/**")
-                .build();
+        return paths;
     }
 }
