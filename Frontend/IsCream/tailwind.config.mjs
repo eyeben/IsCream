@@ -5,6 +5,10 @@ export default {
     extend: {
       fontFamily: {
         custom: ["MyFont", "sans-serif"]
+      },
+      colors: {
+        green: '#009E28'
+        
       }
     }
   },
