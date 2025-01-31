@@ -70,13 +70,17 @@ public class CalendarController {
     }
 
     @PutMapping("/memo")
-    @Operation(summary = "날짜별로 메모를 작성")
+    @Operation(summary = "날짜별로 메모를 수정")
     public ResponseEntity<?> updateMemo(@RequestBody MemoUpdateReq memoUpdateReq) {
         return null;
     }
 
 
-
+    @DeleteMapping("/memo/{memoId}")
+    @Operation(summary = "날짜별로 메모를 삭제")
+    public ResponseEntity<?> deleteMemo(@PathVariable Long memoId) {
+        return null;
+    }
 
 
 }
