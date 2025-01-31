@@ -5,6 +5,7 @@ import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.dto.request.UserCreateReq;
 import com.ssafy.iscream.user.dto.response.UserInfo;
 import com.ssafy.iscream.user.exception.UserException.*;
+import com.ssafy.iscream.auth.exception.AuthException.*;
 import com.ssafy.iscream.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

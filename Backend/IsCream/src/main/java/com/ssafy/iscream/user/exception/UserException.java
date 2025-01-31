@@ -6,15 +6,6 @@ import com.ssafy.iscream.common.response.ResponseData;
 
 public class UserException {
 
-    public static class UserExistException extends MinorException {
-        public UserExistException() {
-            super(ResponseData.builder()
-                    .code(ErrorCode.DUPLICATE_USER.getCode())
-                    .message(ErrorCode.DUPLICATE_USER.getMessage())
-                    .build());
-        }
-    }
-
     public static class UserNotFoundException extends MinorException {
         public UserNotFoundException() {
             super(ResponseData.builder()
@@ -23,5 +14,7 @@ public class UserException {
                     .build());
         }
     }
+
+
 
 }

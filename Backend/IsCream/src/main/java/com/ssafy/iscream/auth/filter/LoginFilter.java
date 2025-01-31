@@ -6,7 +6,7 @@ import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.dto.LoginReq;
 import com.ssafy.iscream.auth.service.TokenService;
 import com.ssafy.iscream.common.exception.ErrorCode;
-import com.ssafy.iscream.common.exception.UnauthorizedException.*;
+import com.ssafy.iscream.auth.exception.AuthException.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

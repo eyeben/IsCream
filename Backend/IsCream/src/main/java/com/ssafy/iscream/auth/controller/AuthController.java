@@ -4,7 +4,7 @@ import com.ssafy.iscream.auth.jwt.JwtUtil;
 import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.service.TokenService;
 import com.ssafy.iscream.common.exception.BadRequestException;
-import com.ssafy.iscream.common.exception.UnauthorizedException;
+import com.ssafy.iscream.auth.exception.AuthException.*;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.dto.request.UserCreateReq;
 import com.ssafy.iscream.user.service.UserService;
@@ -46,10 +46,10 @@ public class AuthController {
 
         try {
             if (!tokenProvider.validateToken(refresh)) {
-                throw new UnauthorizedException.TokenExpiredException();
+                throw new TokenExpiredException();
             }
         } catch (ExpiredJwtException e) {
-            throw new UnauthorizedException.InvalidTokenException();
+            throw new InvalidTokenException();
         }
 
         // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)

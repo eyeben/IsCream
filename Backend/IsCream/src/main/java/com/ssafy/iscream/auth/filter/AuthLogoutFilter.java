@@ -4,7 +4,7 @@ import com.ssafy.iscream.auth.jwt.JwtUtil;
 import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.service.TokenService;
 import com.ssafy.iscream.common.exception.BadRequestException.*;
-import com.ssafy.iscream.common.exception.UnauthorizedException.*;
+import com.ssafy.iscream.auth.exception.AuthException.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
