@@ -48,7 +48,7 @@ const BottomNavigation: React.FC = () => {
   ];
 
   return (
-    <nav className="bottom-0 left-0 w-full h-20 bg-white border-gray-200 shadow-[0_-4px_4px_0_rgba(0,0,0,0.05)] rounded-t-[15px]">
+    <nav className="fixed bottom-0 left-0 w-full h-20 bg-white border-gray-200 shadow-[0_-4px_4px_0_rgba(0,0,0,0.05)] rounded-t-[15px]">
       <div className="max-w-screen-sm mx-auto h-full">
         <div className="flex justify-between items-center h-full px-4">
           {navItems.map((item) => (
