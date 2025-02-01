@@ -1,8 +1,10 @@
 package com.ssafy.iscream.calendar.dto.response;
 
+import com.ssafy.iscream.common.enums.Emoji;
+
 public class CalendarGetRes {
 
-    enum emoji;
+    Emoji emoji;
     boolean isMemo;
     boolean isHtp;
 }

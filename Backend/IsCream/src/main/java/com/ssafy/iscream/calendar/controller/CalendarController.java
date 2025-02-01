@@ -5,6 +5,8 @@ import com.ssafy.iscream.calendar.dto.request.CalendarGetDetailReq;
 import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
 import com.ssafy.iscream.calendar.dto.request.MemoCreateReq;
 import com.ssafy.iscream.calendar.dto.request.MemoUpdateReq;
+import com.ssafy.iscream.calendar.dto.response.CalendarGetDetailRes;
+import com.ssafy.iscream.calendar.dto.response.CalendarGetRes;
 import com.ssafy.iscream.calendar.service.CalendarService;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Calendar;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,8 +39,12 @@ public class CalendarController {
             "isHtp" : boolean (HTP 검사 있는지)
         },
          */
+        try{
+            return ResponseUtil.success(calendarService.getCalendar(calendarGetReq));
+        } catch (Exception e){
+            return ResponseUtil.failure(e);
+        }
 
-        return ResponseUtil.success();
 
     }
 
@@ -58,28 +65,47 @@ public class CalendarController {
         "memo": String (메모 내용)
          */
 
-        return null;
+        try{
+            return ResponseUtil.success(calendarService.getCalendarDetail(calendarGetDetailReq));
+        } catch (Exception e){
+            return ResponseUtil.failure(e);
+        }
     }
 
 
     @PostMapping("/memo")
-    @Operation(summary = "날짜별로 메모를 작성")
+    @Operation(summary = "날짜 별로 메모를 작성")
     public ResponseEntity<?> createMemo(@RequestBody MemoCreateReq memoCreateReq) {
+        try{
+            calendarService.createMemo(memoCreateReq);
+            return ResponseUtil.success();
+        } catch (Exception e){
+            return ResponseUtil.failure(e);
+        }
 
-        return null;
     }
 
     @PutMapping("/memo")
-    @Operation(summary = "날짜별로 메모를 수정")
+    @Operation(summary = "날짜 별로 메모를 수정")
     public ResponseEntity<?> updateMemo(@RequestBody MemoUpdateReq memoUpdateReq) {
-        return null;
+        try{
+            calendarService.updateMemo(memoUpdateReq);
+            return ResponseUtil.success();
+        } catch (Exception e){
+            return ResponseUtil.failure(e);
+        }
     }
 
 
     @DeleteMapping("/memo/{memoId}")
-    @Operation(summary = "날짜별로 메모를 삭제")
+    @Operation(summary = "날짜 별로 메모를 삭제")
     public ResponseEntity<?> deleteMemo(@PathVariable Long memoId) {
-        return null;
+        try{
+            calendarService.deleteMemo(memoId);
+            return ResponseUtil.success();
+        } catch (Exception e){
+            return ResponseUtil.failure(e);
+        }
     }
 
 

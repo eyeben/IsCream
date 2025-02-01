@@ -1,5 +1,7 @@
 package com.ssafy.iscream.calendar.dto.response;
 
+import lombok.Data;
+
 @Data
 public class CalendarGetDetailRes {
     boolean isMemo;
