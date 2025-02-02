@@ -8,6 +8,8 @@ import com.ssafy.iscream.user.dto.request.UserUpdateReq;
 import com.ssafy.iscream.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -58,6 +60,7 @@ public class UserController {
                 userService.changePassword(user.getUserId(), map.get("password"), map.get("newPassword")));
     }
 
+    // TODO: MultipartFile 요청 형식 확인 필요
     @Operation(summary = "회원 정보 수정 (닉네임, 생일, 전화번호, 아이와의 관계, 프로필 사진)", tags = "users")
     @PutMapping("/info")
     public ResponseEntity<?> changePassword(@Login LoginUser user,
@@ -65,7 +68,12 @@ public class UserController {
         userService.updateUserInfo(user.getUserId(), userUpdateReq);
         return ResponseUtil.success();
     }
-    
-    // TODO: 회원 탈퇴 API 추가
+
+    @Operation(summary = "회원 탈퇴", tags = "users")
+    @DeleteMapping
+    public ResponseEntity<?> deleteUserInfo(HttpServletRequest request, HttpServletResponse response, @Login LoginUser user) {
+        userService.updateUserStatus(request, response, user.getUserId());
+        return ResponseUtil.success();
+    }
 
 }

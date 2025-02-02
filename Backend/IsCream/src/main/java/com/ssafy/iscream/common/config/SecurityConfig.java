@@ -113,7 +113,7 @@ public class SecurityConfig {
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), tokenProvider, tokenService), UsernamePasswordAuthenticationFilter.class);
 
         http
-                .addFilterBefore(new AuthLogoutFilter(tokenProvider, tokenService), LogoutFilter.class);
+                .addFilterBefore(new AuthLogoutFilter(tokenService), LogoutFilter.class);
 
         // 세션 설정
         http

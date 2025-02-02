@@ -1,5 +1,7 @@
 package com.ssafy.iscream.user.service;
 
+import com.ssafy.iscream.auth.jwt.JwtUtil;
+import com.ssafy.iscream.auth.service.TokenService;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.user.domain.Relation;
 import com.ssafy.iscream.user.domain.Status;
@@ -11,6 +13,8 @@ import com.ssafy.iscream.user.dto.response.UserInfo;
 import com.ssafy.iscream.user.exception.UserException.*;
 import com.ssafy.iscream.auth.exception.AuthException.*;
 import com.ssafy.iscream.user.domain.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +32,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    private final TokenService tokenService;
 
     // 회원가입
     public Integer joinProcess(UserCreateReq userReq) {
@@ -103,7 +109,7 @@ public class UserService {
 
     // 비밀번호 재설정
     @Transactional
-    public boolean changePassword(int userId, String password, String newPassword) {
+    public boolean changePassword(Integer userId, String password, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
@@ -123,7 +129,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserInfo(int userId, UserUpdateReq req) {
+    public void updateUserInfo(Integer userId, UserUpdateReq req) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
@@ -132,25 +138,27 @@ public class UserService {
         user.setBirthDate(LocalDate.parse(req.getBirthDate()));
         user.setRelation(Relation.valueOf(req.getRelation()));
 
-        // 프로필 사진 파일이 null이 아닌 경우에만 수정
-        // user.getImageUrl()로 s3 버킷에서 삭제, db에서도 삭제
-        // req.getFile()로 받은 파일 s3 업로드 후 url 얻기
-        // 생성된 url user.setImageUrl(url)로 업데이트
-
-        // 수정 실패했을 때의 예외 처리
-
+        /* TODO
+            1. 프로필 사진 파일이 null이 아닌 경우에만 수정
+            2. user.getImageUrl()로 s3 버킷에서 삭제, db에서도 삭제
+            3. req.getFile()로 받은 파일 s3 업로드 후 url 얻기
+            4. 생성된 url user.setImageUrl(url)로 업데이트
+            5. 수정 실패했을 때의 예외 처리
+        */
 
     }
 
     @Transactional
-    public void updateUserStatus(int userId) {
+    public void updateUserStatus(HttpServletRequest request, HttpServletResponse response, Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
         user.setStatus(Status.BANNED); // 탈퇴 처리
 
-        // Redis에 저장된 리프레시 토큰 삭제하기
-        // 쿠키에서 토큰 가져와서 삭제
+        String refresh = tokenService.validateRefreshToken(request); // 쿠키에서 토큰 가져오기
+        tokenService.deleteRefreshToken(refresh); // Redis에 저장된 리프레시 토큰 삭제
+
+        response.addHeader("Set-Cookie", JwtUtil.createCookie("refresh", ""));
     }
 
 }

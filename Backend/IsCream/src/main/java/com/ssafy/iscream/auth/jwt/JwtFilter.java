@@ -1,7 +1,6 @@
 package com.ssafy.iscream.auth.jwt;
 
 import com.ssafy.iscream.auth.user.AuthUserDetails;
-import com.ssafy.iscream.common.exception.BadRequestException;
 import com.ssafy.iscream.auth.exception.AuthException.*;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.user.domain.Role;
