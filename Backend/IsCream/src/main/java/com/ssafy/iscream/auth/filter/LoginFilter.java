@@ -52,7 +52,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             return authenticationManager.authenticate(authToken);
         } catch (Exception e) {
             log.error("Authentication failed {}", e.getMessage());
-            throw new LoginException();
+            throw new AuthTokenException(ErrorCode.LOGIN_FAILED);
         }
     }
 

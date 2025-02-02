@@ -6,7 +6,8 @@ import com.ssafy.iscream.auth.dto.Token;
 import com.ssafy.iscream.auth.exception.AuthException.*;
 import com.ssafy.iscream.auth.jwt.JwtUtil;
 import com.ssafy.iscream.auth.jwt.TokenProvider;
-import com.ssafy.iscream.common.exception.BadRequestException.*;
+import com.ssafy.iscream.common.exception.ErrorCode;
+import com.ssafy.iscream.common.exception.UnauthorizedException.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -44,10 +45,10 @@ public class TokenService {
 
         try {
             if (!tokenProvider.validateToken(refresh)) {
-                throw new TokenExpiredException();
+                throw new AuthTokenException(ErrorCode.TOKEN_EXPIRED);
             }
         } catch (ExpiredJwtException e) {
-            throw new InvalidTokenException();
+            throw new AuthTokenException(ErrorCode.INVALID_TOKEN);
         }
 
         // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)

@@ -1,5 +1,6 @@
 package com.ssafy.iscream.common.config;
 
+import com.ssafy.iscream.auth.jwt.AuthenticationEntryPoint;
 import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.jwt.JwtFilter;
 import com.ssafy.iscream.auth.filter.LoginFilter;
@@ -38,6 +39,7 @@ public class SecurityConfig {
     private final TokenService tokenService;
     private final OAuth2UserServiceImpl customOAuth2UserService;
     private final AuthSuccessHandler customSuccessHandler;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     // AuthenticationManager Bean 등록
     @Bean
@@ -98,9 +100,9 @@ public class SecurityConfig {
                 );
 
         // 예외 처리
-//        http.exceptionHandling((exceptionConfig) ->
-//            exceptionConfig.authenticationEntryPoint(un)
-//        );
+        http.exceptionHandling((exceptionConfig) ->
+            exceptionConfig.authenticationEntryPoint(authenticationEntryPoint)
+        );
 
         http
                 .addFilterBefore(new JwtFilter(tokenProvider), LoginFilter.class);

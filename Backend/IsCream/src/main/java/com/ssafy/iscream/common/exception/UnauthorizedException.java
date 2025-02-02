@@ -9,4 +9,13 @@ public class UnauthorizedException extends GlobalException {
         super(error, HttpStatus.UNAUTHORIZED);
     }
 
+    public static class TokenRequestException extends UnauthorizedException {
+        public TokenRequestException() {
+            super(ResponseData.builder()
+                    .code(ErrorCode.INVALID_TOKEN_REQUEST.getCode())
+                    .message(ErrorCode.INVALID_TOKEN_REQUEST.getMessage())
+                    .build());
+        }
+    }
+
 }
