@@ -37,7 +37,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
         String email = oAuth2Response.getEmail();
 
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
             user = User.builder().email(email).username(oAuth2User.getName()).role(Role.USER).build();

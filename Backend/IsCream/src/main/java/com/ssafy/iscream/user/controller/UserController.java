@@ -70,8 +70,8 @@ public class UserController {
     }
 
     @Operation(summary = "회원 탈퇴", tags = "users")
-    @DeleteMapping
-    public ResponseEntity<?> deleteUserInfo(HttpServletRequest request, HttpServletResponse response, @Login LoginUser user) {
+    @GetMapping("/withdraw")
+    public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response, @Login LoginUser user) {
         userService.updateUserStatus(request, response, user.getUserId());
         return ResponseUtil.success();
     }

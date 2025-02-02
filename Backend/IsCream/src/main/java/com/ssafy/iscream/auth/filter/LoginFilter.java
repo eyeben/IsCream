@@ -52,7 +52,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             return authenticationManager.authenticate(authToken);
         } catch (Exception e) {
             log.error("Authentication failed {}", e.getMessage());
-            throw new AuthTokenException(ErrorCode.LOGIN_FAILED);
+
+            // 예외 구분
+            if (e.getMessage().equals(ErrorCode.WITHDRAW_USER.getCode())) {
+                throw new AuthTokenException(ErrorCode.WITHDRAW_USER);
+            } else if (e.getMessage().equals(ErrorCode.INVALID_LOGIN_EMAIL.getCode())) {
+                throw new AuthTokenException(ErrorCode.INVALID_LOGIN_EMAIL);
+            } else {
+                throw new AuthTokenException(ErrorCode.LOGIN_FAILED);
+            }
         }
     }
 
@@ -68,6 +76,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        JwtUtil.writeJsonResponse(response, ErrorCode.LOGIN_FAILED.getCode(), ErrorCode.LOGIN_FAILED.getMessage());
+
+        ErrorCode errorCode = ErrorCode.LOGIN_FAILED;
+
+        if (failed instanceof AuthTokenException e) {
+            errorCode = e.getErrorCode();
+        }
+
+        JwtUtil.writeJsonResponse(response, errorCode.getCode(), errorCode.getMessage());
     }
 }
