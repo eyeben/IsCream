@@ -41,7 +41,8 @@ public class JwtUtil {
 
         // 응답 헤더 설정
         response.setHeader("access", access);
-        response.addHeader("Set-Cookie", JwtUtil.createCookie("refresh", refresh));
+        response.addHeader("Set-Cookie", createCookie("refresh", refresh));
+//        response.addCookie(createCookie("refresh", refresh));
     }
 
     public static String extractTokenFromCookie(HttpServletRequest request, String tokenName) {
@@ -65,10 +66,21 @@ public class JwtUtil {
         return ResponseCookie.from(key, value)
                 .httpOnly(true)
                 .maxAge(value.isEmpty() ? 0 : 24 * 60 * 60)
-                .sameSite("None")
+//                .sameSite("None")
 //                .secure(true)
                 .path("/")
                 .build()
                 .toString();
     }
+
+//    public static Cookie createCookie(String key, String value) {
+//        Cookie cookie = new Cookie(key, value);
+//        cookie.setMaxAge(value.isEmpty() ? 0 : 24 * 60 * 60);
+////        cookie.setSecure(true);
+////        cookie.setAttribute("SameSite", "None");
+//        cookie.setPath("/");
+//        cookie.setHttpOnly(true);
+//
+//        return cookie;
+//    }
 }

@@ -2,8 +2,9 @@ package com.ssafy.iscream.auth.exception;
 
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException;
-import com.ssafy.iscream.common.exception.UnauthorizedException;
 import com.ssafy.iscream.common.response.ResponseData;
+import lombok.Getter;
+import org.springframework.security.core.AuthenticationException;
 
 public class AuthException {
 
@@ -16,31 +17,15 @@ public class AuthException {
         }
     }
 
-    public static class InvalidTokenException extends UnauthorizedException {
-        public InvalidTokenException() {
-            super(ResponseData.builder()
-                    .code(ErrorCode.INVALID_TOKEN.getCode())
-                    .message(ErrorCode.INVALID_TOKEN.getMessage())
-                    .build());
+    @Getter
+    public static class AuthTokenException extends AuthenticationException {
+        private final ErrorCode errorCode;
+
+        public AuthTokenException(ErrorCode errorCode) {
+            super(errorCode.getMessage());
+            this.errorCode = errorCode;
         }
     }
 
-    public static class TokenExpiredException extends UnauthorizedException {
-        public TokenExpiredException() {
-            super(ResponseData.builder()
-                    .code(ErrorCode.TOKEN_EXPIRED.getCode())
-                    .message(ErrorCode.TOKEN_EXPIRED.getMessage())
-                    .build());
-        }
-    }
-
-    public static class LoginException extends UnauthorizedException {
-        public LoginException() {
-            super(ResponseData.builder()
-                    .code(ErrorCode.LOGIN_FAILED.getCode())
-                    .message(ErrorCode.LOGIN_FAILED.getMessage())
-                    .build());
-        }
-    }
 
 }

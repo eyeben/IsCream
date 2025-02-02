@@ -3,6 +3,7 @@ package com.ssafy.iscream.auth.jwt;
 import com.ssafy.iscream.auth.user.AuthUserDetails;
 import com.ssafy.iscream.common.exception.BadRequestException;
 import com.ssafy.iscream.auth.exception.AuthException.*;
+import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.user.domain.Role;
 import com.ssafy.iscream.user.domain.User;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -47,17 +48,17 @@ public class JwtFilter extends OncePerRequestFilter {
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         try {
             if (!tokenProvider.validateToken(accessToken)) {
-                throw new TokenExpiredException();
+                throw new AuthTokenException(ErrorCode.TOKEN_EXPIRED);
             }
         } catch (ExpiredJwtException e) {
             log.error("Access token expired");
-            throw new InvalidTokenException();
+            throw new AuthTokenException(ErrorCode.INVALID_TOKEN);
         }
 
         // 토큰이 access인지 확인 (발급시 페이로드에 명시)
-        if (!"access".equals(tokenProvider.getCategory(accessToken))) {
+        if (!tokenProvider.getCategory(accessToken).equals(("access"))) {
             log.error("Invalid access token");
-            throw new BadRequestException.TokenRequestException();
+            throw new AuthTokenException(ErrorCode.INVALID_TOKEN_REQUEST);
         }
 
         User user = new User();
