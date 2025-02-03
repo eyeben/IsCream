@@ -8,9 +8,10 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 
-@Entity
-@Data @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @DynamicInsert @DynamicUpdate
 public class User extends BaseTimeEntity {
 
