@@ -68,24 +68,30 @@ const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
     fetchNotifications();
   }, [onChildSelect]);
 
-  // 🔥 스크롤 이벤트 추가
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > lastScrollY) {
-        setIsVisible(false); // 스크롤 내리면 숨김
-      } else {
-        setIsVisible(true); // 스크롤 올리면 표시
-      }
-      setLastScrollY(window.scrollY);
-    };
+// 🔥 스크롤 이벤트 추가 (빠르게 올릴 경우 바로 헤더 표시)
+useEffect(() => {
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+    // 🔥 기존 lastScrollY보다 10px 이상 올리면 헤더 표시
+    if (scrollY < lastScrollY - 10) {
+      setIsVisible(true);
+    } 
+    // 🔥 스크롤을 내릴 때는 바로 숨김
+    else if (scrollY > lastScrollY + 10) {
+      setIsVisible(false);
+    }
+
+    setLastScrollY(scrollY);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, [lastScrollY]);
 
   return (
     <header
-      className={`top-0 left-0 w-full bg-white border-b border-gray-200 z-50 rounded-b-[15px] transition-transform duration-300 ${
+      className={`fixed top-0 left-0 w-full bg-white border-b border-gray-200 z-50 rounded-b-[15px] transition-transform duration-300 ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
