@@ -1,5 +1,6 @@
-package com.ssafy.iscream.common.entity;
+package com.ssafy.iscream.calendar.domain;
 
+import com.ssafy.iscream.common.entity.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @Builder
 @RequiredArgsConstructor
-public class Memo extends BaseTimeEntity{
+public class Memo extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     int memoId;

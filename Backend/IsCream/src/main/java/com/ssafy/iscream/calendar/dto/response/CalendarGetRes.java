@@ -1,6 +1,6 @@
 package com.ssafy.iscream.calendar.dto.response;
 
-import com.ssafy.iscream.common.enums.Emoji;
+import com.ssafy.iscream.htpTest.domain.Emoji;
 
 public class CalendarGetRes {
 
