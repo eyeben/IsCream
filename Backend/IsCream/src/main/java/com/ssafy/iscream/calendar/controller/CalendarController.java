@@ -7,6 +7,7 @@ import com.ssafy.iscream.calendar.dto.request.MemoCreateReq;
 import com.ssafy.iscream.calendar.dto.request.MemoUpdateReq;
 import com.ssafy.iscream.calendar.dto.response.CalendarGetDetailRes;
 import com.ssafy.iscream.calendar.dto.response.CalendarGetRes;
+import com.ssafy.iscream.calendar.service.CalendarFacade;
 import com.ssafy.iscream.calendar.service.CalendarService;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class CalendarController {
 
     private final CalendarService calendarService;
+    private final CalendarFacade calendarFacade;
 
     @GetMapping()
     @Operation(summary = "선택된 자녀 달력 출력")
@@ -40,7 +42,7 @@ public class CalendarController {
         },
          */
         try{
-            return ResponseUtil.success(calendarService.getCalendar(calendarGetReq));
+            return ResponseUtil.success(calendarFacade.getCalendar(calendarGetReq));
         } catch (Exception e){
             return ResponseUtil.failure(e);
         }
@@ -99,7 +101,7 @@ public class CalendarController {
 
     @DeleteMapping("/memo/{memoId}")
     @Operation(summary = "날짜 별로 메모를 삭제")
-    public ResponseEntity<?> deleteMemo(@PathVariable Long memoId) {
+    public ResponseEntity<?> deleteMemo(@PathVariable int memoId) {
         try{
             calendarService.deleteMemo(memoId);
             return ResponseUtil.success();
