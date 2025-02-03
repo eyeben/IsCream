@@ -2,6 +2,7 @@ package com.ssafy.iscream.board.service;
 
 import com.ssafy.iscream.board.domain.*;
 import com.ssafy.iscream.board.dto.request.PostCreateReq;
+import com.ssafy.iscream.board.dto.request.PostUpdateReq;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.*;
 import com.ssafy.iscream.s3.service.S3Service;
@@ -41,7 +42,34 @@ public class PostService {
             throw new DataException(ErrorCode.DATA_SAVE_FAILED);
         }
 
-        // 게시글 이미지 저장
+        saveImage(post, files); // 게시글 이미지 저장
+
+        return postId;
+    }
+
+    // 게시글 수정
+    @Transactional
+    public void updatePost(Integer postId, Integer userId, PostUpdateReq postReq, List<MultipartFile> files) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
+
+        if (!userId.equals(post.getUser().getUserId())) {
+            throw new DataException(ErrorCode.DATA_FORBIDDEN_UPDATE);
+        }
+
+        post.setTitle(postReq.getTitle());
+        post.setContent(postReq.getContent());
+
+        // 이미지 삭제
+        if (!postReq.getDeleteUrls().isEmpty()) {
+            s3Service.deleteFile(postReq.getDeleteUrls());
+            postImageRepository.deleteByImageUrlIn(postReq.getDeleteUrls());
+        }
+
+        saveImage(post, files); // 게시글 이미지 저장
+    }
+
+    private void saveImage(Post post, List<MultipartFile> files) {
         if (files != null && !files.isEmpty()) {
             List<String> imageUrls = s3Service.uploadImage(files);
 
@@ -51,9 +79,6 @@ public class PostService {
 
             postImageRepository.saveAll(postImages);
         }
-
-        return postId;
     }
-
 
 }
