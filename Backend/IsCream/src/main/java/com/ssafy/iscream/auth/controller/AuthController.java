@@ -1,28 +1,22 @@
 package com.ssafy.iscream.auth.controller;
 
 import com.ssafy.iscream.auth.dto.Token;
-import com.ssafy.iscream.auth.exception.AuthException;
 import com.ssafy.iscream.auth.jwt.JwtUtil;
-import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.service.TokenService;
-import com.ssafy.iscream.common.exception.BadRequestException;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.dto.request.UserCreateReq;
 import com.ssafy.iscream.user.service.UserService;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import static com.ssafy.iscream.auth.jwt.JwtUtil.createCookie;
-
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class AuthController {
