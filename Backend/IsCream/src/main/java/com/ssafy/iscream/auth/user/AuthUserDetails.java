@@ -1,6 +1,5 @@
 package com.ssafy.iscream.auth.user;
 
-import com.ssafy.iscream.auth.domain.LoginUser;
 import com.ssafy.iscream.user.domain.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,12 +14,9 @@ import java.util.Map;
 public class AuthUserDetails implements UserDetails, OAuth2User {
 
     private final User user;
-    private final LoginUser loginUser;
 
     public AuthUserDetails(User user) {
         this.user = user;
-        this.loginUser = LoginUser.builder()
-                .userId(user.getUserId()).email(user.getEmail()).build();
     }
 
     @Override

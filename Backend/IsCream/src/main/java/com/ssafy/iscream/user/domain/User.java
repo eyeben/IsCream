@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 
+@Entity
 @Getter @Setter
 @Builder
 @NoArgsConstructor

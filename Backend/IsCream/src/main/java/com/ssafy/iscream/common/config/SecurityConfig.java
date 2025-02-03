@@ -7,6 +7,7 @@ import com.ssafy.iscream.auth.jwt.JwtFilter;
 import com.ssafy.iscream.auth.filter.LoginFilter;
 import com.ssafy.iscream.auth.filter.AuthLogoutFilter;
 import com.ssafy.iscream.auth.service.TokenService;
+import com.ssafy.iscream.auth.service.UserDetailsServiceImpl;
 import com.ssafy.iscream.oauth.AuthSuccessHandler;
 import com.ssafy.iscream.oauth.service.OAuth2UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +37,7 @@ public class SecurityConfig {
 
     // AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final UserDetailsServiceImpl userDetailsService;
     private final TokenProvider tokenProvider;
     private final TokenService tokenService;
     private final OAuth2UserServiceImpl customOAuth2UserService;
@@ -110,7 +112,7 @@ public class SecurityConfig {
         );
 
         http
-                .addFilterBefore(new JwtFilter(tokenProvider), LoginFilter.class);
+                .addFilterBefore(new JwtFilter(tokenProvider, userDetailsService), LoginFilter.class);
 
         // 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
         http

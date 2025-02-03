@@ -1,5 +1,6 @@
 package com.ssafy.iscream.auth.jwt;
 
+import com.ssafy.iscream.auth.service.UserDetailsServiceImpl;
 import com.ssafy.iscream.auth.user.AuthUserDetails;
 import com.ssafy.iscream.auth.exception.AuthException.*;
 import com.ssafy.iscream.common.exception.ErrorCode;
@@ -24,6 +25,8 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
+    private final UserDetailsServiceImpl userDetailsService;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -60,13 +63,17 @@ public class JwtFilter extends OncePerRequestFilter {
             throw new AuthTokenException(ErrorCode.INVALID_TOKEN_REQUEST);
         }
 
-        User user = new User();
-        user.setUserId(tokenProvider.getUserId(accessToken));
-        user.setEmail(tokenProvider.getEmail(accessToken));
-        user.setRole(Role.valueOf(tokenProvider.getRole(accessToken)));
+//        User user = new User();
+//        user.setUserId(tokenProvider.getUserId(accessToken));
+//        user.setEmail(tokenProvider.getEmail(accessToken));
+//        user.setRole(Role.valueOf(tokenProvider.getRole(accessToken)));
+//
+//        AuthUserDetails customUserDetails = new AuthUserDetails(user);
 
-        AuthUserDetails customUserDetails = new AuthUserDetails(user);
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+        String email = tokenProvider.getEmail(accessToken);
+        AuthUserDetails authUserDetails = (AuthUserDetails) userDetailsService.loadUserByUsername(email);
+
+        Authentication authToken = new UsernamePasswordAuthenticationToken(authUserDetails, null, authUserDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);

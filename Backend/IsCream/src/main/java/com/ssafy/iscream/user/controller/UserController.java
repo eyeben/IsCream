@@ -1,8 +1,8 @@
 package com.ssafy.iscream.user.controller;
 
-import com.ssafy.iscream.auth.domain.LoginUser;
 import com.ssafy.iscream.auth.user.Login;
 import com.ssafy.iscream.common.util.ResponseUtil;
+import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.dto.request.UserInfoReq;
 import com.ssafy.iscream.user.dto.request.UserUpdateReq;
 import com.ssafy.iscream.user.service.UserService;
@@ -28,8 +28,8 @@ public class UserController {
 
     @GetMapping("/info")
     @Operation(summary = "사용자 정보 조회", tags = "users")
-    public ResponseEntity<?> getUserInfo(@Login LoginUser user) {
-        System.out.println(user.toString());
+    public ResponseEntity<?> getUserInfo(@Login User user) {
+        System.out.println(user.getNickname());
         return ResponseUtil.success(userService.getUser(user.getUserId()));
     }
 
@@ -49,13 +49,13 @@ public class UserController {
 
     @PostMapping("/info/check")
     @Operation(summary = "사용자 정보 확인 (이메일, 이름, 전화번호)", tags = "users")
-    public ResponseEntity<?> checkUserInfo(@RequestBody UserInfoReq userInfoReq, @Login LoginUser user) {
+    public ResponseEntity<?> checkUserInfo(@RequestBody UserInfoReq userInfoReq, @Login User user) {
         return ResponseUtil.success(userService.existUserInfo(userInfoReq, user.getUserId()));
     }
 
     @Operation(summary = "비밀번호 재설정", tags = "users")
     @PostMapping("/password")
-    public ResponseEntity<?> changePassword(@Login LoginUser user,
+    public ResponseEntity<?> changePassword(@Login User user,
             @Schema(example = "{\"password\": \"string\", \"newPassword\": \"string\"}")
             @RequestBody Map<String, String> map) {
         return ResponseUtil.success(
@@ -64,7 +64,7 @@ public class UserController {
 
     @Operation(summary = "회원 정보 수정 (닉네임, 생일, 전화번호, 아이와의 관계, 프로필 사진)", tags = "users")
     @PutMapping(value = "/info", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> changePassword(@Login LoginUser user,
+    public ResponseEntity<?> changePassword(@Login User user,
                                             @RequestPart(name = "updateUser") UserUpdateReq userUpdateReq,
                                             @Parameter(name = "프로필 사진 파일")
                                             @RequestPart(required = false) MultipartFile file) {
@@ -74,7 +74,7 @@ public class UserController {
 
     @Operation(summary = "회원 탈퇴", tags = "users")
     @GetMapping("/withdraw")
-    public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response, @Login LoginUser user) {
+    public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response, @Login User user) {
         userService.updateUserStatus(request, response, user.getUserId());
         return ResponseUtil.success();
     }
