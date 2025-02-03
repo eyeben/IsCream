@@ -1,35 +1,40 @@
 import { useState, useEffect } from "react";
-import BackIcon from "../../assets/icons/header_back.png";
-import NotifyIcon from "../../assets/icons/header_notify.png";
 
 interface HeaderProps {
-  onBackClick?: () => void;
   onNotificationClick?: () => void;
 }
 
-const Header = ({ onBackClick, onNotificationClick }: HeaderProps) => {
-  const [hasUnreadNotification, setHasUnreadNotification] = useState(false);
+const Header = ({ onNotificationClick }: HeaderProps) => {
+  const [hasUnreadNotification /*setHasUnreadNotification*/] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
-    console.log("BackIcon 경로:", BackIcon);
-    console.log("NotifyIcon 경로:", NotifyIcon);
-
-    // 알림 상태를 가져오는 함수 (예제 로직, 실제 API 연동 필요)
-    const checkNotifications = () => {
-      setHasUnreadNotification(true); // 알림이 있을 때 true
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY) {
+        setIsVisible(false); // 스크롤 내리면 숨김
+      } else {
+        setIsVisible(true); // 스크롤 올리면 표시
+      }
+      setLastScrollY(window.scrollY);
     };
 
-    checkNotifications();
-  }, []);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   return (
-    <header className="top-0 left-0 w-full max-w-screen-sm bg-white border-b border-gray-200 z-50 rounded-b-[15px]">
+    <header
+      className={`top-0 left-0 w-full bg-white border-b border-gray-200 z-50 rounded-b-[15px] transition-transform duration-300 ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="flex items-center justify-between h-[52px] px-4 w-full">
-        {/* 뒤로가기 버튼 (아래 왼쪽 모서리 둥글게) */}
+        {/* 🔥 뒤로가기 버튼 (onBackClick 제거) */}
         <button
           type="button"
-          onClick={onBackClick}
-          className="p-2 w-[40px] h-[40px] rounded-bl-[10px] flex items-center justify-center"
+          onClick={() => window.history.back()} // 기본 브라우저 뒤로가기
+          className="p-2 w-[40px] h-[40px] rounded-bl-[10px]"
           aria-label="뒤로가기"
         >
           <svg

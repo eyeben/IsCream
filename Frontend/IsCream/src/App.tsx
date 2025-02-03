@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import CalendarPage from "./pages/CalendarPage";
 import BottomNavigation from "./components/nav/Nav";
-import Header from "./components/header/Header_Normal";
 // 새로운 페이지 컴포넌트들 import
+import Header from "./components/header/Header";
 
 function App() {
   return (
