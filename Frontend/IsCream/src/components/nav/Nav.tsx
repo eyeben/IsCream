@@ -15,7 +15,7 @@ interface NavItem {
   id: string;
   path: string;
   icon: string;
-  activeIcon: string; // 활성화된 상태의 아이콘 추가
+  activeIcon: string;
   label: string;
 }
 
@@ -23,6 +23,14 @@ const BottomNavigation: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
+
+  // Nav 바를 숨길 경로들을 지정
+  // 예시: 로그인(/login), 회원가입(/signup) 페이지에서는 Nav 바를 숨기고 싶을 때
+  // const excludePaths = ['/login', '/signup', '/register', '/forgot-password'];
+  const excludePaths: string[] = [];
+
+  // 현재 경로가 제외 경로에 포함되어 있으면 Nav 바를 숨김
+  if (excludePaths.includes(currentPath)) return null;
 
   const navItems: NavItem[] = [
     {
@@ -62,9 +70,6 @@ const BottomNavigation: React.FC = () => {
     }
   ];
 
-  const isNavPath = navItems.some((item) => currentPath === item.path);
-  if (!isNavPath) return null;
-
   return (
     <nav className="fixed bottom-0 pt-1rem left-0 w-full h-20 bg-white border-gray-200 shadow-[0_-4px_4px_0_rgba(0,0,0,0.05)] rounded-t-[15px]">
       <div className="max-w-screen-sm mx-auto h-full">
@@ -73,7 +78,7 @@ const BottomNavigation: React.FC = () => {
             <button
               key={item.id}
               className={`flex flex-col items-center justify-center p-2
-                ${currentPath === item.path ? "bg-white" : "hover:bg-white cursor-pointer"}`}
+               ${currentPath === item.path ? "bg-white" : "hover:bg-white cursor-pointer"}`}
               onClick={() => navigate(item.path)}
               type="button"
             >
@@ -84,7 +89,7 @@ const BottomNavigation: React.FC = () => {
               />
               <span
                 className={`text-xs font-medium 
-                ${currentPath === item.path ? "text-[#009E28]" : "text-gray-500"}`}
+               ${currentPath === item.path ? "text-[#009E28]" : "text-gray-500"}`}
               >
                 {item.label}
               </span>
