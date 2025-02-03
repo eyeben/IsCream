@@ -79,7 +79,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
               key={index}
               className={`
               ${!day ? "bg-white" : " cursor-pointer"}
-              aspect-square border rounded-lg p-2 
+              aspect-square border rounded-lg p-1 
               ${isSunday(index) ? "text-red-500" : ""}
               ${isSaturday(index) ? "text-blue-500" : ""}
               relative
@@ -91,7 +91,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
                 <span className="absolute text-xs ">{day}</span>
                 {/* 선택된 날짜 표시 */}
                 {selectedDay === day && (
-                  <div className="absolute w-3 h-3 bg-yellow-200 rounded-full -z-10" />
+                  <div className="absolute w-3 h-3 bg-yellow-200 rounded-full p-1 -z-10" />
                 )}
                 {/* 오늘 날짜 표시 */}
                 {isToday(day) && (
