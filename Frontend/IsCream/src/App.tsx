@@ -1,15 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BottomNavigation from "./components/nav/Nav";
-// pages/index.tsx 폴더에 경로를 지정하고, 여기서는 페이지 이름만 가져와서 사용하면 됩니다.
-import { 
-  CalendarPage, 
-  MyPage 
-} from './pages';
+import Header from "./components/header/Header"
 
 
 function App() { 
   return (
     <BrowserRouter>
+      <Header />
       <div className="w-[95%] mx-auto pb-20">
         {/* 공통 스타일을 최상위 div에 적용 */}
         <Routes>
