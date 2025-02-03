@@ -40,4 +40,11 @@ public class BoardController {
         return ResponseUtil.success();
     }
 
+    @DeleteMapping(value = "/{postId}")
+    @Operation(summary = "게시글 삭제", tags = "board")
+    public ResponseEntity<?> deletePost(@PathVariable Integer postId, @Login User user) {
+        postService.deletePost(postId, user.getUserId());
+        return ResponseUtil.success();
+    }
+
 }

@@ -69,6 +69,24 @@ public class PostService {
         saveImage(post, files); // 게시글 이미지 저장
     }
 
+    // 게시글 삭제
+    @Transactional
+    public void deletePost(Integer postId, Integer userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
+
+        if (!userId.equals(post.getUser().getUserId())) {
+            throw new DataException(ErrorCode.DATA_FORBIDDEN_UPDATE);
+        }
+
+        // s3에서 이미지 삭제
+        s3Service.deleteFile(post.getPostImages().stream()
+                        .map(PostImage::getImageUrl)
+                        .collect(Collectors.toList()));
+
+        postRepository.deleteById(postId);
+    }
+
     private void saveImage(Post post, List<MultipartFile> files) {
         if (files != null && !files.isEmpty()) {
             List<String> imageUrls = s3Service.uploadImage(files);

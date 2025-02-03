@@ -36,9 +36,9 @@ public class Post extends BaseTimeEntity {
     @Column
     private Integer viewCount;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     private List<PostImage> postImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     private List<PostLike> postLikes = new ArrayList<>();
 }
