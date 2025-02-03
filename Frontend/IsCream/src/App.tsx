@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import CalendarPage from "./pages/CalendarPage";
 import BottomNavigation from "./components/nav/Nav";
 import Header from "./components/header/Header"
 
-function App() {
+
+function App() { 
   return (
     <BrowserRouter>
       <Header />
@@ -14,7 +14,7 @@ function App() {
           <Route path="/" element={<div>메인페이지</div>} />
           <Route path="/board" element={<div>게시판</div>} />
           <Route path="/chat" element={<div>채팅</div>} />
-          <Route path="/mypage" element={<div>마이페이지</div>} />
+          <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </div>
       <BottomNavigation />
