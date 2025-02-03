@@ -22,7 +22,7 @@ function App() {
           <Route path="/chat" element={<div>채팅</div>} />
           <Route path="/mypage" element={<MyReport />} />
           <Route path="/mypage/ChangeInfo" element={<ChangeInfo />} />
-          <Route path="/mypage" element={<div>마이페이지</div>} />
+          {/* <Route path="/mypage" element={<div>마이페이지</div>} /> */}
           {/* 메인 페이지 카드 라우터 추가 */}
 
           <Route path="/ai-analysis" element={<div>AI HTP검사 페이지</div>} />

@@ -47,29 +47,32 @@ const MyReport: React.FC = () => {
             </div>
             <div>
                 자녀 등록 영역
-                <ChildRegister
+                {/* <ChildRegister
                     childNickname={userData.childInfo.childNickname}    
                     childSex={userData.childInfo.childSex}
                     childBirth={userData.childInfo.childBirth}
-                />
+                /> */}
             </div>
             <div>
                 검사 결과지 다운
-                <ReportDownload />
+                {/* <ReportDownload /> */}
             </div>
             <div>
                 막대그래프
-                <ReportBarChart 
+                {/* <ReportBarChart 
                     patDate={userData.pat.patDate}
                     typeA={userData.pat?.typeA}
                     typeB={userData.pat?.typeB}
                     typeC={userData.pat?.typeC}
-                    patReport={userData.pat.}
-                />
+                    patReport={userData.pat.patReport}
+                /> */}
             </div>
             <div>
                 원그래프 & 결과보고서
-                <ReportDonutChart />
+                {/* <ReportDonutChart 
+                    personalityDate={userData.personality?.personalityDate}
+                    personalityReport={userData.personality?.personalityReport}
+                /> */}
             </div>
         </div>
     
