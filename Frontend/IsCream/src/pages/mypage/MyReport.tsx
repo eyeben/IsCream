@@ -1,14 +1,15 @@
 import ProfileHeader from "../../components/profile/ProfileHeader";
+import ChildRegister from "./ChildRegister";
 import React, { useState, useEffect } from 'react';
 
 interface MyReportProps{
     name: string;
     profileImage: string;
-    childInfo?: {
+    children?: {
         childNickname: string;
         childSex: string;
         childBirth: string;
-    }
+    }[];
     pat?: {
         patDate: string;
         typeA: number;
@@ -26,13 +27,25 @@ const MyReport: React.FC = () => {
     const [userData, setUserData] = useState<MyReportProps>({
         name: "사용자",
         profileImage: "default-profile.jpg",
-        childInfo: {
-            childNickname:"",
-            childSex:"",
-            childBirth:""
-        }
+        children: []
     });
 
+    const handleAddChild = () => {
+        if (userData.children && userData.children.length < 2) {
+            setUserData(prev => ({
+                ...prev,
+                children: [
+                    ...prev.children!,
+                    {
+                        childNickname: "",
+                        childSex: "",
+                        childBirth: ""
+                    }
+                ]
+            }));
+        }
+    };
+    
   return (
       <>
       {/* <ChangeInfo /> */}
@@ -45,13 +58,24 @@ const MyReport: React.FC = () => {
                     profileNickname={userData.name}
                 />
             </div>
-            <div>
-                자녀 등록 영역
-                {/* <ChildRegister
-                    childNickname={userData.childInfo.childNickname}    
-                    childSex={userData.childInfo.childSex}
-                    childBirth={userData.childInfo.childBirth}
-                /> */}
+            <div className="w-full p-3 bg-white border border-gray-300 rounded items-center">
+                <div>
+                    자녀 정보
+                    {/* 자녀 추가 버튼 - 2명 제한 */}
+                    {userData.children && userData.children.length < 2 && (
+                            <button onClick={handleAddChild}>자녀 추가</button>
+                    )}
+                </div>
+                <div className="flex gap-2">
+                {userData.children && userData.children.map((child, index) => (
+                    <ChildRegister
+                        key={index}
+                        childNickName={child.childNickname}
+                        childSex={child.childSex}
+                        childBirth={child.childBirth}
+                    />
+                ))}
+                </div>
             </div>
             <div>
                 검사 결과지 다운

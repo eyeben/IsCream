@@ -15,7 +15,7 @@ const ProfileHeader = ({ profileImage, profileNickname }: ProfileHeaderProps) =>
     
     return (
         <>
-            <div className='w-11/12 relative '>
+            <div className='w-[95%] relative '>
                 <div className="flex items-center p-4">
                 <img 
                     src={profileImage} 
