@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CalendarPage from "./pages/CalendarPage";
 import BottomNavigation from "./components/nav/Nav";
+import Header from "./components/header/Header"
 
 function App() {
   return (
     <BrowserRouter>
+      <Header />
       <div className="w-[95%] mx-auto pb-20">
         {/* 공통 스타일을 최상위 div에 적용 */}
         <Routes>

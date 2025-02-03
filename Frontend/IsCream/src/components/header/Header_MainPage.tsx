@@ -6,17 +6,18 @@ interface Child {
 }
 
 interface HeaderProps {
-  onBackClick?: () => void;
   onNotificationClick?: () => void;
   onChildSelect: (childName: string) => void;
 }
 
-const Header = ({ onBackClick, onNotificationClick, onChildSelect }: HeaderProps) => {
+const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
   const [hasUnreadNotification, setHasUnreadNotification] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [children, setChildren] = useState<Child[]>([]);
   const [selectedChild, setSelectedChild] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     const fetchChildren = async () => {
@@ -67,13 +68,32 @@ const Header = ({ onBackClick, onNotificationClick, onChildSelect }: HeaderProps
     fetchNotifications();
   }, [onChildSelect]);
 
+  // 🔥 스크롤 이벤트 추가
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY) {
+        setIsVisible(false); // 스크롤 내리면 숨김
+      } else {
+        setIsVisible(true); // 스크롤 올리면 표시
+      }
+      setLastScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <header className="fixed top-0 left-0 w-full max-w-screen-sm bg-white border-b border-gray-200 z-50 rounded-b-[15px]">
+    <header
+      className={`fixed top-0 left-0 w-full bg-white border-b border-gray-200 z-50 rounded-b-[15px] transition-transform duration-300 ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="flex items-center justify-between h-[52px] px-4 w-full">
-        {/* 뒤로가기 버튼 */}
+        {/* 🔥 뒤로가기 버튼 (onBackClick 제거) */}
         <button
           type="button"
-          onClick={onBackClick}
+          onClick={() => window.history.back()} // 기본 브라우저 뒤로가기
           className="p-2 w-[40px] h-[40px] rounded-bl-[10px]"
           aria-label="뒤로가기"
         >
