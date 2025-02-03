@@ -21,7 +21,7 @@ public class TokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     // 리프레시 토큰이 존재하는지 확인
-    public boolean existRefreshToken(String refreshToken) {
+    private boolean existRefreshToken(String refreshToken) {
         return refreshTokenRepository.existsById(refreshToken);
     }
 

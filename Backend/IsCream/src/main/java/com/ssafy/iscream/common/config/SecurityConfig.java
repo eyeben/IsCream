@@ -1,6 +1,7 @@
 package com.ssafy.iscream.common.config;
 
-import com.ssafy.iscream.auth.jwt.AuthenticationEntryPoint;
+import com.ssafy.iscream.auth.exception.JwtAccessDeniedHandler;
+import com.ssafy.iscream.auth.exception.JwtAuthenticationEntryPoint;
 import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.jwt.JwtFilter;
 import com.ssafy.iscream.auth.filter.LoginFilter;
@@ -39,7 +40,8 @@ public class SecurityConfig {
     private final TokenService tokenService;
     private final OAuth2UserServiceImpl customOAuth2UserService;
     private final AuthSuccessHandler customSuccessHandler;
-    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+    private final JwtAccessDeniedHandler accessDeniedHandler;
 
     // AuthenticationManager Bean 등록
     @Bean
@@ -90,6 +92,7 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/users/email/check", "/users/nickname/check").permitAll()
                         .anyRequest().authenticated());
 
         http
@@ -101,7 +104,9 @@ public class SecurityConfig {
 
         // 예외 처리
         http.exceptionHandling((exceptionConfig) ->
-            exceptionConfig.authenticationEntryPoint(authenticationEntryPoint)
+            exceptionConfig
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                    .accessDeniedHandler(accessDeniedHandler)
         );
 
         http
@@ -112,7 +117,7 @@ public class SecurityConfig {
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), tokenProvider, tokenService), UsernamePasswordAuthenticationFilter.class);
 
         http
-                .addFilterBefore(new AuthLogoutFilter(tokenProvider, tokenService), LogoutFilter.class);
+                .addFilterBefore(new AuthLogoutFilter(tokenService), LogoutFilter.class);
 
         // 세션 설정
         http

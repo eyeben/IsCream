@@ -9,7 +9,7 @@ public enum ErrorCode {
     INVALID_TOKEN("E3001", "토큰 유효성 검증에 실패하였습니다."),
     TOKEN_EXPIRED("E3002", "토큰 유효기간이 만료되었습니다."),
     INVALID_TOKEN_REQUEST("E3003", "토큰 요청 형식이 잘못되었습니다."),
-    TOKEN_ERROR("E5004", "토큰 인증에 실패하였습니다."),
+    TOKEN_ERROR("E3004", "토큰 인증에 실패하였습니다."),
 
     DATA_NOT_FOUND("E4001", "데이터 조회에 실패했습니다."),
     DATA_SAVE_FAILED("E4002", "데이터 저장, 업데이트에 실패했습니다."),
@@ -26,6 +26,9 @@ public enum ErrorCode {
     USER_NOT_FOUND("E5007", "존재하지 않는 회원입니다."),
     INVALID_EMAIL_FORMAT("E5008", "이메일 형식이 잘못되었습니다."),
     INVALID_PASSWORD_FORMAT("E5009", "비밀번호 형식이 잘못되었습니다."),
+    INVALID_USER_INFO("E5010", "잘못된 사용자 요청입니다. 입력한 정보를 다시 확인해주세요."),
+    WITHDRAW_USER("E5011", "탈퇴한 사용자입니다."),
+    INVALID_LOGIN_EMAIL("E5012", "이메일이 잘못되었습니다."),
 
     LOGIN_FAILED("E6001", "로그인에 실패하였습니다."),
     LOGIN_SOCIAL_FAILED("E6002", "간편 로그인 실패"),

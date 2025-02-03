@@ -4,20 +4,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-@Schema(description = "회원가입 request")
+@Schema(description = "사용자 정보 수정 request")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreateReq {
-    @Schema(description = "이름", example = "test")
-    private String username;
-
-    @Schema(description = "이메일", example = "test@naver.com")
-    private String email;
-
-    @Schema(description = "비밀번호", example = "1234")
-    private String password;
+public class UserUpdateReq {
 
     @Schema(description = "닉네임", example = "test")
     private String nickname;
@@ -31,3 +24,4 @@ public class UserCreateReq {
     @Schema(description = "아이와의 관계", example = "MOTHER, FATHER, REST")
     private String relation = "REST";
 }
+

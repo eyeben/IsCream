@@ -3,20 +3,15 @@ package com.ssafy.iscream.user.domain;
 import com.ssafy.iscream.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@DynamicInsert
+@Data @Builder
+@NoArgsConstructor @AllArgsConstructor
+@DynamicInsert @DynamicUpdate
 public class User extends BaseTimeEntity {
 
     @Id

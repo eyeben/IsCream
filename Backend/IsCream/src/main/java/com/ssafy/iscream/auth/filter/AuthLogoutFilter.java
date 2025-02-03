@@ -1,7 +1,6 @@
 package com.ssafy.iscream.auth.filter;
 
 import com.ssafy.iscream.auth.jwt.JwtUtil;
-import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,7 +20,6 @@ import static com.ssafy.iscream.auth.jwt.JwtUtil.createCookie;
 @RequiredArgsConstructor
 public class AuthLogoutFilter extends GenericFilterBean {
 
-    private final TokenProvider tokenProvider;
     private final TokenService tokenService;
 
     @Override
