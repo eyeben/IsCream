@@ -7,7 +7,7 @@ export default {
         custom: ["MyFont", "sans-serif"]
       },
       colors: {
-        green: '#009E28'
+        'custom-green': '#009E28'
         
       }
     }

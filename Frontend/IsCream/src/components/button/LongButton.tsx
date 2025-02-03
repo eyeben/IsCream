@@ -18,14 +18,15 @@ interface ButtonProps {
 const COLOR_PROS = {
     red: 'bg-red-600',
     blue: 'bg-blue-700',
-    green: 'bg-[#009E28]',  // 변경된 부분
+    green: 'bg-[#009E28] text-white',
+    // green: 'bg-green-500',
     gray: 'bg-gray-300',
 };
 
-const Button = ({
+const LongButton = ({
     children,
     type = 'button',
-    color = 'blue',
+    color = 'green',
     disabled = false,
     onClick,
     className,
@@ -42,7 +43,7 @@ const Button = ({
                 disabled={disabled}
                 data-id={dataId}
                 data-name={dataName}
-                className={`flex justify-center rounded-sm w-11/12 h-10 px-4 py-1 text-text-md font-semibold text-gray-25 ${COLOR_PROS[color]} ${className}`}
+                className={`flex justify-center items-center rounded-sm w-11/12 h-10 px-4 py-1 text-text-md font-semibold text-gray-25 ${COLOR_PROS[color]} ${className}`}
             >
                 {isLoading ? (
                     <div className="flex h-6 w-20 items-center justify-center gap-2">
@@ -60,4 +61,4 @@ const Button = ({
     );
 };
 
-export default Button;
+export default LongButton;

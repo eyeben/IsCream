@@ -1,21 +1,28 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
-import CalendarPage from "./pages/CalendarPage";
 import BottomNavigation from "./components/nav/Nav";
-// 새로운 페이지 컴포넌트들 import
-import Header from "./components/header/Header";
+import Header from "./components/header/Header_Normal";
+// pages/index.tsx 폴더에 경로를 지정하고, 여기서는 페이지 이름만 가져와서 사용하면 됩니다.
+import { 
+  CalendarPage, 
+  MyReport,
+  ChangeInfo
+} from './pages';
 
 function App() {
   return (
     <BrowserRouter>
       <Header />
-      <div className="w-[95%] mx-auto pb-20 bg-white min-h-screen">
+      <div className="w-[95%] mx-auto pb-20">
+        {/* 공통 스타일을 최상위 div에 적용 */}
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/board" element={<div>게시판</div>} />
           <Route path="/chat" element={<div>채팅</div>} />
-          <Route path="/mypage" element={<div>마이페이지</div>} />
+          <Route path="/mypage" element={<MyReport />} />
+          <Route path="/mypage/ChangeInfo" element={<ChangeInfo />} />
+          {/* <Route path="/mypage" element={<div>마이페이지</div>} /> */}
           {/* 메인 페이지 카드 라우터 추가 */}
 
           <Route path="/ai-analysis" element={<div>AI HTP검사 페이지</div>} />

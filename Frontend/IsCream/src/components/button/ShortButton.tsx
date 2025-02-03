@@ -22,7 +22,7 @@ const COLOR_PROS = {
     gray: 'bg-gray-300',
 };
 
-const Button = ({
+const ShortButton = ({
     children,
     type = 'button',
     color = 'blue',
@@ -60,4 +60,4 @@ const Button = ({
     );
 };
 
-export default Button;
+export default ShortButton;
