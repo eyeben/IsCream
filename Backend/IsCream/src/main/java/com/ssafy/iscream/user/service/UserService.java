@@ -3,6 +3,7 @@ package com.ssafy.iscream.user.service;
 import com.ssafy.iscream.auth.jwt.JwtUtil;
 import com.ssafy.iscream.auth.service.TokenService;
 import com.ssafy.iscream.common.exception.ErrorCode;
+import com.ssafy.iscream.s3.service.S3Service;
 import com.ssafy.iscream.user.domain.Relation;
 import com.ssafy.iscream.user.domain.Status;
 import com.ssafy.iscream.user.domain.User;
@@ -20,6 +21,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -34,6 +36,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final TokenService tokenService;
+    private final S3Service s3Service;
 
     // 회원가입
     public Integer joinProcess(UserCreateReq userReq) {
@@ -129,7 +132,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserInfo(Integer userId, UserUpdateReq req) {
+    public void updateUserInfo(Integer userId, UserUpdateReq req, MultipartFile file) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
@@ -138,14 +141,16 @@ public class UserService {
         user.setBirthDate(LocalDate.parse(req.getBirthDate()));
         user.setRelation(Relation.valueOf(req.getRelation()));
 
-        /* TODO
-            1. 프로필 사진 파일이 null이 아닌 경우에만 수정
-            2. user.getImageUrl()로 s3 버킷에서 삭제, db에서도 삭제
-            3. req.getFile()로 받은 파일 s3 업로드 후 url 얻기
-            4. 생성된 url user.setImageUrl(url)로 업데이트
-            5. 수정 실패했을 때의 예외 처리
-        */
+        // 프로필 사진 저장
+        if (file != null) {
+            // 기존 이미지 삭제
+            if (user.getImageUrl() != null) {
+                s3Service.deleteFile(user.getImageUrl());
+            }
 
+            String imageUrl = s3Service.uploadImage(file);
+            user.setImageUrl(imageUrl);
+        }
     }
 
     @Transactional

@@ -50,30 +50,34 @@ public class S3Service {
     }
 
     // 단일 파일 업로드
-    public String uploadImage(MultipartFile multipartFile) throws IOException {
+    public String uploadImage(MultipartFile multipartFile) {
         String fileKey = imageDir + FileUtil.createFileName(multipartFile);
 
-        // 임시 파일 생성
-        File tempFile = File.createTempFile("upload-", ".tmp");
-        multipartFile.transferTo(tempFile);
+        File tempFile = null;
 
         try {
+            // 임시 파일 생성
+            tempFile = File.createTempFile("upload-", ".tmp");
+            multipartFile.transferTo(tempFile);
             // S3에 업로드
             s3Client.putObject(
                     PutObjectRequest.builder().bucket(bucket).key(fileKey).build(),
                     RequestBody.fromFile(tempFile)
             );
-        } catch (SdkClientException e) {
+        } catch (IOException | SdkClientException e) {
             throw new S3UploadException(FILE_UPLOAD_FAILED);
         } finally {
-            tempFile.delete(); // 임시 파일 삭제
+            // 임시 파일 삭제
+            if (tempFile != null) {
+                tempFile.delete();
+            }
         }
 
         return baseUrl + fileKey; // 만들어진 url 반환
     }
 
     // 여러 파일 업로드
-    public List<String> uploadImage(List<MultipartFile> files) throws IOException {
+    public List<String> uploadImage(List<MultipartFile> files) {
         List<String> result = new ArrayList<>();
 
         for (MultipartFile file : files) {

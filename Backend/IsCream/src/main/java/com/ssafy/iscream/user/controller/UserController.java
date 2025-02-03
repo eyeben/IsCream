@@ -7,13 +7,16 @@ import com.ssafy.iscream.user.dto.request.UserInfoReq;
 import com.ssafy.iscream.user.dto.request.UserUpdateReq;
 import com.ssafy.iscream.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -60,12 +63,13 @@ public class UserController {
                 userService.changePassword(user.getUserId(), map.get("password"), map.get("newPassword")));
     }
 
-    // TODO: MultipartFile 요청 형식 확인 필요
     @Operation(summary = "회원 정보 수정 (닉네임, 생일, 전화번호, 아이와의 관계, 프로필 사진)", tags = "users")
-    @PutMapping("/info")
+    @PutMapping(value = "/info", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> changePassword(@Login LoginUser user,
-                                            @RequestBody UserUpdateReq userUpdateReq) {
-        userService.updateUserInfo(user.getUserId(), userUpdateReq);
+                                            @RequestPart(name = "updateUser") UserUpdateReq userUpdateReq,
+                                            @Parameter(name = "프로필 사진 파일")
+                                            @RequestPart(required = false) MultipartFile file) {
+        userService.updateUserInfo(user.getUserId(), userUpdateReq, file);
         return ResponseUtil.success();
     }
 

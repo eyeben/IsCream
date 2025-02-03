@@ -23,8 +23,5 @@ public class UserUpdateReq {
 
     @Schema(description = "아이와의 관계", example = "MOTHER, FATHER, REST")
     private String relation = "REST";
-
-    @Schema(description = "프로필 사진")
-    private MultipartFile file;
 }
 
