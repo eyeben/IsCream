@@ -3,4 +3,5 @@ export { default as MyReport } from "./mypage/MyReport";
 export { default as ChangeInfo } from "./mypage/ChangeInfo";
 export { default as LoginPage } from "./LoginPage";
 // export { default as MyPage } from "./MyPage";
-export { default as MainPage } from "./baord/BoardMain";
+export { default as MainPage } from "./MainPage";
+export { default as BoardMain } from "./baord/BoardMain";

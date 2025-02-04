@@ -4,18 +4,24 @@ import Header from "./components/header/Header";
 import LoginPage from "./pages/LoginPage"; // 경로 확인
 
 // pages/index.tsx 폴더에 경로를 지정하고, 여기서는 페이지 이름만 가져와서 사용하면 됩니다.
-import { CalendarPage, MyReport, ChangeInfo, MainPage } from "./pages";
+import {
+  CalendarPage,
+  MyReport,
+  ChangeInfo,
+  MainPage,
+  BoardMain
+} from "./pages";
 
 function App() {
   return (
     <BrowserRouter>
       <Header />
-      <div className="w-[95%] mx-auto pb-20 bg-white">
+      <div className="w-[95%] mx-auto pb-20 bg-white mt-15">
         {/* 공통 스타일을 최상위 div에 적용 */}
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/board" element={<MainPage />} />
+          <Route path="/board" element={<BoardMain />} />
           <Route path="/chat" element={<div>채팅</div>} />
           <Route path="/mypage" element={<MyReport />} />
           <Route path="/mypage/ChangeInfo" element={<ChangeInfo />} />
