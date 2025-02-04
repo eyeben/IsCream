@@ -26,21 +26,12 @@ public record PostDetail(
                 post.getTitle(),
                 post.getContent(),
                 post.getPostLikes().size(),
-                isUserLiked(post, user),
+                PostList.isUserLiked(post, user),
                 post.getViewCount(),
                 extractImageUrls(post),
                 DateUtil.format(post.getCreatedAt()),
                 new UserProfile(post.getUser())
         );
-    }
-
-    private static boolean isUserLiked(Post post, User user) {
-        if (user == null) {
-            return false;
-        }
-
-        return post.getPostLikes().stream()
-                .anyMatch(like -> like.getUser().getUserId().equals(user.getUserId()));
     }
 
     private static List<String> extractImageUrls(Post post) {

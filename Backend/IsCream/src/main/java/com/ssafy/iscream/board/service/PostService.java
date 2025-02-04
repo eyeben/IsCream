@@ -4,6 +4,7 @@ import com.ssafy.iscream.board.domain.*;
 import com.ssafy.iscream.board.dto.request.PostCreateReq;
 import com.ssafy.iscream.board.dto.request.PostUpdateReq;
 import com.ssafy.iscream.board.dto.response.PostDetail;
+import com.ssafy.iscream.board.dto.response.PostList;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.*;
 import com.ssafy.iscream.s3.service.S3Service;
@@ -94,6 +95,15 @@ public class PostService {
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
         return new PostDetail(post, user);
+    }
+
+    // 게시글 목록 조회
+    public PostList getPostList(User user) {
+        List<Post> postList = postRepository.findAll();
+
+        int totalCount = (int) postRepository.count();
+
+        return PostList.of(postList, user, totalCount, 1, postList.size());
     }
 
     private void saveImage(Post post, List<MultipartFile> files) {

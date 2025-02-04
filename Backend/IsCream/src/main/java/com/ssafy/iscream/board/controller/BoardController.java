@@ -56,7 +56,7 @@ public class BoardController {
     @Operation(summary = "게시글 목록 조회", tags = "board")
     @GetMapping
     public ResponseEntity<?> getPosts(@Login User user) {
-        return ResponseUtil.success(null);
+        return ResponseUtil.success(postService.getPostList(user));
     }
 
 }
