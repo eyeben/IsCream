@@ -4,6 +4,7 @@ import HTPimage from "../../assets/image/HTP검사.png";
 import ParentingAttitude from "../../assets/image/육아양육태도검사.png";
 import Big5 from "../../assets/image/성격5요인검사.png";
 
+//123
 const Banner = () => {
   const slides = [
     { image: HTPimage, to: "/ai-analysis" },
