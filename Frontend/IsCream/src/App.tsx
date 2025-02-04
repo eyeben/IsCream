@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import BottomNavigation from "./components/nav/Nav";
-import Header from "./components/header/Header_Normal";
+import Header from "./components/header/Header";
+import LoginPage from "./pages/LoginPage"; // 경로 확인
+
 // pages/index.tsx 폴더에 경로를 지정하고, 여기서는 페이지 이름만 가져와서 사용하면 됩니다.
 import { 
   CalendarPage, 
@@ -24,6 +26,7 @@ function App() {
           <Route path="/mypage/ChangeInfo" element={<ChangeInfo />} />
           {/* <Route path="/mypage" element={<div>마이페이지</div>} /> */}
           {/* 메인 페이지 카드 라우터 추가 */}
+          <Route path="/login" element={<LoginPage />} /> {/* 로그인 페이지 등록 */}
 
           <Route path="/ai-analysis" element={<div>AI HTP검사 페이지</div>} />
           <Route
