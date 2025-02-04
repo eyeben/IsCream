@@ -1,97 +1,101 @@
-// 사용방법
-// <BarChart 
-//     data={values} 
-//     title="날짜"
-//     className="mt-4" />
+import React from "react";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Title,
+  Tooltip,
+  Legend
+} from "chart.js";
 
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
-import 'chart.js/auto';
+// ✅ Chart.js에 필요한 요소 등록
+Chart.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
 interface BarChartProps {
-    data?: number[];
-    title?: string;
-    className?: string;
+  data?: number[];
+  title?: string;
+  className?: string;
 }
 
 const COLOR_PROPS = {
-    colors: [
-        '#84CAFF',
-        '#FED300',
-        '#89D785'
-    ]
+  colors: ["#84CAFF", "#FED300", "#89D785"]
 };
 
-const LABELS = ['A형', 'B형', 'C형'];
+const LABELS = ["A형", "B형", "C형"];
 
 const BarChart: React.FC<BarChartProps> = ({
-    data =[12, 3, 20],
-    title = '2024.01.31',
-    className = ''
+  data = [12, 3, 20],
+  title = "2024.01.31",
+  className = ""
 }) => {
-    const maxValue = Math.max(...data);
-    const roundedMax = Math.ceil((maxValue + 5) / 5) * 5;
-    const chartData = {
-        labels: LABELS,
-        datasets: [
-          {
-            label: '데이터',
-            data: data,
-            backgroundColor: COLOR_PROPS.colors
-          },
-        ],
-    };
-    
-    const options = {
-        responsive: true,
-        plugins: {
-            title: {
-                display: true,
-                text: title
-            },
-          legend: {
-            display: false
-          },
-          tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.8)'
-          }
+  const maxValue = Math.max(...data);
+  const roundedMax = Math.ceil((maxValue + 5) / 5) * 5;
+
+  const chartData = {
+    labels: LABELS,
+    datasets: [
+      {
+        label: "데이터",
+        data: data,
+        backgroundColor: COLOR_PROPS.colors
+      }
+    ]
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: title
+      },
+      legend: {
+        display: false
+      },
+      tooltip: {
+        backgroundColor: "rgba(0, 0, 0, 0.8)"
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: roundedMax,
+        grid: {
+          color: "rgba(0, 0, 0, 0.1)"
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: roundedMax,
-            grid: {
-              color: 'rgba(0, 0, 0, 0.1)'
-            },
-            ticks: {
-                stepSize: 5,
-            }
-          },
-          x: {
-            grid: {
-                drawBorder: false,
-                display: true,           // grid 표시 활성화
-                drawOnChartArea: true,   // 차트 영역에 그리기
-                drawTicks: false,        // 눈금 표시 안 함
-                lineWidth: 1,            // 선 굵기
-                color: 'rgba(0, 0, 0, 0.1)', // 선 색상
-                offset: false  
-            },
-                ticks: {
-                    padding: 10,
-                    font: {
-                        size: 12
-                    }
-                }
+        ticks: {
+          stepSize: 5
+        }
+      },
+      x: {
+        grid: {
+          drawBorder: false,
+          display: true,
+          drawOnChartArea: true,
+          drawTicks: false,
+          lineWidth: 1,
+          color: "rgba(0, 0, 0, 0.1)",
+          offset: false
+        },
+        ticks: {
+          padding: 10,
+          font: {
+            size: 12
           }
         }
-    };
-    
-    return (
-        <div className={`w-9/11 h-80 p-4 bg-white rounded-lg shadow-sm ${className}`}>
-            <Bar data={chartData} options={options} />
-        </div>
-    );
+      }
+    }
+  };
+
+  return (
+    <div
+      className={`w-9/11 h-80 p-4 bg-white rounded-lg shadow-sm ${className}`}
+    >
+      <Bar data={chartData} options={options} />
+    </div>
+  );
 };
-    
-    export default BarChart;
+
+export default BarChart;
