@@ -22,16 +22,16 @@ public class BoardController {
 
     private final PostService postService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "게시글 작성", tags = "board")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createPost(@Login User user,
                                         @RequestPart(name = "post") PostCreateReq post,
                                         @RequestPart(required = false) List<MultipartFile> files) {
         return ResponseUtil.success(postService.createPost(user, post, files));
     }
 
-    @PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "게시글 수정", tags = "board")
+    @PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updatePost(@PathVariable Integer postId,
                                         @Login User user,
                                         @RequestPart(name = "post") PostUpdateReq post,
@@ -40,8 +40,8 @@ public class BoardController {
         return ResponseUtil.success();
     }
 
-    @DeleteMapping(value = "/{postId}")
     @Operation(summary = "게시글 삭제", tags = "board")
+    @DeleteMapping(value = "/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Integer postId, @Login User user) {
         postService.deletePost(postId, user.getUserId());
         return ResponseUtil.success();
@@ -50,7 +50,13 @@ public class BoardController {
     @Operation(summary = "게시글 상세 조회", tags = "board")
     @GetMapping(value = "/{postId}")
     public ResponseEntity<?> getPost(@PathVariable Integer postId, @Login User user) {
-        return ResponseUtil.success(postService.getPostDetail(postId, user.getUserId()));
+        return ResponseUtil.success(postService.getPostDetail(postId, user));
+    }
+
+    @Operation(summary = "게시글 목록 조회", tags = "board")
+    @GetMapping
+    public ResponseEntity<?> getPosts(@Login User user) {
+        return ResponseUtil.success(null);
     }
 
 }

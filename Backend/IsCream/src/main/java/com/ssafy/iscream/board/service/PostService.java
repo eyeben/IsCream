@@ -89,11 +89,11 @@ public class PostService {
     }
 
     // 게시글 상세 조회
-    public PostDetail getPostDetail(Integer postId, Integer userId) {
+    public PostDetail getPostDetail(Integer postId, User user) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
-        return new PostDetail(post, userId);
+        return new PostDetail(post, user);
     }
 
     private void saveImage(Post post, List<MultipartFile> files) {
