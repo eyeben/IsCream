@@ -1,6 +1,7 @@
 import React from "react";
 import { CalendarGridProps } from "./types";
 
+// GI
 const CalendarGrid: React.FC<CalendarGridProps> = ({
   currentDate,
   calendarData,
