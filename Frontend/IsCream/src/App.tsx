@@ -1,11 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainPage from "./pages/MainPage";
 import BottomNavigation from "./components/nav/Nav";
 import Header from "./components/header/Header";
 import LoginPage from "./pages/LoginPage"; // 경로 확인
 
 // pages/index.tsx 폴더에 경로를 지정하고, 여기서는 페이지 이름만 가져와서 사용하면 됩니다.
-import { CalendarPage, MyReport, ChangeInfo } from "./pages";
+import { CalendarPage, MyReport, ChangeInfo, MainPage } from "./pages";
 
 function App() {
   return (
@@ -16,7 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/board" element={<div>게시판</div>} />
+          <Route path="/board" element={<MainPage />} />
           <Route path="/chat" element={<div>채팅</div>} />
           <Route path="/mypage" element={<MyReport />} />
           <Route path="/mypage/ChangeInfo" element={<ChangeInfo />} />
