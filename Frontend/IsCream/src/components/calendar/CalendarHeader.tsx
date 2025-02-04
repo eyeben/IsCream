@@ -14,6 +14,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   const monthPopupRef = useRef<HTMLDivElement>(null);
 
   // 년도 선택 옵션 (현재 년도 ±10년)
+  // HI
   const years = Array.from(
     { length: 21 },
     (_, i) => currentDate.getFullYear() - 10 + i
