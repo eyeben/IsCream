@@ -6,7 +6,7 @@ import LoginPage from "./pages/LoginPage"; // 경로 확인
 // pages/index.tsx 폴더에 경로를 지정하고, 여기서는 페이지 이름만 가져와서 사용하면 됩니다.
 import {
   CalendarPage,
-  MyReport,
+  MyPage,
   ChangeInfo,
   MainPage,
   BoardMain
@@ -23,7 +23,7 @@ function App() {
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/board" element={<BoardMain />} />
           <Route path="/chat" element={<div>채팅</div>} />
-          <Route path="/mypage" element={<MyReport />} />
+          <Route path="/mypage" element={<MyPage />} />
           <Route path="/mypage/ChangeInfo" element={<ChangeInfo />} />
           {/* <Route path="/mypage" element={<div>마이페이지</div>} /> */}
           {/* 메인 페이지 카드 라우터 추가 */}
