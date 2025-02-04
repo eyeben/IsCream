@@ -3,6 +3,7 @@ package com.ssafy.iscream.board.service;
 import com.ssafy.iscream.board.domain.*;
 import com.ssafy.iscream.board.dto.request.PostCreateReq;
 import com.ssafy.iscream.board.dto.request.PostUpdateReq;
+import com.ssafy.iscream.board.dto.response.PostDetail;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.*;
 import com.ssafy.iscream.s3.service.S3Service;
@@ -85,6 +86,14 @@ public class PostService {
                         .collect(Collectors.toList()));
 
         postRepository.deleteById(postId);
+    }
+
+    // 게시글 상세 조회
+    public PostDetail getPostDetail(Integer postId, Integer userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
+
+        return new PostDetail(post, userId);
     }
 
     private void saveImage(Post post, List<MultipartFile> files) {

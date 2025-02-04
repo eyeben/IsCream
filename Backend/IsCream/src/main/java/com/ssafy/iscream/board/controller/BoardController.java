@@ -47,4 +47,10 @@ public class BoardController {
         return ResponseUtil.success();
     }
 
+    @Operation(summary = "게시글 상세 조회", tags = "board")
+    @GetMapping(value = "/{postId}")
+    public ResponseEntity<?> getPost(@PathVariable Integer postId, @Login User user) {
+        return ResponseUtil.success(postService.getPostDetail(postId, user.getUserId()));
+    }
+
 }
