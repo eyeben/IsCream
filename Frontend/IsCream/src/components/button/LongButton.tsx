@@ -43,7 +43,7 @@ const LongButton = ({
               disabled={disabled}
               data-id={dataId}
               data-name={dataName}
-              className={`flex justify-center items-center rounded-sm w-11/12 h-10 px-4 py-1 text-text-md font-semibold text-gray-25 ${COLOR_PROS[color]} ${className}`}
+              className={`w-[95%] flex justify-center items-center rounded-sm h-10 px-4 py-1 text-text-md font-semibold text-gray-25 ${COLOR_PROS[color]} ${className}`}
           >
               {isLoading ? (
                   <div className="flex h-6 w-20 items-center justify-center gap-2">

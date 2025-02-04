@@ -47,7 +47,7 @@ const Input = ({
     }
     return (
         <>
-            <div className="w-11/12 relative">
+            <div className="w-[95%] relative">
                 <div className="w-full p-3 bg-white border border-gray-300 rounded flex items-center">
                     <input
                         type={inputType}
