@@ -8,12 +8,14 @@ const BoardMain = () => {
   };
 
   return (
+    // 검색바 컴포넌트 추가
     <div className="w-full mt-15">
       <SearchBar
         onSearch={handleSearch}
         placeholder="찾으시는 것을 검색해주세요"
       />
     </div>
+    //
   );
 };
 
