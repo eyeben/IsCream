@@ -5,9 +5,14 @@ import HeaderNormal from "./Header_Normal"; // 나머지 페이지(게시판 제
 const HeaderController = () => {
   const location = useLocation(); // 현재 경로 확인
 
+  // 선택 이벤트 핸들러 (기본 함수 추가)
+  const handleChildSelect = (selectedItem: string) => {
+    console.log("Selected item:", selectedItem);
+  };
+
   // 메인 페이지와 마이페이지에서 HeaderMain 사용
   if (location.pathname === "/" || location.pathname === "/mypage") {
-    return <HeaderMain />;
+    return <HeaderMain onChildSelect={handleChildSelect} />;
   }
 
   // 게시판 페이지를 제외한 모든 페이지에서 HeaderNormal 사용
