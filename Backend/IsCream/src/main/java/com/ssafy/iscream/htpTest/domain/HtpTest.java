@@ -12,6 +12,7 @@ import lombok.*;
 @Getter
 @Builder
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class HtpTest extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

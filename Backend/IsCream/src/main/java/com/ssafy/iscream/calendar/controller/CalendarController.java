@@ -28,19 +28,9 @@ public class CalendarController {
     private final CalendarService calendarService;
     private final CalendarFacade calendarFacade;
 
-    @GetMapping()
+    @PostMapping()
     @Operation(summary = "선택된 자녀 달력 출력")
     public ResponseEntity<?> getCalendar(@RequestBody CalendarGetReq calendarGetReq) {
-
-        /*
-        ResponseDto:
-                day : int(며칠인지) :
-         {
-            "emoji" : String (이모티콘),
-            "isMemo" : boolean (메모 있는지),
-            "isHtp" : boolean (HTP 검사 있는지)
-        },
-         */
         try{
             return ResponseUtil.success(calendarFacade.getCalendar(calendarGetReq));
         } catch (Exception e){
@@ -50,23 +40,9 @@ public class CalendarController {
 
     }
 
-    @GetMapping("/detail")
+    @PostMapping("/detail")
     @Operation(summary = "선택된 자녀 달력 날짜별 정보 출력")
     public ResponseEntity<?> getCalendarDetail(@RequestBody CalendarGetDetailReq calendarGetDetailReq) {
-
-
-        /*
-        Response Dto :
-        "isMemo": boolean (메모 있는지),
-        "isHtp": boolean (htp 검사 있는지),
-        "houseUrl": String (집 그림 이미지 url),
-        "treeUrl": String (나무 그림 이미지 url),
-        "personUrl": String (사람 그림 이미지 url),
-        "report": String (검사 결과),
-        "memoId" : String (메모아이디)
-        "memo": String (메모 내용)
-         */
-
         try{
             return ResponseUtil.success(calendarService.getCalendarDetail(calendarGetDetailReq));
         } catch (Exception e){
