@@ -37,26 +37,28 @@ const LongButton = ({
   
   return (
       <>
-          <button
-              onClick={onClick}
-              type={type}
-              disabled={disabled}
-              data-id={dataId}
-              data-name={dataName}
-              className={`w-[95%] flex justify-center items-center rounded-sm h-10 px-4 py-1 text-text-md font-semibold text-gray-25 ${COLOR_PROS[color]} ${className}`}
-          >
-              {isLoading ? (
-                  <div className="flex h-6 w-20 items-center justify-center gap-2">
-                      {/* <img
-                          src="/assets/loading/spinner.svg"
-                          alt="로딩중"
-                          className="h-full w-full"
-                      /> */}
-                  </div>
-              ) : (
-                  children
-              )}
-          </button>
+        <div className="w-full max-w-[706px] flex justify-center ">
+            <button
+                onClick={onClick}
+                type={type}
+                disabled={disabled}
+                data-id={dataId}
+                data-name={dataName}
+                className={`w-[95%] items-center rounded-sm h-10 px-4 py-1 text-text-md font-semibold text-gray-25 ${COLOR_PROS[color]} ${className}`}
+            >
+                {isLoading ? (
+                    <div className="flex h-6 w-20 items-center justify-center gap-2">
+                        {/* <img
+                            src="/assets/loading/spinner.svg"
+                            alt="로딩중"
+                            className="h-full w-full"
+                        /> */}
+                    </div>
+                ) : (
+                    children
+                )}
+            </button>
+          </div>
       </>
   );
 };
