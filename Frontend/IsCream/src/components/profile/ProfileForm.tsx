@@ -13,21 +13,23 @@ const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
   const [selectedRelation, setSelectedRelation] = useState<string>(''); 
   
   return (
+    <div className="w-full max-w-[706px]">
     <div className="space-y-4 w-full">
-      {/* 닉네임 필드 */}
-      <ProfileFormLabel
-        label="닉네임"
-        required
-      >
-        <Input
-          placeholder="닉네임"
-          type="text"
-          required={true}
-          withButton={true}
-          onButtonClick={() => console.log('중복확인 클릭')}
-        />
-      </ProfileFormLabel>
-
+      <div>
+        {/* 닉네임 필드 */}
+        <ProfileFormLabel
+          label="닉네임"
+          required
+        >
+          <Input
+            placeholder="닉네임"
+            type="text"
+            required={true}
+            withButton={true}
+            onButtonClick={() => console.log('중복확인 클릭')}
+          />
+        </ProfileFormLabel>
+      </div>
       {/* 전화번호 필드 */}
       <ProfileFormLabel
         label="전화번호"
@@ -78,9 +80,10 @@ const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
       </div>
 
       {/* 정보 수정 버튼 */}
-      <div className="flex justify-center fixed bottom-20 left-0 right-0 py-4">
+      <div className="flex justify-center sticky mt-20 mb-10">
           <LongButton color="green">정보 수정</LongButton>
       </div>
+    </div>
     </div>
   );
 };

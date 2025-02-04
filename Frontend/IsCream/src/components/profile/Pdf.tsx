@@ -1,18 +1,25 @@
-import ChildInfo from "../child/ChildInfo";
 
-interface ChildrenSectionProps{
-    children: {
-        childNickname: string;
-        childSex: string;
-        childBirth: string;
-    }[];
-    onAddChild: () => void;
-    onEditChild: (index: number) => void;
-    onDeleteChild: (index: number) => void;
-}
 
-const ChildrenSection = ({children, onAddChild, onEditChild, onDeleteChild}: ChildrenSectionProps) => (
-    <div className="w-full flex justify-center">
+const Pdf = () => (
+    <div className='w-full flex justify-center'>
+        <div className='w-full max-w-[706px] p-3 my-3 bg-white border border-gray-300 rounded items-center'>
+            <div className="flex justify-between">
+                <div className="m-3 text-xl">
+                    검사결과(PDF) 다운
+                </div>
+                <div className="m-3 text-xl">
+                        <button                         >
+                            &gt;
+                        </button>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+export default Pdf;
+
+{/* <div className="w-full flex justify-center">
         <div className="w-full max-w-[706px] p-3 my-3 bg-white border border-gray-300 rounded items-center">
             <div className="flex justify-between">
                 <div className="m-3 text-xl">
@@ -43,7 +50,4 @@ const ChildrenSection = ({children, onAddChild, onEditChild, onDeleteChild}: Chi
                 ))}
             </div>
         </div>
-    </div>
-);
-
-export default ChildrenSection;
+    </div> */}

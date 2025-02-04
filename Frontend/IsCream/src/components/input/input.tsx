@@ -47,8 +47,8 @@ const Input = ({
     }
     return (
         <>
-            <div className="w-[95%] relative">
-                <div className="w-full p-3 bg-white border border-gray-300 rounded flex items-center">
+            <div className="w-[95%] ">
+                <div className="w-full max-w-[706px] p-3 bg-white border border-gray-300 rounded flex items-center">
                     <input
                         type={inputType}
                         placeholder={placeholder}
