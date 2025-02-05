@@ -37,4 +37,12 @@ public class CommentController {
         return ResponseUtil.success();
     }
 
+    @Operation(summary = "댓글/대댓글 삭제", tags = "comments")
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> deleteComment(@Login User user,
+                                           @PathVariable Integer commentId) {
+        commentService.deleteComment(user.getUserId(), commentId);
+        return ResponseUtil.success();
+    }
+
 }

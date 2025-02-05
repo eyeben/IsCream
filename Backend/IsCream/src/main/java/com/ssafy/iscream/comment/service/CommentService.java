@@ -58,6 +58,16 @@ public class CommentService {
         comment.setContent(content);
     }
 
-    // TODO: 댓글/대댓글 삭제
+    // 댓글/대댓글 삭제
+    public void deleteComment(Integer userId, Integer commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
+
+        if (!userId.equals(comment.getUser().getUserId())) {
+            throw new DataException(ErrorCode.DATA_FORBIDDEN_UPDATE);
+        }
+
+        commentRepository.deleteById(commentId);
+    }
 
 }
