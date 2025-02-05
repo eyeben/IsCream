@@ -1,0 +1,66 @@
+# Python 관련 파일
+*.py[cod]
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
+*.pyo
+
+# Virtual Environment
+env/
+venv/
+env_ai/
+ENV/
+.venv/
+*.env
+
+# FastAPI 관련
+instance/
+*.db
+*.sqlite3
+
+# VSCode 관련 설정
+.vscode/
+*.code-workspace
+
+# 로그 파일
+*.log
+*.out
+*.err
+
+# 운영 체제 관련
+.DS_Store
+Thumbs.db
+
+# Test Coverage 파일
+htmlcov/
+.coverage
+*.cover
+*.py,cover
+
+# MyPy 및 기타 도구
+.mypy_cache/
+.pytest_cache/
+.cache/
+*.prof
+
+# Docker 관련
+*.pid
+*.tar
+docker-compose.override.yml
+.env.docker
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 기타 IDE 관련
+.idea/
+*.iml
+
+# 빌드 파일
+*.zip
+*.tar.gz
+*.rar

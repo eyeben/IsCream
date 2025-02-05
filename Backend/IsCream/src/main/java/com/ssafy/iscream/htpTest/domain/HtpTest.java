@@ -17,8 +17,10 @@ public class HtpTest extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer htpTestId;
+
     @NotNull
     Integer childId;
+
     String houseDrawingUrl;
     String treeDrawingUrl;
     String personDrawingUrl;
