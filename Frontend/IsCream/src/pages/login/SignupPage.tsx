@@ -115,7 +115,7 @@ const SignUpPage = () => {
         nickname: formData.nickname,
       });
 
-      if (response.data.isAvailable) {
+      if (response.data.code === "S0000") {
         setNicknameCheckMessage("사용 가능한 닉네임입니다.");
       } else {
         setNicknameCheckMessage("이미 사용 중인 닉네임입니다.");
@@ -167,71 +167,81 @@ const SignUpPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen w-full px-6 py-10">
-      <div className="w-full max-w-md flex flex-col items-center space-y-4">
-        <label className="w-full text-gray-700 font-semibold text-left">이메일 아이디 *</label>
-        <Input
-          placeholder="example@naver.com"
-          type="email"
-          required={true}
-          value={formData.email}
-          onChange={(value) => handleChange("email", value)}
-          withButton={true}
-          onButtonClick={checkEmailDuplicate}
-        />
-        <p className={`text-sm ${emailCheckMessage.includes("가능") ? "text-green-500" : "text-red-500"}`}>
-          {emailCheckMessage}
-        </p>
+      <div className="w-full max-w-md flex flex-col items-start space-y-4">
+        <div className="w-full">
+          <label className="text-gray-700 font-semibold">이메일 아이디 *</label>
+          <Input
+            placeholder="example@naver.com"
+            type="email"
+            required={true}
+            value={formData.email}
+            onChange={(value) => handleChange("email", value)}
+            withButton={true}
+            onButtonClick={checkEmailDuplicate}
+          />
+          <p className={`text-sm ${emailCheckMessage.includes("가능") ? "text-green-500" : "text-red-500"}`}>
+            {emailCheckMessage}
+          </p>
+        </div>
 
-        <label className="w-full text-gray-700 font-semibold text-left">닉네임 *</label>
-        <Input
-          placeholder="닉네임을 입력해주세요."
-          type="text"
-          required={true}
-          value={formData.nickname}
-          onChange={(value) => handleChange("nickname", value)}
-          withButton={true}
-          onButtonClick={checkNicknameDuplicate}
-        />
-        <p className={`text-sm ${nicknameCheckMessage.includes("가능") ? "text-green-500" : "text-red-500"}`}>
-          {nicknameCheckMessage}
-        </p>
+        <div className="w-full">
+          <label className="text-gray-700 font-semibold">닉네임 *</label>
+          <Input
+            placeholder="닉네임을 입력해주세요."
+            type="text"
+            required={true}
+            value={formData.nickname}
+            onChange={(value) => handleChange("nickname", value)}
+            withButton={true}
+            onButtonClick={checkNicknameDuplicate}
+          />
+          <p className={`text-sm ${nicknameCheckMessage.includes("가능") ? "text-green-500" : "text-red-500"}`}>
+            {nicknameCheckMessage}
+          </p>
+        </div>
 
-        <label className="w-full text-gray-700 font-semibold text-left">비밀번호 입력 *</label>
-        <Input
-          placeholder="비밀번호를 입력해주세요."
-          type="password"
-          required={true}
-          value={formData.password}
-          onChange={(value) => handleChange("password", value)}
-        />
-        <p className="text-sm text-red-500">{passwordValidationMessage}</p>
+        <div className="w-full">
+          <label className="text-gray-700 font-semibold">비밀번호 입력 *</label>
+          <Input
+            placeholder="비밀번호를 입력해주세요."
+            type="password"
+            required={true}
+            value={formData.password}
+            onChange={(value) => handleChange("password", value)}
+          />
+          <p className="text-sm text-red-500">{passwordValidationMessage}</p>
+        </div>
 
-        <label className="w-full text-gray-700 font-semibold text-left">비밀번호 확인 *</label>
-        <Input
-          placeholder="비밀번호를 확인해주세요."
-          type="password"
-          required={true}
-          value={formData.confirmPassword}
-          onChange={(value) => handleChange("confirmPassword", value)}
-        />
-        <p className={`text-sm ${passwordMatchMessage.includes("일치합니다") ? "text-green-500" : "text-red-500"}`}>
-          {passwordMatchMessage}
-        </p>
+        <div className="w-full">
+          <label className="text-gray-700 font-semibold">비밀번호 확인 *</label>
+          <Input
+            placeholder="비밀번호를 확인해주세요."
+            type="password"
+            required={true}
+            value={formData.confirmPassword}
+            onChange={(value) => handleChange("confirmPassword", value)}
+          />
+          <p className={`text-sm ${passwordMatchMessage.includes("일치합니다") ? "text-green-500" : "text-red-500"}`}>
+            {passwordMatchMessage}
+          </p>
+        </div>
 
-        <label className="w-full text-gray-700 font-semibold text-left">전화번호 *</label>
-        <Input
-          placeholder="010-xxxx-xxxx"
-          type="tel"
-          required={true}
-          value={formData.phone}
-          onChange={(value) => handleChange("phone", value)}
-        />
+        <div className="w-full">
+          <label className="text-gray-700 font-semibold">전화번호 *</label>
+          <Input
+            placeholder="010-xxxx-xxxx"
+            type="tel"
+            required={true}
+            value={formData.phone}
+            onChange={(value) => handleChange("phone", value)}
+          />
+        </div>
       </div>
 
       <LongButton 
         onClick={handleSubmit} 
         color="green" 
-        className="mt-8 w-full max-w-md bg-green-600 border border-green-500 font-semibold px-4 py-2"
+        className="mt-8 w-full max-w-md bg-green-600 border border-green-500 font-semibold px-4 py-2 text-white"
       >
         {buttonText}
       </LongButton>
