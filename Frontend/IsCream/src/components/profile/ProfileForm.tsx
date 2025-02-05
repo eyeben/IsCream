@@ -10,8 +10,21 @@ interface ProfileFormProps {
 }
 
 const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
+  const [nickname, setNickname] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedRelation, setSelectedRelation] = useState<string>(''); 
   
+  const handleSubmit = () => {
+    const formData = {
+      nickname,
+      phoneNumber,
+      birthDate,
+      relation: selectedRelation
+    };
+
+    console.log("입력된 폼데이터 제출:", formData);
+
+  }
   return (
     <div className="w-full max-w-[706px]">
     <div className="space-y-4 w-full">
@@ -26,6 +39,8 @@ const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
             type="text"
             required={true}
             withButton={true}
+            value={nickname}
+            onChange={(value) => setNickname(value)}
             onButtonClick={() => console.log('중복확인 클릭')}
           />
         </ProfileFormLabel>
@@ -39,6 +54,8 @@ const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
           placeholder="010-1234-5678"
           type="tel"
           required={true}
+          value={phoneNumber}
+          onChange={(value) => setPhoneNumber(value)}
         />
       </ProfileFormLabel>
 
@@ -81,7 +98,7 @@ const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
 
       {/* 정보 수정 버튼 */}
       <div className="flex justify-center sticky mt-20 mb-10">
-          <LongButton color="green">정보 수정</LongButton>
+          <LongButton color="green" onClick={handleSubmit}>정보 수정</LongButton>
       </div>
     </div>
     </div>
