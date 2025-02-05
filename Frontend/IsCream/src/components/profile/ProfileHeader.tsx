@@ -17,7 +17,7 @@ const ProfileHeader = ({ profileImage, profileNickname }: ProfileHeaderProps) =>
         <>
             <div className='w-full flex justify-center'>
                 <div className='max-w-[706px] w-[95%] mx-auto'>
-                    <div className="flex items-center p-4">
+                    <div className="flex items-center p-4 text-xl">
                         <img 
                             src={profileImage} 
                             alt="Profile"
@@ -25,7 +25,7 @@ const ProfileHeader = ({ profileImage, profileNickname }: ProfileHeaderProps) =>
                         <span className="ml-4">{profileNickname}님</span>
                         <button 
                             className="ml-auto"
-                            onClick={handleClick}>›</button>
+                            onClick={handleClick}>&gt;</button>
                     </div>
                 </div>
             </div>
