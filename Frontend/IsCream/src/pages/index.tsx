@@ -5,3 +5,4 @@ export { default as LoginPage } from "./login/LoginPage";
 export { default as MyPage } from "./MyPage";
 export { default as MainPage } from "./MainPage";
 export { default as BoardMain } from "./baord/BoardMain";
+export { default as PDFDownload} from "./mypage/PDFDownload"
