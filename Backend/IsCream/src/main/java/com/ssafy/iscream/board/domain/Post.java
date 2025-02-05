@@ -2,9 +2,9 @@ package com.ssafy.iscream.board.domain;
 
 import com.ssafy.iscream.common.entity.BaseTimeEntity;
 import com.ssafy.iscream.user.domain.User;
+import com.ssafy.iscream.comment.domain.Comment;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -41,4 +41,8 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     private List<PostLike> postLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
+
 }
