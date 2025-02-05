@@ -5,6 +5,9 @@
 //         required={true}
 //         />
 
+import { useState } from "react";
+import { Eye, EyeOff } from 'lucide-react';
+
 //       <Input
 //         placeholder="홍길동"
 //         type="text"
@@ -17,7 +20,7 @@
 interface InputProps {
 
     placeholder?: string;
-    type?: 'email' | 'tel' | 'text' | 'calendar';
+    type?: 'email' | 'tel' | 'text' | 'calendar' | 'password';
     required?: boolean;
     className?: string;
     withButton?: boolean,
@@ -39,12 +42,23 @@ const Input = ({
     onChange
 }: InputProps) => {
     
-    const inputType = type === 'calendar' ? 'date' : type;
+    const [showPassword, setShoePassword] = useState(false);
+    const inputType = type === 'calendar' 
+        ? 'date' 
+        : type === 'password'
+            ? (showPassword ? 'text' : 'password')
+            : type;
+
     const handlerInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if(onChange){
             onChange(e.target.value);
         }
     }
+
+    const togglePasswordVisibility = () => {
+        setShoePassword(!showPassword);
+    }
+    
     return (
         <>
             <div className="w-[95%] ">
@@ -66,6 +80,20 @@ const Input = ({
                         >
                             {buttonText}
                         </button>
+                    )}
+
+                    {type === 'password' && (
+                        <button
+                        onClick={togglePasswordVisibility}
+                        className="p-1 text-gray-500 hover:text-gray-700"
+                        type="button"
+                    >
+                        {showPassword ? (
+                            <Eye className="w-5 h-5" />
+                        ) : (
+                        <EyeOff className="w-5 h-5" />
+                        )}
+                    </button>
                     )}
                 </div>
             </div>
