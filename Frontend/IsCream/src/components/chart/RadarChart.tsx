@@ -92,10 +92,12 @@ const RadarChart: React.FC<RadarChartProps> = ({
   };
 
   return (
-    <div
-      className={`w-9/11 h-80 p-4 bg-white rounded-lg shadow-sm ${className}`}
-    >
-      <Radar data={chartData} options={options} />
+    <div  className="w-full flex justify-center">
+      <div
+        className={`w-[80%] h-full p-4 bg-white ${className}`}
+      >
+        <Radar data={chartData} options={options} />
+      </div>
     </div>
   );
 };
