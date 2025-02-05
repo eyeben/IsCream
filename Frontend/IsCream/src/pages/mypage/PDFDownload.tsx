@@ -2,6 +2,8 @@ interface PDFDownloadProps{
 
 }
 
-const PDFDownload() => ();
+const PDFDownload() => (
+    
+);
 
 export default PDFDownload;

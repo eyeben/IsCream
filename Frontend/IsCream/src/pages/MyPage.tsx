@@ -2,6 +2,8 @@ import ProfileHeader from "../components/profile/ProfileHeader";
 import ChildrenSection from "../components/profile/ChildrenSection";
 import ChildModal from "../components/modal/ChildModal";
 import Pdf from "../components/profile/Pdf"
+import PAT from "../components/report/PAT";
+import Personality5 from "../components/report/Personality5";
 import React, { useState } from 'react';
 
 interface MyPageProps{
@@ -98,10 +100,10 @@ const MyPage: React.FC = () => {
             <Pdf />
             
             {/* 막대그래프 및 보고서 */}
-
+            <PAT />
 
             {/* 도넛그래프 및 보고서 */}
-            
+            <Personality5 />
 
         </div>
             
