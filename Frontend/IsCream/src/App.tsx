@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BottomNavigation from "./components/nav/Nav";
 import Header from "./components/header/Header";
-import LoginPage from "./pages/LoginPage"; // 경로 확인
+import LoginPage from "./pages/login/LoginPage"; // 경로 확인
 
 // pages/index.tsx 폴더에 경로를 지정하고, 여기서는 페이지 이름만 가져와서 사용하면 됩니다.
 import {
