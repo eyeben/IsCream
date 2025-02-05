@@ -16,9 +16,9 @@ import lombok.*;
 public class HtpTest extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int htpTestId;
+    Integer htpTestId;
     @NotNull
-    int childId;
+    Integer childId;
     String houseDrawingUrl;
     String treeDrawingUrl;
     String personDrawingUrl;
