@@ -5,8 +5,6 @@ import com.ssafy.iscream.calendar.dto.request.CalendarGetDetailReq;
 import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
 import com.ssafy.iscream.calendar.dto.request.MemoCreateReq;
 import com.ssafy.iscream.calendar.dto.request.MemoUpdateReq;
-import com.ssafy.iscream.calendar.dto.response.CalendarGetDetailRes;
-import com.ssafy.iscream.calendar.dto.response.CalendarGetRes;
 import com.ssafy.iscream.calendar.service.CalendarFacade;
 import com.ssafy.iscream.calendar.service.CalendarService;
 import com.ssafy.iscream.common.util.ResponseUtil;
@@ -16,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Calendar;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
