@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./Backend/IsCream
+      dockerfile: Dockerfile
+    container_name: backend-app
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+
+  frontend:
+    build:
+      context: ./Frontend/IsCream
+      dockerfile: Dockerfile
+    container_name: frontend-app
+    ports:
+      - "80:80"
+
+  ai-server:
+    build:
+      context: ./AI
+      dockerfile: Dockerfile
+    container_name: ai-server
+    ports:
+      - "8000:8000"
+    volumes:
+      - /home/ubuntu/models:/home/ubuntu/models  # 모델 경로 마운트
