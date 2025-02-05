@@ -24,7 +24,7 @@ interface InputProps {
     buttonText?: string;
     onButtonClick?: () => void;
     value?: string; // 달력 값
-    onChange?: (value: string) => void; // 달력 변경
+    onChange?: (value: string) => void;
 }
 
 const Input = ({
@@ -40,7 +40,7 @@ const Input = ({
 }: InputProps) => {
     
     const inputType = type === 'calendar' ? 'date' : type;
-    const handlerDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handlerInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if(onChange){
             onChange(e.target.value);
         }
@@ -57,7 +57,7 @@ const Input = ({
                             type === 'calendar' ? 'cursor-pointer' : ''
                         }`}
                         value={value}
-                        onChange={type === 'calendar' ? handlerDateChange : undefined}
+                        onChange={handlerInputChange}
                     />
                     {withButton && (
                         <button
