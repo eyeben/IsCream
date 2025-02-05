@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+//TODO: 예외 처리 방식 -> 공통 에러 생성 시 수정해야함
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/calendars")
@@ -27,59 +27,36 @@ public class CalendarController {
     @PostMapping()
     @Operation(summary = "선택된 자녀 달력 출력")
     public ResponseEntity<?> getCalendar(@RequestBody CalendarGetReq calendarGetReq) {
-        try{
-            return ResponseUtil.success(calendarFacade.getCalendar(calendarGetReq));
-        } catch (Exception e){
-            return ResponseUtil.failure(e);
-        }
-
-
+        return ResponseUtil.success(calendarFacade.getCalendar(calendarGetReq));
     }
 
     @PostMapping("/detail")
     @Operation(summary = "선택된 자녀 달력 날짜별 정보 출력")
     public ResponseEntity<?> getCalendarDetail(@RequestBody CalendarGetDetailReq calendarGetDetailReq) {
-        try{
-            return ResponseUtil.success(calendarService.getCalendarDetail(calendarGetDetailReq));
-        } catch (Exception e){
-            return ResponseUtil.failure(e);
-        }
+        return ResponseUtil.success(calendarService.getCalendarDetail(calendarGetDetailReq));
     }
 
 
     @PostMapping("/memo")
     @Operation(summary = "날짜 별로 메모를 작성")
     public ResponseEntity<?> createMemo(@RequestBody MemoCreateReq memoCreateReq) {
-        try{
-            calendarService.createMemo(memoCreateReq);
-            return ResponseUtil.success();
-        } catch (Exception e){
-            return ResponseUtil.failure(e);
-        }
-
+        calendarService.createMemo(memoCreateReq);
+        return ResponseUtil.success();
     }
 
     @PutMapping("/memo")
     @Operation(summary = "날짜 별로 메모를 수정")
-    public ResponseEntity<?> updateMemo(@RequestBody MemoUpdateReq memoUpdateReq) {
-        try{
-            calendarService.updateMemo(memoUpdateReq);
-            return ResponseUtil.success();
-        } catch (Exception e){
-            return ResponseUtil.failure(e);
-        }
+    public ResponseEntity<?> updateMemo(@RequestBody MemoUpdateReq memoUpdateReq) throws Exception {
+        calendarService.updateMemo(memoUpdateReq);
+        return ResponseUtil.success();
     }
 
 
     @DeleteMapping("/memo/{memoId}")
     @Operation(summary = "날짜 별로 메모를 삭제")
-    public ResponseEntity<?> deleteMemo(@PathVariable int memoId) {
-        try{
-            calendarService.deleteMemo(memoId);
-            return ResponseUtil.success();
-        } catch (Exception e){
-            return ResponseUtil.failure(e);
-        }
+    public ResponseEntity<?> deleteMemo(@PathVariable int memoId) throws Exception {
+        calendarService.deleteMemo(memoId);
+        return ResponseUtil.success();
     }
 
 
