@@ -73,4 +73,10 @@ public class BoardController {
         return ResponseUtil.success();
     }
 
+    @Operation(summary = "메인 페이지 게시글 조회", tags = "board")
+    @GetMapping("/main")
+    public ResponseEntity<?> getMainPost(@Login User user) {
+        return ResponseUtil.success(postService.getMainPost(user));
+    }
+
 }

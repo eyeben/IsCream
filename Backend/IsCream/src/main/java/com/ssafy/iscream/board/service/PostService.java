@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -104,6 +106,24 @@ public class PostService {
                 .toList();
 
         return PostList.of(postInfoList, totalCount, 1, postList.size());
+    }
+
+    // 메인 페이지 게시글 조회
+    public Map<String, List<PostList.PostInfo>> getMainPost(User user) {
+        Map<String, List<PostList.PostInfo>> result = new HashMap<>();
+
+        List<PostList.PostInfo> hotPosts = postRepository.findTop5ByLikes().stream()
+                .map(post -> new PostList.PostInfo(post, isUserLiked(post, user)))
+                .toList();
+
+        List<PostList.PostInfo> latestPosts = postRepository.findTop5ByOrderByCreatedAtDesc().stream()
+                .map(post -> new PostList.PostInfo(post, isUserLiked(post, user)))
+                .toList();
+
+        result.put("hot", hotPosts);
+        result.put("latest", latestPosts);
+
+        return result;
     }
 
     private void saveImage(Post post, List<MultipartFile> files) {
