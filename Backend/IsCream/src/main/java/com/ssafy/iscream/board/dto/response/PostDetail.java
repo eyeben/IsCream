@@ -32,7 +32,7 @@ public record PostDetail(
                 extractImageUrls(post),
                 DateUtil.format(post.getCreatedAt()),
                 new UserProfile(post.getUser()),
-                user.getImageUrl()
+                user != null ? user.getImageUrl() : null
         );
     }
 
