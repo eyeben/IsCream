@@ -90,7 +90,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
-        return new PostDetail(post, user);
+        return new PostDetail(post, user, isUserLiked(post, user));
     }
 
     // 게시글 목록 조회
@@ -99,7 +99,11 @@ public class PostService {
 
         int totalCount = (int) postRepository.count();
 
-        return PostList.of(postList, user, totalCount, 1, postList.size());
+        List<PostList.PostInfo> postInfoList = postList.stream()
+                .map(post -> new PostList.PostInfo(post,isUserLiked(post, user)))
+                .toList();
+
+        return PostList.of(postInfoList, totalCount, 1, postList.size());
     }
 
     private void saveImage(Post post, List<MultipartFile> files) {
@@ -127,5 +131,14 @@ public class PostService {
     public void deletePostLike(Integer postId, Integer userId) {
         postLikeRepository.deleteByPost_PostIdAndUser_UserId(postId, userId);
     }
+
+    private boolean isUserLiked(Post post, User user) {
+        if (user == null) {
+            return false;
+        }
+
+        return postLikeRepository.existsByPost_PostIdAndUser_UserId(post.getPostId(), user.getUserId());
+    }
+
 
 }

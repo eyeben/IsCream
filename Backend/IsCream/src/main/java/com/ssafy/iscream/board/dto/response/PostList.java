@@ -29,14 +29,14 @@ public class PostList {
             String createdAt,
             String authorName
     ) {
-        public PostInfo(Post post, User user) {
+        public PostInfo(Post post, boolean userLiked) {
             this(
                     post.getPostId(),
                     post.getTitle(),
                     post.getContent(),
                     extractThumbnail(post),
                     post.getPostLikes().size(),
-                    isUserLiked(post, user),
+                    userLiked,
                     post.getViewCount(),
                     DateUtil.format(post.getCreatedAt()),
                     post.getUser().getNickname()
@@ -44,25 +44,14 @@ public class PostList {
         }
     }
 
-    public static PostList of(List<Post> list, User user, int totalCount, int page, int size) {
+    public static PostList of(List<PostInfo> list, int totalCount, int page, int size) {
         return PostList.builder()
                 .totalCount(totalCount)
                 .page(page)
                 .size(size)
                 .isEnd((page + 1) * size >= totalCount)
-                .list(list.stream()
-                        .map(post -> new PostInfo(post, user))
-                        .collect(Collectors.toList()))
+                .list(list)
                 .build();
-    }
-
-    public static boolean isUserLiked(Post post, User user) {
-        if (user == null) {
-            return false;
-        }
-
-        return post.getPostLikes().stream()
-                .anyMatch(like -> like.getUser().getUserId().equals(user.getUserId()));
     }
 
     private static String extractThumbnail(Post post) {
