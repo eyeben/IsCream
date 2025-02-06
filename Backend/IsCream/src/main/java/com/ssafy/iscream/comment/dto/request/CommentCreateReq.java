@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentCreateReq {
-    @Schema(description = "게시글 아이디", example = "5")
+    @Schema(description = "게시글 아이디", example = "1")
     private Integer postId;
 
     @Schema(description = "부모댓글 아이디(댓글 작성시 0 또는 null)", example = "1")

@@ -32,7 +32,7 @@ public class CommentController {
     public ResponseEntity<?> updateComment(@Login User user,
                      @PathVariable Integer commentId,
                      @Schema(example = "{\"content\": \"string\"}")
-                     Map<String, String> map) {
+                     @RequestBody Map<String, String> map) {
         commentService.updateComment(user.getUserId(), commentId, map.get("content"));
         return ResponseUtil.success();
     }
