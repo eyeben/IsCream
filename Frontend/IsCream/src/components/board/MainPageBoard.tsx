@@ -70,7 +70,7 @@ const MainPageBoard = () => {
               {filteredPosts.map((post, index) => (
                 <Link
                   key={post.id}
-                  to={`/board/${post.id}`}
+                  to={`/board/detail/${post.id}`}
                   className="block no-underline"
                 >
                   <div className="flex items-center py-3 px-4 border-b-1 border-[#E6E6E6] hover:bg-gray-50  transition-colors">
