@@ -3,12 +3,10 @@ package com.ssafy.iscream.board.dto.response;
 import com.ssafy.iscream.board.domain.Post;
 import com.ssafy.iscream.board.domain.PostImage;
 import com.ssafy.iscream.common.util.DateUtil;
-import com.ssafy.iscream.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Builder @Getter
 public class PostList {
@@ -49,7 +47,7 @@ public class PostList {
                 .totalCount(totalCount)
                 .page(page)
                 .size(size)
-                .isEnd((page + 1) * size >= totalCount)
+                .isEnd(page * size >= totalCount)
                 .list(list)
                 .build();
     }

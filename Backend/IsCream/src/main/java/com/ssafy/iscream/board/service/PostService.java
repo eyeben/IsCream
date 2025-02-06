@@ -11,6 +11,9 @@ import com.ssafy.iscream.s3.service.S3Service;
 import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -96,16 +99,29 @@ public class PostService {
     }
 
     // 게시글 목록 조회
-    public PostList getPostList(User user) {
-        List<Post> postList = postRepository.findAll();
-
+    public PostList getPostList(User user, Integer page, Integer size) {
         int totalCount = (int) postRepository.count();
 
-        List<PostList.PostInfo> postInfoList = postList.stream()
-                .map(post -> new PostList.PostInfo(post,isUserLiked(post, user)))
-                .toList();
+        Pageable pageable = PageRequest.of(page - 1, size);
 
-        return PostList.of(postInfoList, totalCount, 1, postList.size());
+        Page<Post> postPage = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+
+        List<PostList.PostInfo> postInfoList = postPage.getContent().stream()
+                .map(post -> new PostList.PostInfo(post, isUserLiked(post, user)))
+                .collect(Collectors.toList());
+
+        return PostList.of(postInfoList, (int) postPage.getTotalElements(), pageable.getPageNumber() + 1, pageable.getPageSize());
+
+
+//        int offset = (page - 1) * size;
+//
+//        List<Post> postList = postRepository.findPostsWithPagination(offset, size);
+//
+//        List<PostList.PostInfo> postInfoList = postList.stream()
+//                .map(post -> new PostList.PostInfo(post,isUserLiked(post, user)))
+//                .toList();
+//
+//        return PostList.of(postInfoList, totalCount, page, postList.size());
     }
 
     // 메인 페이지 게시글 조회

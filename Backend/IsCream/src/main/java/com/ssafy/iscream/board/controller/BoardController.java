@@ -55,8 +55,10 @@ public class BoardController {
 
     @Operation(summary = "게시글 목록 조회", tags = "board")
     @GetMapping
-    public ResponseEntity<?> getPosts(@Login User user) {
-        return ResponseUtil.success(postService.getPostList(user));
+    public ResponseEntity<?> getPosts(@Login User user,
+                                      @RequestParam(defaultValue = "1") Integer page,
+                                      @RequestParam(defaultValue = "10") Integer size) {
+        return ResponseUtil.success(postService.getPostList(user, page, size));
     }
 
     @Operation(summary = "게시글 좋아요", tags = "board")
