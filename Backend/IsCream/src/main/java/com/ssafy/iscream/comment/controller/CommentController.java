@@ -8,7 +8,6 @@ import com.ssafy.iscream.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +42,12 @@ public class CommentController {
                                            @PathVariable Integer commentId) {
         commentService.deleteComment(user.getUserId(), commentId);
         return ResponseUtil.success();
+    }
+
+    @Operation(summary = "댓글 조회", tags = "comments")
+    @GetMapping("/{postId}")
+    public ResponseEntity<?> getComments(@PathVariable Integer postId) {
+        return ResponseUtil.success(commentService.getComments(postId));
     }
 
 }

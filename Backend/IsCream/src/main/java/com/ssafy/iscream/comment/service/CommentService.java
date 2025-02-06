@@ -5,11 +5,14 @@ import com.ssafy.iscream.board.domain.PostRepository;
 import com.ssafy.iscream.comment.domain.Comment;
 import com.ssafy.iscream.comment.domain.CommentRepository;
 import com.ssafy.iscream.comment.dto.request.CommentCreateReq;
+import com.ssafy.iscream.comment.dto.response.CommentList;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.*;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -68,6 +71,13 @@ public class CommentService {
         }
 
         commentRepository.deleteById(commentId);
+    }
+
+    // 댓글 조회
+    public CommentList getComments(Integer postId) {
+        List<Comment> commentList = commentRepository.findAllByPostIdWithReplies(postId);
+
+        return CommentList.of(commentList, commentList.size());
     }
 
 }

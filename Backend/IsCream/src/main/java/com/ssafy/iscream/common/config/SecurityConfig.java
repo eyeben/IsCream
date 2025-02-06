@@ -97,7 +97,7 @@ public class SecurityConfig {
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
                         .requestMatchers("/users/email/check", "/users/nickname/check").permitAll()
                         .requestMatchers(HttpMethod.GET, "/board/{postId}", "/board", "/board/search", "/board/main").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/comments").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/comments/{postId}").permitAll()
                         .anyRequest().authenticated());
 
         http

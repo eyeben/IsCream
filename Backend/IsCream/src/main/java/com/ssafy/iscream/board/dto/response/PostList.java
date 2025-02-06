@@ -65,12 +65,6 @@ public class PostList {
                 .anyMatch(like -> like.getUser().getUserId().equals(user.getUserId()));
     }
 
-    private static List<String> extractImageUrls(Post post) {
-        return post.getPostImages().stream()
-                .map(PostImage::getImageUrl)
-                .collect(Collectors.toList());
-    }
-
     private static String extractThumbnail(Post post) {
         List<PostImage> images = post.getPostImages();
         return (images != null && !images.isEmpty()) ? images.get(0).getImageUrl() : null;
