@@ -99,15 +99,23 @@ public class PostService {
     }
 
     // 게시글 목록 조회
-    public PostList getPostList(User user, Integer lastId, Integer size) {
+    public PostList getPostList(User user, Integer lastId, Integer lastLikeCount, Integer size, String sort) {
         Pageable pageable = PageRequest.of(0, size);
 
         Page<Post> posts;
 
-        if (lastId == null) {
-            posts = postRepository.findPost(pageable);
+        if (sort.equals("create")) {
+            if (lastId == null) {
+                posts = postRepository.findPost(pageable);
+            } else {
+                posts = postRepository.findPostByLastId(lastId, pageable);
+            }
         } else {
-            posts = postRepository.findPostByLastId(lastId, pageable);
+            if (lastId == null) {
+                posts = postRepository.findPostByLikes(pageable);
+            } else {
+                posts = postRepository.findPostByLikesAndLastId(lastId, lastLikeCount, pageable);
+            }
         }
 
         boolean hasNext = posts.hasNext();
@@ -116,9 +124,12 @@ public class PostService {
                 .map(post -> new PostList.PostInfo(post,isUserLiked(post, user)))
                 .toList();
 
-        Integer newLastId = !postList.isEmpty() ? postList.get(postList.size() - 1).postId() : null;
+        PostList.PostInfo lastPost = !postList.isEmpty() ? postList.get(postList.size() - 1) : null;
 
-        return PostList.of(newLastId, postList.size(), hasNext, postList);
+        Integer newLastId = lastPost != null ? lastPost.postId() : null;
+        Integer newLikeCount = lastPost != null ? lastPost.likes() : null;
+
+        return PostList.of(newLastId, newLikeCount, postList.size(), hasNext, postList);
     }
 
     // 메인 페이지 게시글 조회

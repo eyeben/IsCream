@@ -57,8 +57,10 @@ public class BoardController {
     @GetMapping
     public ResponseEntity<?> getPosts(@Login User user,
                                       @RequestParam(required = false) Integer lastId,
-                                      @RequestParam(defaultValue = "10") Integer size) {
-        return ResponseUtil.success(postService.getPostList(user, lastId, size));
+                                      @RequestParam(defaultValue = "0") Integer lastLikeCount,
+                                      @RequestParam(defaultValue = "10") Integer size,
+                                      @RequestParam(defaultValue = "create") String sort) {
+        return ResponseUtil.success(postService.getPostList(user, lastId, lastLikeCount, size, sort));
     }
 
     @Operation(summary = "게시글 좋아요", tags = "board")
