@@ -20,9 +20,15 @@ import java.time.LocalDate;
 public class Child extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int childId;
-    int userId;
+    Integer childId;
+    Integer userId;
     String nickname;
     LocalDate birthDate;
     Gender gender;
+
+    public void updateChild(String nickname, LocalDate birthDate, Gender gender) {
+        this.nickname = nickname;
+        this.birthDate = birthDate;
+        this.gender = gender;
+    }
 }
