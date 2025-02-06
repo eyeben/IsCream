@@ -118,4 +118,18 @@ public class PostService {
         }
     }
 
+    // 게시글 좋아요
+    public void addPostLike(Integer postId, User user) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
+
+        postLikeRepository.save(PostLike.builder().user(user).post(post).build());
+    }
+
+    // 게시글 좋아요 취소
+    @Transactional
+    public void deletePostLike(Integer postId, Integer userId) {
+        postLikeRepository.deleteByPost_PostIdAndUser_UserId(postId, userId);
+    }
+
 }

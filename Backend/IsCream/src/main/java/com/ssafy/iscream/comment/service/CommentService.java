@@ -64,6 +64,7 @@ public class CommentService {
     }
 
     // 댓글/대댓글 삭제
+    @Transactional
     public void deleteComment(Integer userId, Integer commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));

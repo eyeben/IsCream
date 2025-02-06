@@ -59,4 +59,18 @@ public class BoardController {
         return ResponseUtil.success(postService.getPostList(user));
     }
 
+    @Operation(summary = "게시글 좋아요", tags = "board")
+    @GetMapping("/{postId}/like")
+    public ResponseEntity<?> likePost(@PathVariable Integer postId, @Login User user) {
+        postService.addPostLike(postId, user);
+        return ResponseUtil.success();
+    }
+
+    @Operation(summary = "게시글 좋아요 취소", tags = "board")
+    @DeleteMapping("/{postId}/like")
+    public ResponseEntity<?> cancelLikePost(@PathVariable Integer postId, @Login User user) {
+        postService.deletePostLike(postId, user.getUserId());
+        return ResponseUtil.success();
+    }
+
 }

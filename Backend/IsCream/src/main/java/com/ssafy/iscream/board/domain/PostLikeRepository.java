@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostLikeRepository extends JpaRepository<PostLike, Integer> {
-
+    void deleteByPost_PostIdAndUser_UserId(Integer postId, Integer userId);
 }
