@@ -18,7 +18,8 @@ public record PostDetail(
         Integer viewCount,
         List<String> images,
         String createdAt,
-        UserProfile author
+        UserProfile author,
+        String userImageUrl
 ) {
     public PostDetail(Post post, User user) {
         this(
@@ -30,7 +31,8 @@ public record PostDetail(
                 post.getViewCount(),
                 extractImageUrls(post),
                 DateUtil.format(post.getCreatedAt()),
-                new UserProfile(post.getUser())
+                new UserProfile(post.getUser()),
+                user.getImageUrl()
         );
     }
 
