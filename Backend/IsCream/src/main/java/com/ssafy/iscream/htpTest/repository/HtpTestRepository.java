@@ -15,4 +15,6 @@ public interface HtpTestRepository extends JpaRepository<HtpTest, Integer> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
+
+
 }

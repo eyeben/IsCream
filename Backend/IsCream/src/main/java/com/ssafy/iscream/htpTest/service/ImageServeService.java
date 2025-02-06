@@ -1,0 +1,38 @@
+package com.ssafy.iscream.htpTest.service;
+
+import com.ssafy.iscream.htpTest.domain.request.HtpTestDiagnosisReq;
+import com.ssafy.iscream.user.domain.User;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
+
+@Service
+public class ImageServeService {
+    private final WebClient webClient;
+
+    public ImageServeService(WebClient.Builder webClientBuilder) {
+        // 서버 URL
+        this.webClient = webClientBuilder.baseUrl("http://3.36.67.41:8000").build();
+    }
+
+    public String sendImageData(User user, List<HtpTestDiagnosisReq> data) {
+        if (data == null || data.isEmpty()) {
+            return "No data to send.";
+        }
+
+        try {
+            String response = webClient.post()
+                    .uri("/ai/predict")  // 엔드포인트 설정
+                    .bodyValue(data)  // JSON 데이터 전송
+                    .retrieve()
+                    .bodyToMono(String.class)  // 응답을 String으로 변환
+                    .block();  // 동기적으로 응답 대기 후 반환
+
+            return response != null ? response : "No response from server.";
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+}
