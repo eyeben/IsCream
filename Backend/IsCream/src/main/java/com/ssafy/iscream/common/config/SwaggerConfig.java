@@ -64,6 +64,13 @@ public class SwaggerConfig {
                 .pathsToMatch("/calendars/**")
                 .build();
     }
+    @Bean
+    GroupedOpenApi childrenApi() {
+        return GroupedOpenApi.builder()
+                .group("children")
+                .pathsToMatch("/children/**")
+                .build();
+    }
 
     private Components securityComponents() {
         return new Components()

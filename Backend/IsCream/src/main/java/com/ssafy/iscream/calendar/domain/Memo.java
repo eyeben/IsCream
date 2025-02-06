@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public class Memo extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int memoId;
     @NotNull
     int childId;
