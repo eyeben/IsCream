@@ -38,15 +38,11 @@ public class PostService {
                 .user(user)
                 .build();
 
-        Integer postId = postRepository.save(post).getPostId();
+        Post savePost = postRepository.save(post);
 
-        if (postId == null) {
-            throw new DataException(ErrorCode.DATA_SAVE_FAILED);
-        }
+        saveImage(savePost, files); // 게시글 이미지 저장
 
-        saveImage(post, files); // 게시글 이미지 저장
-
-        return postId;
+        return savePost.getPostId();
     }
 
     // 게시글 수정

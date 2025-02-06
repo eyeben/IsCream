@@ -41,13 +41,9 @@ public class CommentService {
                 .parentComment(parent)
                 .build();
 
-        Integer commentId = commentRepository.save(comment).getCommentId();
+        Comment saveComment = commentRepository.save(comment);
 
-        if (commentId == null) {
-            throw new DataException(ErrorCode.DATA_SAVE_FAILED);
-        }
-
-        return commentId;
+        return saveComment.getCommentId();
     }
 
     // 댓글/대댓글 수정
