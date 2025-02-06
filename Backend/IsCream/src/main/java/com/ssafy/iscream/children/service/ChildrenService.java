@@ -5,6 +5,11 @@ import com.ssafy.iscream.children.dto.req.ChildrenCreateReq;
 import com.ssafy.iscream.children.dto.req.ChildrenUpdateReq;
 import com.ssafy.iscream.children.dto.res.ChildrenGetRes;
 import com.ssafy.iscream.children.repository.ChildRepository;
+import com.ssafy.iscream.common.exception.ErrorCode;
+import com.ssafy.iscream.common.exception.NotFoundException;
+import com.ssafy.iscream.common.exception.UnauthorizedException;
+import com.ssafy.iscream.common.response.ResponseData;
+import com.ssafy.iscream.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -47,20 +52,30 @@ public class ChildrenService {
 
 
     public void updateChildren(Integer userId, ChildrenUpdateReq childrenUpdateReq) {
-        Child childOriginal = childRepository.findById(childrenUpdateReq.getChildId()).orElse(null);
-        if (childOriginal != null && childOriginal.getUserId() == userId) {
-            Child childNew = Child.builder()
-                    .nickname(childrenUpdateReq.getNickname())
-                    .birthDate(childrenUpdateReq.getBirthDate())
-                    .gender(childrenUpdateReq.getGender())
-                    .build();
-            childRepository.save(childNew);
+        Child childOriginal = childRepository.findById(childrenUpdateReq.getChildId())
+                .orElseThrow(() -> new NotFoundException(new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null)));
+
+        if (!userId.equals(childOriginal.getUserId())) {
+            throw new UnauthorizedException(new ResponseData<>((ErrorCode.DATA_FORBIDDEN_ACCESS.getCode()),ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
         }
+
+        // 기존 엔티티 수정
+        childOriginal.updateChild(childrenUpdateReq.getNickname(), childrenUpdateReq.getBirthDate(), childrenUpdateReq.getGender());
 
     }
 
 
+
     public void deleteChildren(Integer userId, Integer childrenId) {
-        childRepository.findById(childrenId).ifPresent(childRepository::delete);
+        Child childOriginal = childRepository.findById(childrenId)
+                .orElseThrow(() -> new NotFoundException(
+                        new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null)));
+
+        if (!userId.equals(childOriginal.getUserId())) {
+            throw new UnauthorizedException(
+                    new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
+        }
+
+        childRepository.delete(childOriginal);
     }
 }
