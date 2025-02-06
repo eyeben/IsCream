@@ -3,6 +3,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import axios, { AxiosError } from "axios";
 import LoginLogo from "../../assets/icons/login_logo.png";
 import GoogleLogo from "../../assets/icons/google_logo.png";
+import LongButton from "../../components/button/LongButton"; // ✅ 버튼 컴포넌트 추가
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -81,12 +82,16 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button
-          className="w-full p-3 bg-green-500 text-white rounded hover:bg-green-600"
+
+        {/* ✅ 기존 버튼을 LongButton으로 변경 */}
+        <LongButton
+          type="submit"
+          color="green"
+          className="w-full p-3 rounded hover:bg-green-600 text-base"
           onClick={handleLogin}
         >
           로그인
-        </button>
+        </LongButton>
       </div>
 
       {error && <p className="text-red-500 mt-2">{error}</p>}
