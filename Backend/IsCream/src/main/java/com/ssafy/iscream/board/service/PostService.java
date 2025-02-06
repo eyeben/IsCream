@@ -99,29 +99,26 @@ public class PostService {
     }
 
     // 게시글 목록 조회
-    public PostList getPostList(User user, Integer page, Integer size) {
-        int totalCount = (int) postRepository.count();
+    public PostList getPostList(User user, Integer lastId, Integer size) {
+        Pageable pageable = PageRequest.of(0, size);
 
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Post> posts;
 
-        Page<Post> postPage = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+        if (lastId == null) {
+            posts = postRepository.findPost(pageable);
+        } else {
+            posts = postRepository.findPostByLastId(lastId, pageable);
+        }
 
-        List<PostList.PostInfo> postInfoList = postPage.getContent().stream()
-                .map(post -> new PostList.PostInfo(post, isUserLiked(post, user)))
-                .collect(Collectors.toList());
+        boolean hasNext = posts.hasNext();
 
-        return PostList.of(postInfoList, (int) postPage.getTotalElements(), pageable.getPageNumber() + 1, pageable.getPageSize());
+        List<PostList.PostInfo> postList = posts.stream()
+                .map(post -> new PostList.PostInfo(post,isUserLiked(post, user)))
+                .toList();
 
+        Integer newLastId = !postList.isEmpty() ? postList.get(postList.size() - 1).postId() : null;
 
-//        int offset = (page - 1) * size;
-//
-//        List<Post> postList = postRepository.findPostsWithPagination(offset, size);
-//
-//        List<PostList.PostInfo> postInfoList = postList.stream()
-//                .map(post -> new PostList.PostInfo(post,isUserLiked(post, user)))
-//                .toList();
-//
-//        return PostList.of(postInfoList, totalCount, page, postList.size());
+        return PostList.of(newLastId, postList.size(), hasNext, postList);
     }
 
     // 메인 페이지 게시글 조회

@@ -10,11 +10,10 @@ import java.util.List;
 
 @Builder @Getter
 public class PostList {
-    private Integer totalCount;
-    private Integer page;
+    private Integer lastId;
     private Integer size;
-    private Boolean isEnd;
-    private List<PostInfo> list;
+    private Boolean hasNext;
+    private List<PostInfo> info;
 
     public record PostInfo(
             Integer postId,
@@ -42,13 +41,13 @@ public class PostList {
         }
     }
 
-    public static PostList of(List<PostInfo> list, int totalCount, int page, int size) {
+    public static PostList of(Integer lastId, Integer size,
+                              Boolean hasNext, List<PostInfo> info) {
         return PostList.builder()
-                .totalCount(totalCount)
-                .page(page)
+                .lastId(lastId)
                 .size(size)
-                .isEnd(page * size >= totalCount)
-                .list(list)
+                .hasNext(hasNext)
+                .info(info)
                 .build();
     }
 

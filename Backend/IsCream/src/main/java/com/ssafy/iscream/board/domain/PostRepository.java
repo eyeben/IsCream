@@ -23,9 +23,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     List<Post> findTop5ByOrderByCreatedAtDesc();
 
-    @Query("SELECT p FROM Post p ORDER BY p.createdAt DESC")
-    List<Post> findPostsWithPagination(@Param("offset") int offset, @Param("size") int size);
+    @Query("SELECT p FROM Post p ORDER BY p.createdAt DESC, p.postId DESC")
+    Page<Post> findPost(Pageable pageable);
 
-    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    @Query("SELECT p FROM Post p WHERE p.postId < :lastId ORDER BY p.createdAt DESC, p.postId DESC")
+    Page<Post> findPostByLastId(@Param("lastId") Integer lastId, Pageable pageable);
 
 }
