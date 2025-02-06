@@ -99,7 +99,7 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
 
         {/* 비밀번호 찾기 & 회원가입 */}
         <div className="mt-4 flex items-center w-full justify-center">
-          <a href="/forgot-password" className="hover:underline mr-2">비밀번호 찾기</a>
+          <a href="/find-password" className="hover:underline mr-2">비밀번호 찾기</a>
           <span className="mx-2">|</span>
           <a href="/signup" className="hover:underline ml-2">회원가입</a>
         </div>
