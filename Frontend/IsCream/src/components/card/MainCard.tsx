@@ -20,7 +20,7 @@ const MainCard = ({ image, title, to }: MainCardProps) => {
         </div>
 
         {/* 텍스트 영역 */}
-        <div className="bg-[#009E28] w-[99%] py-0.5 rounded-lg flex items-center justify-center">
+        <div className="bg-[#009E28] w-[99%] py-0.5 rounded-[15px] flex items-center justify-center">
           <p className="text-[10px] sm:text-xs md:text-sm text-white overflow-hidden whitespace-nowrap text-ellipsis px-2">
             {title}
           </p>

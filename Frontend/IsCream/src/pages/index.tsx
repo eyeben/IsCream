@@ -4,5 +4,8 @@ export { default as ChangeInfo } from "./mypage/ChangeInfo";
 export { default as LoginPage } from "./login/LoginPage";
 export { default as MyPage } from "./MyPage";
 export { default as MainPage } from "./MainPage";
-export { default as BoardMain } from "./baord/BoardMain";
-export { default as PDFDownload} from "./mypage/PDFDownload"
+export { default as PDFDownload } from "./mypage/PDFDownload";
+export { default as BoardPage } from "./baord/BoardPage";
+export { default as BoardCreatePage } from "./baord/BoardCreatePage";
+export { default as BoardEditPage } from "./baord/BoardEditPage";
+export { default as BoardDetailPage } from "./baord/BoardDetailPage";
