@@ -11,6 +11,7 @@ import com.ssafy.iscream.common.exception.MinorException.*;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class CommentService {
     }
 
     // 댓글/대댓글 수정
+    @Transactional
     public void updateComment(Integer userId, Integer commentId, String content) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
