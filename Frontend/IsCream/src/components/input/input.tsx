@@ -76,7 +76,7 @@ const Input = ({
                     {withButton && (
                         <button
                             onClick={onButtonClick}
-                            className="px-2 py-0 bg-green-600 text-white rounded hover:bg-green-700"
+                            className="px-3 py-1 bg-green-600 text-white text-xs rounded-[15px] hover:bg-green-700"
                         >
                             {buttonText}
                         </button>

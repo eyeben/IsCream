@@ -16,15 +16,17 @@ const ProfileHeader = ({ profileImage, profileNickname }: ProfileHeaderProps) =>
     return (
         <>
             <div className='w-full flex justify-center'>
-                <div className='max-w-[706px] w-[95%] mx-auto'>
-                    <div className="flex items-center p-4 text-xl">
-                        <img 
-                            src={profileImage} 
-                            alt="Profile"
-                            className="w-12 h-12 rounded-full w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200" />
-                        <span className="ml-4">{profileNickname}님</span>
+                <div className='w-full max-w-[706px] w-[95%] mx-auto px-3 my-3'>
+                    <div className="flex justify-between text-xl">
+                        <div className='flex items-center'>
+                            <img 
+                                src={profileImage} 
+                                alt="Profile"
+                                className="w-12 h-12 rounded-full w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200" />
+                            <span className="ml-4 text-[25px]">{profileNickname}님</span>
+                        </div>
                         <button 
-                            className="ml-auto"
+                            className="ml-auto m-3"
                             onClick={handleClick}>&gt;</button>
                     </div>
                 </div>
