@@ -25,6 +25,7 @@ public class ChildrenService {
 
     public List<ChildrenGetRes> getChildren(Integer userId) {
         List<Child> children = childRepository.findAllByUserId(userId);
+
         List<ChildrenGetRes> childrenGetResList = new ArrayList<>();
         for (Child child : children) {
             ChildrenGetRes childrenGetRes = ChildrenGetRes.builder()
@@ -43,6 +44,7 @@ public class ChildrenService {
 
     public void createChildren(Integer userId, ChildrenCreateReq childrenCreateReq) {
         Child child = Child.builder()
+                .userId(userId)
                 .nickname(childrenCreateReq.getNickname())
                 .birthDate(childrenCreateReq.getBirthDate())
                 .gender(childrenCreateReq.getGender())
@@ -59,8 +61,8 @@ public class ChildrenService {
             throw new UnauthorizedException(new ResponseData<>((ErrorCode.DATA_FORBIDDEN_ACCESS.getCode()),ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
         }
 
-        // 기존 엔티티 수정
         childOriginal.updateChild(childrenUpdateReq.getNickname(), childrenUpdateReq.getBirthDate(), childrenUpdateReq.getGender());
+        childRepository.save(childOriginal);
 
     }
 
