@@ -88,7 +88,7 @@ const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
       <div className="flex justify-center">
         <div className="w-[95%] flex justify-end">
           <button
-            className="w-1/3 bg-[#009E28] rounded text-white p-1 my-5"
+            className="w-1/3 bg-[#009E28] rounded-[15px] text-white p-1 my-5"
             onClick={() => console.log("비밀번호 변경하기 버튼 클릭")}
           >
             비밀번호 변경하기 &gt;

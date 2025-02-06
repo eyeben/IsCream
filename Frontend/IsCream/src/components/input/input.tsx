@@ -1,4 +1,4 @@
-// 사용방법법
+// 사용방법
 // <Input
 //         placeholder='hello@example.com'
 //         type='email'
@@ -18,7 +18,6 @@ import { Eye, EyeOff } from 'lucide-react';
 
 
 interface InputProps {
-
     placeholder?: string;
     type?: 'email' | 'tel' | 'text' | 'calendar' | 'password';
     required?: boolean;
@@ -31,15 +30,15 @@ interface InputProps {
 }
 
 const Input = ({
-    placeholder = '',
-    type = 'email',
-    required = false,
-    className='',
-    withButton = false,
-    buttonText = '중복 확인',
-    onButtonClick,
-    value,
-    onChange
+  placeholder = "",
+  type = "email",
+  required = false,
+  className = "",
+  withButton = false,
+  buttonText = "중복 확인",
+  onButtonClick,
+  value,
+  onChange,
 }: InputProps) => {
     
     const [showPassword, setShoePassword] = useState(false);
@@ -76,7 +75,7 @@ const Input = ({
                     {withButton && (
                         <button
                             onClick={onButtonClick}
-                            className="px-2 py-0 bg-green-600 text-white rounded hover:bg-green-700"
+                            className="px-3 py-1 bg-green-600 text-white text-xs rounded-[15px] hover:bg-green-700"
                         >
                             {buttonText}
                         </button>

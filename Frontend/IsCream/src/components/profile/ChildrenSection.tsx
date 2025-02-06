@@ -13,7 +13,7 @@ interface ChildrenSectionProps{
 
 const ChildrenSection = ({children, onAddChild, onEditChild, onDeleteChild}: ChildrenSectionProps) => (
     <div className="w-full flex justify-center">
-        <div className="w-full max-w-[706px] p-3 my-3 bg-white border border-gray-300 rounded items-center">
+        <div className="w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center">
             <div className="flex justify-between">
                 <div className="m-3 text-xl">
                     자녀 정보
