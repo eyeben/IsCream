@@ -1,5 +1,6 @@
 import BarChart from "../chart/BarChart";
 import Report from "../../components/report/Report"
+
 const PAT = () => (
     <div className='w-full flex justify-center'>
         <div className='w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center'>
