@@ -1,3 +1,4 @@
+import LogoutButton from "../components/profile/LogoutButton";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ChildrenSection from "../components/profile/ChildrenSection";
 import ChildModal from "../components/modal/ChildModal";
@@ -82,6 +83,9 @@ const MyPage: React.FC = () => {
   return (
       <>
         <div>
+            {/* 로그아웃 */}
+            <LogoutButton />
+
             {/* 프로필 이미지 영역 */}
             <ProfileHeader 
                 profileImage={userData.profileImage}
