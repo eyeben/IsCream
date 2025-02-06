@@ -4,6 +4,7 @@ import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.domain.request.HtpTestCreateReq;
 import com.ssafy.iscream.htpTest.domain.request.HtpTestDiagnosisReq;
+import com.ssafy.iscream.htpTest.domain.request.HtpTestReq;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
 import com.ssafy.iscream.s3.service.S3Service;
 import com.ssafy.iscream.user.domain.User;
@@ -47,7 +48,7 @@ public class HtpTestService {
     }
 
     // house, tree, male, female
-    public String htpTestCycle(User user, HtpTestCreateReq req) {
+    public String htpTestCycle(User user, HtpTestReq req) {
         String result = "";
         if (req.getType().equals("house")) {
             checkTodayHtpTest(req.getChildId());
@@ -63,21 +64,21 @@ public class HtpTestService {
         return result;
     }
 
-    public void testHouse(User user, HtpTestCreateReq req) {
+    public void testHouse(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setHouseDrawingUrl(url);
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getHouseDrawingUrl()));
     }
 
-    public void testTree(User user, HtpTestCreateReq req) {
+    public void testTree(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setTreeDrawingUrl(url);
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getTreeDrawingUrl()));
     }
 
-    public String testMale(User user, HtpTestCreateReq req) {
+    public String testMale(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setMaleDrawingUrl(url);
@@ -90,7 +91,7 @@ public class HtpTestService {
         return result;
     }
 
-    public String testFemale(User user, HtpTestCreateReq req) {
+    public String testFemale(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setFemaleDrawingUrl(url);
