@@ -2,6 +2,7 @@ export { default as CalendarPage } from "./CalendarPage";
 // export { default as MyReport } from "./mypage/MyReport";
 export { default as ChangeInfo } from "./mypage/ChangeInfo";
 export { default as LoginPage } from "./login/LoginPage";
+export { default as SignUpPage } from "./login/SignupPage";
 export { default as MyPage } from "./MyPage";
 export { default as MainPage } from "./MainPage";
 export { default as PDFDownload } from "./mypage/PDFDownload";
