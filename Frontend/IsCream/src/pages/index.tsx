@@ -10,3 +10,4 @@ export { default as BoardPage } from "./baord/BoardPage";
 export { default as BoardCreatePage } from "./baord/BoardCreatePage";
 export { default as BoardEditPage } from "./baord/BoardEditPage";
 export { default as BoardDetailPage } from "./baord/BoardDetailPage";
+export { default as ChangePassword} from "./mypage/ChangePassword";

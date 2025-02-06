@@ -3,6 +3,7 @@ import LongButton from "../button/LongButton";
 import ProfileFormLabel from "./ProfileFormLabel";
 import RelationButtons from "../../components/profile/RelationButtons";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileFormProps {
   birthDate: string;
@@ -14,7 +15,10 @@ const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedRelation, setSelectedRelation] = useState<string>(''); 
   
+  const navigate = useNavigate();
+
   const handleSubmit = () => {
+
     const formData = {
       nickname,
       phoneNumber,
@@ -89,7 +93,10 @@ const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
         <div className="w-[95%] flex justify-end">
           <button
             className="w-1/3 bg-[#009E28] rounded-[15px] text-white p-1 my-5"
-            onClick={() => console.log("비밀번호 변경하기 버튼 클릭")}
+            onClick={() => {
+              console.log("비밀번호 변경하기 버튼 클릭")
+              navigate('/mypage/changeinfo/password')
+            }}
           >
             비밀번호 변경하기 &gt;
           </button>

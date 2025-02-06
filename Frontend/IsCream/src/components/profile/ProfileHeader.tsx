@@ -10,7 +10,7 @@ const ProfileHeader = ({ profileImage, profileNickname }: ProfileHeaderProps) =>
 
     const handleClick = () => {
         console.log('상세 프로필 설정 페이지 이동');
-        navigate('/mypage/ChangeInfo');
+        navigate('/mypage/changeInfo');
     };
     
     return (

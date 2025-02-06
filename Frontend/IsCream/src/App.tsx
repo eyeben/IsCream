@@ -10,6 +10,7 @@ import {
   CalendarPage,
   MyPage,
   ChangeInfo,
+  ChangePassword,
   MainPage,
   PDFDownload,
   BoardPage,
@@ -35,7 +36,8 @@ function App() {
           <Route path="/board/detail/:postId" element={<BoardDetailPage />} />
           <Route path="/chat" element={<div>채팅</div>} />
           <Route path="/mypage" element={<MyPage />} />
-          <Route path="/mypage/ChangeInfo" element={<ChangeInfo />} />
+          <Route path="/mypage/changeInfo" element={<ChangeInfo />} />
+          <Route path="/mypage/changeInfo/password" element={<ChangePassword />} />
           <Route path="/mypage/PDFDownload" element={<PDFDownload />} />
           {/* <Route path="/mypage" element={<div>마이페이지</div>} /> */}
           {/* 메인 페이지 카드 라우터 추가 */}
