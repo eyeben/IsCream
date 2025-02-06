@@ -16,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className={`relative w-[95%] h-[75px] mx-auto ${className}`}>
+    <div className={`relative h-[75px] mx-auto ${className}`}>
       <div className="relative w-full h-full flex items-center">
         <input
           type="text"

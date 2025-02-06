@@ -3,6 +3,7 @@ import BottomNavigation from "./components/nav/Nav";
 import Header from "./components/header/Header";
 import LoginPage from "./pages/login/LoginPage"; // 경로 확인
 import SignUpPage from "./pages/login/SignupPage";
+// import LoginPage from "./pages/login/LoginPage";
 
 // pages/index.tsx 폴더에 경로를 지정하고, 여기서는 페이지 이름만 가져와서 사용하면 됩니다.
 import {
@@ -10,20 +11,26 @@ import {
   MyPage,
   ChangeInfo,
   MainPage,
-  BoardMain,
-  PDFDownload
+  PDFDownload,
+  BoardPage,
+  BoardCreatePage,
+  BoardEditPage,
+  BoardDetailPage
 } from "./pages";
 
 function App() {
   return (
     <BrowserRouter>
       <Header />
-      <div className="w-[95%] mx-auto pb-20 bg-white mt-15">
-        {/* 공통 스타일을 최상위 div에 적용 */}
+      <div className="w-[95%] mx-auto pb-20 bg-white pt-15 min-h-screen">
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/board" element={<BoardMain />} />
+          {/* 게시판 관련 라우트 */}
+          <Route path="/board" element={<BoardPage />} />
+          <Route path="/board/write" element={<BoardCreatePage />} />
+          <Route path="/board/edit/:postId" element={<BoardEditPage />} />
+          <Route path="/board/detail/:postId" element={<BoardDetailPage />} />
           <Route path="/chat" element={<div>채팅</div>} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/mypage/ChangeInfo" element={<ChangeInfo />} />
