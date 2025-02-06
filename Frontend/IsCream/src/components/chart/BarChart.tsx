@@ -92,9 +92,9 @@ const BarChart: React.FC<BarChartProps> = ({
   return (
     <div  className="w-full flex justify-center">
       <div
-        className={`w-[80%] h-full bg-white flex justify-center${className}`}
+        className={`w-[80%] h-full bg-white flex justify-center ${className}`}
       >
-        <Bar data={chartData} options={options} />
+        <Bar data={chartData} options={options} className="w-full"/>
       </div>
     </div>
   );
