@@ -19,6 +19,7 @@ import {
   FindPasswordPage,
   VerifyEmailPage,
   ResetPasswordPage,
+  ChatPage,
 } from "./pages";
 
 function App() {
@@ -40,7 +41,7 @@ function App() {
           <Route path="/board/detail/:postId" element={<BoardDetailPage />} />
 
           {/* 채팅 */}
-          <Route path="/chat" element={<div>채팅</div>} />
+          <Route path="/chat" element={<ChatPage />} />
 
           {/* 마이페이지 관련 라우트 */}
           <Route path="/mypage" element={<MyPage />} />

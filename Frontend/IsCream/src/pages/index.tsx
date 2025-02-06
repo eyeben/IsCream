@@ -22,3 +22,6 @@ export { default as BoardPage } from "./baord/BoardPage";
 export { default as BoardCreatePage } from "./baord/BoardCreatePage";
 export { default as BoardEditPage } from "./baord/BoardEditPage";
 export { default as BoardDetailPage } from "./baord/BoardDetailPage";
+
+// 🌟 채팅 관련
+export { default as ChatPage } from "./ChatPage"
