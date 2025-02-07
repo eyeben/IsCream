@@ -52,7 +52,7 @@ public class HtpTestService {
         String result = "";
         if (req.getType().equals("house")) {
             checkTodayHtpTest(req.getChildId());
-            init(user);
+            init(user, req);
             testHouse(user, req);
         } else if (req.getType().equals("tree")) {
             testTree(user, req);
@@ -105,8 +105,10 @@ public class HtpTestService {
     }
 
 
-    public void init(User user) {
-        htpTestRepository.save(new HtpTest());
+    public void init(User user, HtpTestReq req) {
+        HtpTest htpTest = new HtpTest();
+        htpTest.setChildId(req.getChildId());
+        htpTestRepository.save(htpTest);
         if (imageMap.containsKey(user.getUserId())) {
             imageMap.get(user.getUserId()).clear();
         } else {
