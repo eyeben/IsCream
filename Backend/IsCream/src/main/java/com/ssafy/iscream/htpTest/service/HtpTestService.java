@@ -2,6 +2,7 @@ package com.ssafy.iscream.htpTest.service;
 
 import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
 import com.ssafy.iscream.common.exception.ErrorCode;
+import com.ssafy.iscream.common.exception.NotFoundException;
 import com.ssafy.iscream.common.exception.UnauthorizedException;
 import com.ssafy.iscream.common.response.ResponseData;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
@@ -9,6 +10,7 @@ import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.time.Month;
@@ -35,4 +37,8 @@ public class HtpTestService {
         return htpTests;
     }
 
+    public HtpTest getByChildIdAndDate(Integer childId, LocalDate selectedDate) {
+        return htpTestRepository.findByChildIdAndDate(childId, selectedDate).orElse(null);
+
+    }
 }

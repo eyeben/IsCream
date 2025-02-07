@@ -29,13 +29,13 @@ public class CalendarController {
     @PostMapping()
     @Operation(summary = "선택된 자녀 달력 출력")
     public ResponseEntity<?> getCalendar(@Login User user, @RequestBody CalendarGetReq calendarGetReq) {
-        return ResponseUtil.success(user.getUserId(), calendarGetReq.getCalendar(calendarGetReq));
+        return ResponseUtil.success(calendarFacade.getCalendar(user.getUserId(), calendarGetReq));
     }
 
     @PostMapping("/detail")
     @Operation(summary = "선택된 자녀 달력 날짜별 정보 출력")
     public ResponseEntity<?> getCalendarDetail(@Login User user,@RequestBody CalendarGetDetailReq calendarGetDetailReq) {
-        return ResponseUtil.success(calendarService.getCalendarDetail(user.getUserId(), calendarGetDetailReq));
+        return ResponseUtil.success(calendarFacade.getCalendarDetail(user.getUserId(), calendarGetDetailReq));
     }
 
 

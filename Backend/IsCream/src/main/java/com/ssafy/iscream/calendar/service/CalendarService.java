@@ -17,6 +17,7 @@ import com.ssafy.iscream.htpTest.domain.HtpTest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
@@ -83,11 +84,20 @@ public class CalendarService {
         }
 
         // 권한 없는 경우
-        if (!memos.isEmpty() && memos.get(0).getUserId().equals(userId)) {
+        if (!memos.isEmpty() && !memos.get(0).getUserId().equals(userId)) {
             throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
         }
 
         return days;
 
+    }
+
+    public Memo getByChildIdDate(Integer childId, LocalDate selectedDate) {
+        Memo memo = memoRepository.findByChildIdAndDate(childId, selectedDate).orElse(null);
+        if(memo != null && memo.getUserId().equals(childId)) {
+            throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
+        }
+
+        return memo;
     }
 }

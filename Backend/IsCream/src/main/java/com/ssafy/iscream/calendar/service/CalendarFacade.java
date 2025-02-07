@@ -1,6 +1,9 @@
 package com.ssafy.iscream.calendar.service;
 
+import com.ssafy.iscream.calendar.domain.Memo;
+import com.ssafy.iscream.calendar.dto.request.CalendarGetDetailReq;
 import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
+import com.ssafy.iscream.calendar.dto.response.CalendarGetDetailRes;
 import com.ssafy.iscream.calendar.dto.response.CalendarGetRes;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.service.HtpTestService;
@@ -16,8 +19,6 @@ import java.util.Map;
 public class CalendarFacade {
     private final CalendarService calendarService;
     private final HtpTestService htpTestService;
-
-    //TODO: getDetail 구현
 
     public Map<Integer, CalendarGetRes> getCalendar(Integer userId, CalendarGetReq calendarGetReq) {
         List<HtpTest> htpTests = htpTestService.getByYearMonth(userId, calendarGetReq);
@@ -47,5 +48,11 @@ public class CalendarFacade {
         }
 
         return calendarGetResMap;
+    }
+
+    public CalendarGetDetailRes getCalendarDetail(Integer userId, CalendarGetDetailReq calendarGetDetailReq) {
+        HtpTest htpTest = htpTestService.getByChildIdAndDate(calendarGetDetailReq.getChildId(),calendarGetDetailReq.getSelectedDate());
+        Memo memo = calendarService.getByChildIdDate(calendarGetDetailReq.getChildId(),calendarGetDetailReq.getSelectedDate());
+        return new CalendarGetDetailRes(htpTest, memo);
     }
 }

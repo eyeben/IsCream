@@ -1,15 +1,32 @@
 package com.ssafy.iscream.calendar.dto.response;
 
+import com.ssafy.iscream.calendar.domain.Memo;
+import com.ssafy.iscream.htpTest.domain.HtpTest;
 import lombok.Data;
 
 @Data
 public class CalendarGetDetailRes {
-    boolean isMemo;
-    boolean isHtp;
+    boolean isMemo = false;
+    boolean isHtp = false;
     String houseUrl;
     String treeUrl;
     String personUrl;
     String report;
     int memoId;
-    String memo;
+    String memoContent;
+
+    public CalendarGetDetailRes(HtpTest htpTest, Memo memo) {
+        if (htpTest != null) {
+            isHtp = true;
+            houseUrl = htpTest.getHouseDrawingUrl();
+            treeUrl = htpTest.getTreeDrawingUrl();
+            personUrl = htpTest.getPersonDrawingUrl();
+            report = htpTest.getAnalysisResult();
+        }
+        if (memo != null) {
+            isMemo = true;
+            memoContent = memo.getContent();
+        }
+
+    }
 }

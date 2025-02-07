@@ -19,4 +19,6 @@ public class CalendarGetRes {
     public void updateIsHtp(boolean isHtp) {
         this.isHtp = isHtp;
     }
+
+
 }
