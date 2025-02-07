@@ -1,6 +1,10 @@
+import LogoutButton from "../components/profile/LogoutButton";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ChildrenSection from "../components/profile/ChildrenSection";
 import ChildModal from "../components/modal/ChildModal";
+import Pdf from "../components/profile/Pdf"
+import PAT from "../components/report/PAT";
+import Personality5 from "../components/report/Personality5";
 import React, { useState } from 'react';
 
 interface MyPageProps{
@@ -79,12 +83,16 @@ const MyPage: React.FC = () => {
   return (
       <>
         <div>
+            {/* 로그아웃 */}
+            <LogoutButton />
+
             {/* 프로필 이미지 영역 */}
             <ProfileHeader 
                 profileImage={userData.profileImage}
                 profileNickname={userData.name}
             />
-
+        
+            {/* 자녀 정보 영역 */}
             <ChildrenSection 
                 children={userData.children || []}
                 onAddChild={handleAddChild}
@@ -92,7 +100,14 @@ const MyPage: React.FC = () => {
                 onDeleteChild={handleDeleteChild}
             />
 
+            {/* 검사결과(PDF) 다운 */}
+            <Pdf />
             
+            {/* 막대그래프 및 보고서 */}
+            <PAT />
+
+            {/* 도넛그래프 및 보고서 */}
+            <Personality5 />
 
         </div>
             

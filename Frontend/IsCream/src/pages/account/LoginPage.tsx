@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import LoginForm from "../components/account/LoginForm";
+import LoginForm from "../../components/account/LoginForm";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const LoginPage: React.FC = () => {
