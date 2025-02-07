@@ -18,10 +18,13 @@ export { default as ChangeInfo } from "./mypage/ChangeInfo";
 export { default as PDFDownload } from "./mypage/PDFDownload";
 
 // 🌟 게시판 관련
-export { default as BoardPage } from "./baord/BoardPage";
-export { default as BoardCreatePage } from "./baord/BoardCreatePage";
-export { default as BoardEditPage } from "./baord/BoardEditPage";
-export { default as BoardDetailPage } from "./baord/BoardDetailPage";
+export { default as CenterPage } from "./map/CenterPage";
+
+// 🌟 게시판 관련
+export { default as BoardPage } from "./board/BoardPage";
+export { default as BoardCreatePage } from "./board/BoardCreatePage";
+export { default as BoardEditPage } from "./board/BoardEditPage";
+export { default as BoardDetailPage } from "./board/BoardDetailPage";
 
 // 🌟 채팅 관련
-export { default as ChatPage } from "./ChatPage"
+export { default as ChatPage } from "./ChatPage";

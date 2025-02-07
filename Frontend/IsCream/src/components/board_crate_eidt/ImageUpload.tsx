@@ -50,7 +50,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           <div className="flex-shrink-0">
             <button
               onClick={handleUploadClick}
-              className="w-30 h-30 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
+              className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
             >
               <div className="text-gray-400">
                 <svg
@@ -72,7 +72,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
           {/* 이미지 미리보기 */}
           {previews.map((preview, index) => (
-            <div key={preview} className="relative flex-shrink-0 w-30 h-30">
+            <div key={preview} className="relative flex-shrink-0 w-24 h-24">
               <img
                 src={preview}
                 alt={`업로드 이미지 ${index + 1}`}
@@ -80,10 +80,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               />
               <button
                 onClick={() => handleDeleteImage(index)}
-                className="absolute top-1 right-1 bg-opacity-50 border border-[#B3B3B3] rounded-full p-1"
+                className="absolute top-1 right-1 bg-black bg-opacity-50 rounded-full p-1"
               >
                 <svg
-                  className="w-4 h-4 text-[#B3B3B3]"
+                  className="w-4 h-4 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

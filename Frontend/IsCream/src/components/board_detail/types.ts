@@ -16,6 +16,19 @@ export interface Post {
   author: Author;
 }
 
+export interface CommentItemProps {
+  comment: Comment;
+  currentUserId?: string;
+  onEdit?: (commentId: number) => void;
+  onDelete?: (commentId: number) => void;
+  onChat?: (userId: string) => void;
+  onReply: () => void;
+  onToggleReplies?: () => void;
+  repliesCount?: number;
+  isRepliesExpanded?: boolean;
+  children?: React.ReactNode;
+  isReply?: boolean;
+}
 export interface Comment {
   commentId: number;
   content: string;
@@ -27,6 +40,12 @@ export interface Comment {
 
 export interface CommentDropdownProps {
   comment: Comment;
+  currentUserId?: string;
+  onEdit?: (commentId: number) => void;
+  onDelete?: (commentId: number) => void;
+  onChat?: (userId: string) => void;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
 export interface DetailActionsProps {
@@ -42,16 +61,25 @@ export interface DetailCommentsProps {
   comments: Comment[];
   onSubmit: (content: string, parentId?: number) => void;
   isCommentFormVisible: boolean;
-  currentUserId?: string; // 현재 로그인한 사용자 ID 추가
-  onEdit?: (commentId: number) => void; // 댓글 수정 기능
-  onDelete?: (commentId: number) => void; // 댓글 삭제 기능
-  onChat?: (userId: string) => void; // 채팅 기능
+  currentUserId?: string;
+  onEdit?: (commentId: number, content: string) => void; // 여기를 수정
+  onDelete?: (commentId: number) => void;
+  onChat?: (userId: string) => void;
 }
 
 export interface DetailContentProps {
   post: Post;
-  currentUserId?: string; // 현재 로그인한 사용자 ID 추가
+  currentUserId?: string; // 추가
   onEdit?: () => void;
   onDelete?: () => void;
-  onChat?: () => void; // 채팅 기능 추가
+  onChat?: (userId: string) => void; // 추가
+}
+
+export interface CommentFormProps {
+  onSubmit: (content: string, parentId?: number) => void;
+  isVisible?: boolean;
+  parentId?: number;
+  onCancel?: () => void;
+  placeholder?: string;
+  imageUrl?: string; // 프로필 이미지 URL
 }
