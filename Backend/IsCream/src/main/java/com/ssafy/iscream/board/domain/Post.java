@@ -45,4 +45,12 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
+    public void increaseViews() {
+        this.viewCount += 1;
+    }
+
+    public void updateViews(int views) {
+        this.viewCount = views;
+    }
+
 }

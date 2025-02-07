@@ -8,6 +8,7 @@ import com.ssafy.iscream.board.service.PostService;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,8 +51,8 @@ public class BoardController {
 
     @Operation(summary = "게시글 상세 조회", tags = "board")
     @GetMapping(value = "/post/{postId}")
-    public ResponseEntity<?> getPost(@PathVariable Integer postId, @Login User user) {
-        return ResponseUtil.success(postService.getPostDetail(postId, user));
+    public ResponseEntity<?> getPost(@PathVariable Integer postId, @Login User user, HttpServletRequest request) {
+        return ResponseUtil.success(postService.getPostDetail(postId, user, request));
     }
 
     @Operation(summary = "게시글 목록 조회 (검색 포함)", tags = "board")
