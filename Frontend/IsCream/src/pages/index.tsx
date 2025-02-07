@@ -28,3 +28,6 @@ export { default as BoardDetailPage } from "./board/BoardDetailPage";
 
 // 🌟 채팅 관련
 export { default as ChatPage } from "./ChatPage";
+
+// 🌟 HTP 검사 (그림판)
+export { default as CanvasPage } from "./CanvasPage";

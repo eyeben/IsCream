@@ -27,7 +27,7 @@ const BottomNavigation: React.FC = () => {
   // Nav 바를 숨길 경로들을 지정
   // 예시: 로그인(/login), 회원가입(/signup) 페이지에서는 Nav 바를 숨기고 싶을 때
   // const excludePaths = ['/login', '/signup', '/register', '/forgot-password'];
-  const excludePaths: string[] = [];
+  const excludePaths: string[] = ['/htp'];
 
   // 현재 경로가 제외 경로에 포함되어 있으면 Nav 바를 숨김
   if (excludePaths.includes(currentPath)) return null;
