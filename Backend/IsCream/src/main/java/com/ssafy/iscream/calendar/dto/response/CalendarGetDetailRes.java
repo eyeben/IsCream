@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 public class CalendarGetDetailRes {
-    boolean isMemo = false;
-    boolean isHtp = false;
+    Boolean isMemo = false;
+    Boolean isHtp = false;
     String houseUrl;
     String treeUrl;
     String personUrl;
     String report;
-    int memoId;
+    Integer memoId;
     String memoContent;
 
     public CalendarGetDetailRes(HtpTest htpTest, Memo memo) {

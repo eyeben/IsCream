@@ -9,8 +9,8 @@ import lombok.Getter;
 public class CalendarGetRes {
 
     Emoji emoji;
-    boolean isMemo;
-    boolean isHtp;
+    Boolean isMemo;
+    Boolean isHtp;
 
     public void updateIsMemo(boolean isMemo) {
         this.isMemo = isMemo;
