@@ -9,7 +9,6 @@ import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.NotFoundException;
 import com.ssafy.iscream.common.exception.UnauthorizedException;
 import com.ssafy.iscream.common.response.ResponseData;
-import com.ssafy.iscream.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
