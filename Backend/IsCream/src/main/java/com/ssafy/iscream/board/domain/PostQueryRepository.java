@@ -50,6 +50,16 @@ public class PostQueryRepository {
         List<Post> posts = query.limit(pageable.getPageSize()).fetch();
 
         return PageableExecutionUtils.getPage(posts, pageable, query::fetchCount);
+    }
 
+    public List<Post> findTop5LikePost() {
+        return queryFactory
+                .select(post)
+                .from(post)
+                .leftJoin(post.postLikes, postLike)
+                .groupBy(post)
+                .orderBy(postLike.count().desc(), post.createdAt.desc())
+                .limit(5)
+                .fetch();
     }
 }

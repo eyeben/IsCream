@@ -3,6 +3,7 @@ package com.ssafy.iscream.comment.service;
 import com.ssafy.iscream.board.domain.Post;
 import com.ssafy.iscream.board.domain.PostRepository;
 import com.ssafy.iscream.comment.domain.Comment;
+import com.ssafy.iscream.comment.domain.CommentQueryRepository;
 import com.ssafy.iscream.comment.domain.CommentRepository;
 import com.ssafy.iscream.comment.dto.request.CommentCreateReq;
 import com.ssafy.iscream.comment.dto.response.CommentList;
@@ -20,6 +21,7 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final CommentQueryRepository commentQueryRepository;
     private final PostRepository postRepository;
 
     // 댓글/대댓글 작성
@@ -74,7 +76,7 @@ public class CommentService {
 
     // 댓글 조회
     public CommentList getComments(Integer postId) {
-        List<Comment> commentList = commentRepository.findAllByPostIdWithReplies(postId);
+        List<Comment> commentList = commentQueryRepository.findCommentByPostId(postId);
 
         return CommentList.of(commentList, commentList.size());
     }
