@@ -23,9 +23,7 @@ public class HtpTestService {
     private final HtpTestRepository htpTestRepository;
 
     public List<HtpTest> getByYearMonth(Integer userId, CalendarGetReq calendarGetReq) {
-        int year = calendarGetReq.getYearMonth().getYear();
-        Month month = calendarGetReq.getYearMonth().getMonth();
-        LocalDateTime startDate = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime startDate = LocalDateTime.of(calendarGetReq.getYear(), calendarGetReq.getMonth(), 1, 0, 0);
         LocalDateTime endDate = startDate.plusMonths(1); // 다음 달 1일 (해당 월의 끝까지 포함)
 
         // 권한 없는 경우

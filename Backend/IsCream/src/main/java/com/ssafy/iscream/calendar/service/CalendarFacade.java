@@ -26,6 +26,7 @@ public class CalendarFacade {
 
         Map<Integer, CalendarGetRes> calendarGetResMap = new HashMap<>();
         for (HtpTest htpTest : htpTests) {
+
             CalendarGetRes calendarGetRes = CalendarGetRes.builder()
                     .emoji(htpTest.getEmoji())
                     .isHtp(true)

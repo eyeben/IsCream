@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-//TODO: 예외 처리 방식 -> 공통 에러 생성 시 수정해야함
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/calendars")

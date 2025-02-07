@@ -27,10 +27,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CalendarService {
-    MemoRepository memoRepository;
-    // TODO: 예외처리 추가해야함
-
-
+    private final MemoRepository memoRepository;
 
     public void createMemo(Integer userId, MemoCreateReq memoCreateReq) {
 
@@ -72,12 +69,10 @@ public class CalendarService {
     }
 
     public List<Integer> getDaysByYearMonth(Integer userId, CalendarGetReq calendarGetReq) {
-        int year = calendarGetReq.getYearMonth().getYear();
-        Month month = calendarGetReq.getYearMonth().getMonth();
-        LocalDateTime startDate = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime startDate = LocalDateTime.of(calendarGetReq.getYear(), calendarGetReq.getMonth(), 1, 0, 0);
         LocalDateTime endDate = startDate.plusMonths(1); // 다음 달 1일 (해당 월의 끝까지 포함)
 
-        List<Memo> memos = memoRepository.findByChildIdAndCreatedAtBetween( calendarGetReq.getChildId(), startDate, endDate);
+        List<Memo> memos = memoRepository.findByChildIdAndCreatedAtBetween(calendarGetReq.getChildId(), startDate, endDate);
         List<Integer> days = new ArrayList<>();
         for (Memo memo : memos) {
             days.add(memo.getCreatedAt().getDayOfMonth());

@@ -24,6 +24,7 @@ public class CalendarGetDetailRes {
             report = htpTest.getAnalysisResult();
         }
         if (memo != null) {
+            memoId = memo.getMemoId();
             isMemo = true;
             memoContent = memo.getContent();
         }

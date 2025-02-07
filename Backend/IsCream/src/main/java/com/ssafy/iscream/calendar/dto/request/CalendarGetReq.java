@@ -7,5 +7,6 @@ import java.time.YearMonth;
 @Data
 public class CalendarGetReq {
     int childId;
-    YearMonth yearMonth;
+    int year;
+    int month;
 }
