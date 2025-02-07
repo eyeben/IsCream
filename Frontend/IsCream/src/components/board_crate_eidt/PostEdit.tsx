@@ -1,4 +1,3 @@
-// PostEdit.tsx
 import React, { useState, FormEvent, useEffect } from "react";
 import { Post } from "../board_detail/types";
 import { PostForm } from "./PostForm";
@@ -9,12 +8,7 @@ import LongButton from "../button/LongButton";
 
 interface PostEditProps {
   post: Post;
-  onSubmit?: (updatedPost: {
-    title: string;
-    content: string;
-    images?: File[];
-    existingImages?: string[];
-  }) => Promise<void>;
+  onSubmit?: (formData: FormData) => Promise<void>;
   onCancel?: () => void;
 }
 
@@ -43,23 +37,24 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSubmit, onCancel }) => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (onSubmit) {
-      // FormData 생성
       const formData = new FormData();
 
-      // post 데이터
-      const postData = {
-        title: title.trim(),
-        content: content.trim(),
-        deleteFiles: "" // 삭제된 이미지 URL 배열
-      };
+      // 기본 필드 추가
+      formData.append("title", title.trim());
+      formData.append("content", content.trim());
 
-      // post 데이터를 JSON으로 추가
-      formData.append("post", JSON.stringify(postData));
-
-      // 새로운 이미지 파일들 추가
+      // 새 이미지 파일 추가
       newImages.forEach((file) => {
-        formData.append("files", file);
+        formData.append("images", file);
       });
+
+      // 기존 이미지 URL 추가
+      formData.append("existingImages", JSON.stringify(existingImages));
+
+      // 삭제된 이미지 URL 계산
+      const deletedImages =
+        post.images?.filter((img) => !existingImages.includes(img)) || [];
+      formData.append("deletedImages", JSON.stringify(deletedImages));
 
       onSubmit(formData);
     }
@@ -72,12 +67,10 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSubmit, onCancel }) => {
     }
   };
 
-  // 기존 이미지 삭제 처리를 위한 ImageUpload props
   const handleImagesChange = (images: File[]) => {
     setNewImages(images);
   };
 
-  // 기존 이미지 삭제
   const handleExistingImageDelete = (indexToDelete: number) => {
     setExistingImages(
       existingImages.filter((_, index) => index !== indexToDelete)
@@ -86,7 +79,6 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSubmit, onCancel }) => {
 
   return (
     <div className="flex flex-col bg-white min-h-screen">
-      {/* 메인 콘텐츠 영역 */}
       <div className="px-4 md:px-6 lg:px-8 flex-1">
         <div className="w-full max-w-4xl mx-auto py-10">
           <PostForm onSubmit={handleSubmit}>
@@ -102,7 +94,6 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSubmit, onCancel }) => {
               />
             </div>
 
-            {/* 기존 이미지 표시 */}
             {existingImages.length > 0 && (
               <div className="mb-4">
                 <div className="flex overflow-x-auto scrollbar-hide gap-2 pb-2">
@@ -141,7 +132,6 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSubmit, onCancel }) => {
               </div>
             )}
 
-            {/* 새 이미지 업로드 */}
             <div className="mt-4">
               <ImageUpload onImagesChange={handleImagesChange} />
             </div>
@@ -149,7 +139,6 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSubmit, onCancel }) => {
         </div>
       </div>
 
-      {/* 하단 버튼 영역 */}
       <div className="sticky bottom-0 w-full bg-white py-4 px-4 md:px-6 lg:px-8 border-t border-gray-200">
         <div className="w-full max-w-3xl mx-auto flex gap-4">
           <button

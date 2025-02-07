@@ -7,47 +7,18 @@ const BoardEditPage = () => {
   const location = useLocation();
   const post = location.state?.post as Post;
 
-  const handleSubmit = async (updatedPost: {
-    title: string;
-    content: string;
-    images?: File[];
-    existingImages?: string[];
-  }) => {
+  // 수정된 핸들러 타입
+  const handleSubmit = async (formData: FormData) => {
     try {
-      // FormData 객체 생성
-      const formData = new FormData();
-
-      // 기본 필드 추가
-      formData.append("title", updatedPost.title);
-      formData.append("content", updatedPost.content);
-
-      // 새 이미지 파일 추가 (다중 파일 업로드 지원)
-      if (updatedPost.images) {
-        updatedPost.images.forEach((file) => {
-          formData.append("images", file); // 서버측에서 배열로 수신
-        });
-      }
-
-      // 기존 이미지 URL 추가 (JSON 문자열화)
-      if (updatedPost.existingImages) {
-        formData.append(
-          "existingImages",
-          JSON.stringify(updatedPost.existingImages)
-        );
-      }
-
-      // API 요청 예시 (실제 엔드포인트로 변경 필요)
       const response = await fetch(`/api/posts/${post.postId}`, {
         method: "PUT",
-        body: formData, // Content-Type 자동 설정
+        body: formData,
         headers: {
-          // JWT 인증 예시 (필요시 추가)
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       });
 
       if (!response.ok) throw new Error("업데이트 실패");
-
       navigate(`/board/${post.postId}`);
     } catch (error) {
       console.error("게시글 수정 중 오류 발생:", error);
@@ -55,7 +26,7 @@ const BoardEditPage = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1); // 이전 페이지로 이동
+    navigate(-1);
   };
 
   if (!post) {
