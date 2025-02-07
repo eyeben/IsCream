@@ -1,4 +1,4 @@
-import PostCreate from "../../components/board_crate/PostCreate";
+import PostCreate from "../../components/board_crate_eidt/PostCreate";
 
 const BoardWritePage = () => {
   return (

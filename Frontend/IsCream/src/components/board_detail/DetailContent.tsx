@@ -1,9 +1,17 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { DetailContentProps } from "./types";
 
-const DetailContent = ({ post, onEdit, onDelete }: DetailContentProps) => {
+const DetailContent = ({
+  post,
+  currentUserId,
+  // onEdit,
+  onDelete,
+  onChat
+}: DetailContentProps) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -20,6 +28,15 @@ const DetailContent = ({ post, onEdit, onDelete }: DetailContentProps) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const isAuthor = currentUserId === post.author.id;
+
+  const handleEditClick = () => {
+    navigate(`/board/edit/${post.postId}`, {
+      state: { post }
+    });
+    setShowDropdown(false);
+  };
 
   return (
     <div className="px-4 py-6">
@@ -54,39 +71,37 @@ const DetailContent = ({ post, onEdit, onDelete }: DetailContentProps) => {
             </svg>
           </button>
 
-          {/* 드롭다운 메뉴
-              드롭다운 글 작성자가 아니면 채팅하기 버튼만 보이기
-              드롭다운 글 작성자면 수정하기, 삭제하기 버튼 보이기 */}
-
           {showDropdown && (
             <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
-              <button
-                onClick={() => {
-                  onDelete?.();
-                  setShowDropdown(false);
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-b-lg"
-              >
-                채팅하기
-              </button>
-              <button
-                onClick={() => {
-                  onEdit?.();
-                  setShowDropdown(false);
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-t-lg"
-              >
-                수정하기
-              </button>
-              <button
-                onClick={() => {
-                  onDelete?.();
-                  setShowDropdown(false);
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 rounded-b-lg"
-              >
-                삭제하기
-              </button>
+              {isAuthor ? (
+                <>
+                  <button
+                    onClick={handleEditClick}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-t-lg"
+                  >
+                    수정하기
+                  </button>
+                  <button
+                    onClick={() => {
+                      onDelete?.();
+                      setShowDropdown(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 rounded-b-lg"
+                  >
+                    삭제하기
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    onChat?.(post.author.id);
+                    setShowDropdown(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-lg"
+                >
+                  채팅하기
+                </button>
+              )}
             </div>
           )}
         </div>
