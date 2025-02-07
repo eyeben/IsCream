@@ -2,6 +2,7 @@ package com.ssafy.iscream.board.controller;
 
 import com.ssafy.iscream.auth.user.Login;
 import com.ssafy.iscream.board.dto.request.PostCreateReq;
+import com.ssafy.iscream.board.dto.request.PostReq;
 import com.ssafy.iscream.board.dto.request.PostUpdateReq;
 import com.ssafy.iscream.board.service.PostService;
 import com.ssafy.iscream.common.util.ResponseUtil;
@@ -23,7 +24,7 @@ public class BoardController {
     private final PostService postService;
 
     @Operation(summary = "게시글 작성", tags = "board")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createPost(@Login User user,
                                         @RequestPart(name = "post") PostCreateReq post,
                                         @RequestPart(required = false) List<MultipartFile> files) {
@@ -31,7 +32,7 @@ public class BoardController {
     }
 
     @Operation(summary = "게시글 수정", tags = "board")
-    @PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/post/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updatePost(@PathVariable Integer postId,
                                         @Login User user,
                                         @RequestPart(name = "post") PostUpdateReq post,
@@ -41,37 +42,34 @@ public class BoardController {
     }
 
     @Operation(summary = "게시글 삭제", tags = "board")
-    @DeleteMapping(value = "/{postId}")
+    @DeleteMapping(value = "/post/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Integer postId, @Login User user) {
         postService.deletePost(postId, user.getUserId());
         return ResponseUtil.success();
     }
 
     @Operation(summary = "게시글 상세 조회", tags = "board")
-    @GetMapping(value = "/{postId}")
+    @GetMapping(value = "/post/{postId}")
     public ResponseEntity<?> getPost(@PathVariable Integer postId, @Login User user) {
         return ResponseUtil.success(postService.getPostDetail(postId, user));
     }
 
-    @Operation(summary = "게시글 목록 조회", tags = "board")
-    @GetMapping
+    @Operation(summary = "게시글 목록 조회 (검색 포함)", tags = "board")
+    @PostMapping
     public ResponseEntity<?> getPosts(@Login User user,
-                                      @RequestParam(required = false) Integer lastId,
-                                      @RequestParam(defaultValue = "0") Integer lastLikeCount,
-                                      @RequestParam(defaultValue = "10") Integer size,
-                                      @RequestParam(defaultValue = "create") String sort) {
-        return ResponseUtil.success(postService.getPostList(user, lastId, lastLikeCount, size, sort));
+                                      @RequestBody PostReq req) {
+        return ResponseUtil.success(postService.getPostList(user, req));
     }
 
     @Operation(summary = "게시글 좋아요", tags = "board")
-    @GetMapping("/{postId}/like")
+    @GetMapping("/post/{postId}/like")
     public ResponseEntity<?> likePost(@PathVariable Integer postId, @Login User user) {
         postService.addPostLike(postId, user);
         return ResponseUtil.success();
     }
 
     @Operation(summary = "게시글 좋아요 취소", tags = "board")
-    @DeleteMapping("/{postId}/like")
+    @DeleteMapping("/post/{postId}/like")
     public ResponseEntity<?> cancelLikePost(@PathVariable Integer postId, @Login User user) {
         postService.deletePostLike(postId, user.getUserId());
         return ResponseUtil.success();

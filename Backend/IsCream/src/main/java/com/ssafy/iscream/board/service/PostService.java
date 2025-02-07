@@ -2,6 +2,7 @@ package com.ssafy.iscream.board.service;
 
 import com.ssafy.iscream.board.domain.*;
 import com.ssafy.iscream.board.dto.request.PostCreateReq;
+import com.ssafy.iscream.board.dto.request.PostReq;
 import com.ssafy.iscream.board.dto.request.PostUpdateReq;
 import com.ssafy.iscream.board.dto.response.PostDetail;
 import com.ssafy.iscream.board.dto.response.PostList;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostService {
 
+    private final PostQueryRepository postQuerydslRepository;
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final PostLikeRepository postLikeRepository;
@@ -98,25 +100,13 @@ public class PostService {
         return new PostDetail(post, user, isUserLiked(post, user));
     }
 
-    // 게시글 목록 조회
-    public PostList getPostList(User user, Integer lastId, Integer lastLikeCount, Integer size, String sort) {
-        Pageable pageable = PageRequest.of(0, size);
+    // 게시글 목록 조회 (검색 포함)
+    public PostList getPostList(User user, PostReq req) {
+        Pageable pageable = PageRequest.of(0, req.getSize());
 
-        Page<Post> posts;
-
-        if (sort.equals("create")) {
-            if (lastId == null) {
-                posts = postRepository.findPost(pageable);
-            } else {
-                posts = postRepository.findPostByLastId(lastId, pageable);
-            }
-        } else {
-            if (lastId == null) {
-                posts = postRepository.findPostByLikes(pageable);
-            } else {
-                posts = postRepository.findPostByLikesAndLastId(lastId, lastLikeCount, pageable);
-            }
-        }
+        Page<Post> posts = postQuerydslRepository
+                .searchPosts(req.getLastId(), req.getLastLikeCount(), req.getSort(),
+                        req.getTitle(), req.getContent(), pageable);
 
         boolean hasNext = posts.hasNext();
 
@@ -131,6 +121,7 @@ public class PostService {
 
         return PostList.of(newLastId, newLikeCount, postList.size(), hasNext, postList);
     }
+
 
     // 메인 페이지 게시글 조회
     public Map<String, List<PostList.PostInfo>> getMainPost(User user) {

@@ -22,22 +22,4 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     List<Post> findTop5ByLikes();
 
     List<Post> findTop5ByOrderByCreatedAtDesc();
-
-    @Query("SELECT p FROM Post p ORDER BY p.createdAt DESC, p.postId DESC")
-    Page<Post> findPost(Pageable pageable);
-
-    @Query("SELECT p FROM Post p WHERE p.postId < :lastId ORDER BY p.createdAt DESC, p.postId DESC")
-    Page<Post> findPostByLastId(@Param("lastId") Integer lastId, Pageable pageable);
-
-    @Query("SELECT p FROM Post p LEFT JOIN PostLike pl ON pl.post = p " +
-            "GROUP BY p ORDER BY COUNT(pl) DESC, p.createdAt DESC, p.postId DESC")
-    Page<Post> findPostByLikes(Pageable pageable);
-
-    @Query("SELECT p FROM Post p LEFT JOIN PostLike pl ON pl.post = p " +
-            "WHERE COUNT(pl) < :lastLikeCount AND p.postId < :lastId GROUP BY p ORDER BY COUNT(pl) DESC, p.createdAt DESC, p.postId DESC")
-    Page<Post> findPostByLikesAndLastId(@Param("lastId") Integer lastId,
-                                                        @Param("lastLikeCount") Integer lastLikeCount,
-                                                        Pageable pageable);
-
-
 }
