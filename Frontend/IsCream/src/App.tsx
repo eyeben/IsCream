@@ -20,7 +20,8 @@ import {
   VerifyEmailPage,
   ResetPasswordPage,
   ChatPage,
-  CenterPage
+  CenterPage,
+  CanvasPage,
 } from "./pages";
 
 function App() {
@@ -61,6 +62,9 @@ function App() {
           <Route path="/find-password" element={<FindPasswordPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+          {/* ✅ HTP 검사 (그림판) 추가 */}
+          <Route path="/htp" element={<CanvasPage />} />
 
           {/* 기타 기능 */}
           <Route path="/ai-analysis" element={<div>AI HTP검사 페이지</div>} />
