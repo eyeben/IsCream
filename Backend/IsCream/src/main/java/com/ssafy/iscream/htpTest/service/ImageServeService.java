@@ -1,5 +1,7 @@
 package com.ssafy.iscream.htpTest.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ssafy.iscream.htpTest.domain.request.HtpTestDiagnosisReq;
 import com.ssafy.iscream.user.domain.User;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,13 @@ public class ImageServeService {
         if (data == null || data.isEmpty()) {
             return "No data to send.";
         }
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.set("files", objectMapper.valueToTree(data));
         try {
             String response = webClient.post()
                     .uri("/ai/predict")  // 엔드포인트 설정
-                    .bodyValue(data)  // JSON 데이터 전송
+                    .bodyValue(jsonObject)  // JSON 데이터 전송
                     .retrieve()
                     .bodyToMono(String.class)  // 응답을 String으로 변환
                     .block();  // 동기적으로 응답 대기 후 반환

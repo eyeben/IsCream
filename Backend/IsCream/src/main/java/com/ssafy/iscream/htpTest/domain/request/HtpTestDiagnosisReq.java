@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class HtpTestDiagnosisReq {
     String time;
     String type;
-    String url;
+    String imageUrl;
 }

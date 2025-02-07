@@ -2,7 +2,6 @@ package com.ssafy.iscream.htpTest.service;
 
 import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
-import com.ssafy.iscream.htpTest.domain.request.HtpTestCreateReq;
 import com.ssafy.iscream.htpTest.domain.request.HtpTestDiagnosisReq;
 import com.ssafy.iscream.htpTest.domain.request.HtpTestReq;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
@@ -85,7 +84,8 @@ public class HtpTestService {
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getMaleDrawingUrl()));
         String result = "";
         if (req.getIndex().equals(4)) {
-            result = imageServeService.sendImageData(user, imageMap.get(user.getUserId()));
+            ArrayList<HtpTestDiagnosisReq> files = imageMap.get(user.getUserId());
+            result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
         }
         return result;
@@ -98,7 +98,8 @@ public class HtpTestService {
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getFemaleDrawingUrl()));
         String result = "";
         if (req.getIndex().equals(4)) {
-            result = imageServeService.sendImageData(user, imageMap.get(user.getUserId()));
+            ArrayList<HtpTestDiagnosisReq> files = imageMap.get(user.getUserId());
+            result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
         }
         return result;
