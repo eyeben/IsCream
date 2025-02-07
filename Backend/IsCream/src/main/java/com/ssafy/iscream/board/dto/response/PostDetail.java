@@ -21,14 +21,14 @@ public record PostDetail(
         UserProfile author,
         String userImageUrl
 ) {
-    public PostDetail(Post post, User user, Boolean userLiked) {
+    public PostDetail(Post post, User user, Boolean userLiked, Integer viewCount) {
         this(
                 post.getPostId(),
                 post.getTitle(),
                 post.getContent(),
                 post.getPostLikes().size(),
                 userLiked,
-                post.getViewCount(),
+                viewCount,
                 extractImageUrls(post),
                 DateUtil.format(post.getCreatedAt()),
                 new UserProfile(post.getUser()),

@@ -104,7 +104,7 @@ public class PostService {
 
         increaseViewPost(post, user, request);
 
-        return new PostDetail(post, user, isUserLiked(post, user));
+        return new PostDetail(post, user, isUserLiked(post, user), getViews(postId));
     }
 
     @Transactional
@@ -115,11 +115,17 @@ public class PostService {
 
         // 24시간 내에 조회한 적이 없을 경우 조회수 증가
         if (Boolean.TRUE.equals(isNotViewed)) {
-            post.increaseViews();
+            incrementViews(post.getPostId());
         }
     }
 
-    public int getView(Integer postId) {
+    public void incrementViews(Integer postId) {
+        String key = "post:views:" + postId;
+        redisTemplate.opsForValue().increment(key);
+    }
+
+
+    public int getViews(Integer postId) {
         String key = "post:views:" + postId;
         Object currentViews = redisTemplate.opsForValue().get(key);
 
@@ -133,7 +139,8 @@ public class PostService {
         return (int) currentViews;
     }
 
-    @Scheduled(cron = "0 */10 * * * ?")
+    // 일정 시간마다 DB에 조회수 저장
+    @Scheduled(cron = "0 */30 * * * ?")
     @Transactional
     public void updateViewCountToDatabase() {
         Set<String> keys = redisTemplate.keys("post:views:*");
@@ -218,18 +225,6 @@ public class PostService {
         return result;
     }
 
-    private void saveImage(Post post, List<MultipartFile> files) {
-        if (files != null && !files.isEmpty()) {
-            List<String> imageUrls = s3Service.uploadImage(files);
-
-            List<PostImage> postImages = imageUrls.stream()
-                    .map(url -> PostImage.builder().imageUrl(url).post(post).build())
-                    .collect(Collectors.toList());
-
-            postImageRepository.saveAll(postImages);
-        }
-    }
-
     // 게시글 좋아요
     public void addPostLike(Integer postId, User user) {
         Post post = postRepository.findById(postId)
@@ -244,6 +239,7 @@ public class PostService {
         postLikeRepository.deleteByPost_PostIdAndUser_UserId(postId, userId);
     }
 
+    // 사용자 좋아요 여부 확인
     private boolean isUserLiked(Post post, User user) {
         if (user == null) {
             return false;
@@ -252,5 +248,17 @@ public class PostService {
         return postLikeRepository.existsByPost_PostIdAndUser_UserId(post.getPostId(), user.getUserId());
     }
 
+    // 게시글 이미지 저장
+    private void saveImage(Post post, List<MultipartFile> files) {
+        if (files != null && !files.isEmpty()) {
+            List<String> imageUrls = s3Service.uploadImage(files);
+
+            List<PostImage> postImages = imageUrls.stream()
+                    .map(url -> PostImage.builder().imageUrl(url).post(post).build())
+                    .collect(Collectors.toList());
+
+            postImageRepository.saveAll(postImages);
+        }
+    }
 
 }
