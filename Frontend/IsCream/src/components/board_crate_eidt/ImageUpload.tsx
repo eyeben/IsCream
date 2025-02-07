@@ -1,100 +1,44 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 
 interface ImageUploadProps {
   maxImages?: number;
-  onImagesChange?: (newImages: File[], deletedUrls: string[]) => void;
-  existingImages?: string[];
+  onImagesChange?: (images: File[]) => void;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   maxImages = 10,
-  onImagesChange,
-  existingImages = []
+  onImagesChange
 }) => {
-  const [newImages, setNewImages] = useState<File[]>([]);
-  const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
-  const [allPreviews, setAllPreviews] = useState<
-    Array<{
-      url: string;
-      isExisting: boolean;
-      originalUrl?: string;
-    }>
-  >([]);
+  const [images, setImages] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    // 기존 이미지를 previews에 추가
-    setAllPreviews(
-      existingImages.map((url) => ({
-        url,
-        isExisting: true,
-        originalUrl: url
-      }))
-    );
-  }, [existingImages]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    const totalImageCount = allPreviews.length + files.length;
-
-    if (totalImageCount > maxImages) {
-      alert(`이미지는 최대 ${maxImages}장까지 업로드 가능합니다.`);
+    if (files.length + images.length > maxImages) {
+      alert(`최대 ${maxImages}장까지 업로드 가능합니다.`);
       return;
     }
 
-    const updatedNewImages = [...newImages, ...files];
-    setNewImages(updatedNewImages);
-
-    const newPreviews = files.map((file) => ({
-      url: URL.createObjectURL(file),
-      isExisting: false
-    }));
-    setAllPreviews((prev) => [...prev, ...newPreviews]);
-
+    const newImages = [...images, ...files];
+    setImages(newImages);
     if (onImagesChange) {
-      onImagesChange(updatedNewImages, deletedImageUrls);
+      onImagesChange(newImages);
     }
+
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+    setPreviews((prev) => [...prev, ...newPreviews]);
   };
 
   const handleDeleteImage = (index: number) => {
-    const targetPreview = allPreviews[index];
-
-    if (targetPreview.isExisting && targetPreview.originalUrl) {
-      // 기존 이미지 삭제 시 URL 저장
-      setDeletedImageUrls((prev) => [...prev, targetPreview.originalUrl!]);
-    } else {
-      // 새로 추가된 이미지 삭제
-      const newImageIndex = allPreviews
-        .slice(0, index)
-        .filter((p) => !p.isExisting).length;
-      setNewImages((prev) => prev.filter((_, i) => i !== newImageIndex));
-    }
-
-    setAllPreviews((prev) => prev.filter((_, i) => i !== index));
-
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
     if (onImagesChange) {
-      if (targetPreview.isExisting && targetPreview.originalUrl) {
-        onImagesChange(newImages, [
-          ...deletedImageUrls,
-          targetPreview.originalUrl
-        ]);
-      } else {
-        const updatedNewImages = newImages.filter((_, i) => {
-          const newImageIndex = allPreviews
-            .slice(0, index)
-            .filter((p) => !p.isExisting).length;
-          return i !== newImageIndex;
-        });
-        onImagesChange(updatedNewImages, deletedImageUrls);
-      }
+      onImagesChange(images.filter((_, i) => i !== index));
     }
   };
 
   const handleUploadClick = () => {
-    if (allPreviews.length >= maxImages) {
-      alert(`이미지는 최대 ${maxImages}장까지 업로드 가능합니다.`);
-      return;
-    }
     fileInputRef.current?.click();
   };
 
@@ -105,9 +49,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           {/* 업로드 버튼 */}
           <div className="flex-shrink-0">
             <button
-              type="button"
               onClick={handleUploadClick}
-              className="w-30 h-30 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
+              className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
             >
               <div className="text-gray-400">
                 <svg
@@ -128,23 +71,19 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           </div>
 
           {/* 이미지 미리보기 */}
-          {allPreviews.map((preview, index) => (
-            <div
-              key={`${preview.url}-${index}`}
-              className="relative flex-shrink-0 w-30 h-30"
-            >
+          {previews.map((preview, index) => (
+            <div key={preview} className="relative flex-shrink-0 w-24 h-24">
               <img
-                src={preview.url}
+                src={preview}
                 alt={`업로드 이미지 ${index + 1}`}
                 className="w-full h-full object-cover rounded-lg"
               />
               <button
-                type="button"
                 onClick={() => handleDeleteImage(index)}
-                className="absolute top-1 right-1 bg-opacity-50 border border-[#333333] rounded-full"
+                className="absolute top-1 right-1 bg-black bg-opacity-50 rounded-full p-1"
               >
                 <svg
-                  className="w-5 h-5 rounded-full text-[#33333] hover:bg-green-600"
+                  className="w-4 h-4 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -164,7 +103,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
       {/* 이미지 개수 표시 */}
       <div className="mt-2 text-right text-sm text-gray-500">
-        {allPreviews.length} / {maxImages} 장
+        {images.length} / {maxImages} 장
       </div>
 
       {/* 숨겨진 파일 입력 */}

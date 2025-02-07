@@ -18,6 +18,9 @@ export { default as ChangeInfo } from "./mypage/ChangeInfo";
 export { default as PDFDownload } from "./mypage/PDFDownload";
 
 // 🌟 게시판 관련
+export { default as CenterPage } from "./map/CenterPage";
+
+// 🌟 게시판 관련
 export { default as BoardPage } from "./board/BoardPage";
 export { default as BoardCreatePage } from "./board/BoardCreatePage";
 export { default as BoardEditPage } from "./board/BoardEditPage";

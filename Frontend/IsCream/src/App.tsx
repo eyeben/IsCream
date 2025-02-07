@@ -20,6 +20,7 @@ import {
   VerifyEmailPage,
   ResetPasswordPage,
   ChatPage,
+  CenterPage
 } from "./pages";
 
 function App() {
@@ -46,7 +47,10 @@ function App() {
           {/* 마이페이지 관련 라우트 */}
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/mypage/changeInfo" element={<ChangeInfo />} />
-          <Route path="/mypage/changeInfo/password" element={<ChangePassword />} />
+          <Route
+            path="/mypage/changeInfo/password"
+            element={<ChangePassword />}
+          />
           <Route path="/mypage/PDFDownload" element={<PDFDownload />} />
 
           {/* 로그인 및 회원가입 */}
@@ -60,9 +64,12 @@ function App() {
 
           {/* 기타 기능 */}
           <Route path="/ai-analysis" element={<div>AI HTP검사 페이지</div>} />
-          <Route path="/parenting-test" element={<div>부모양육태도 검사</div>} />
+          <Route
+            path="/parenting-test"
+            element={<div>부모양육태도 검사</div>}
+          />
           <Route path="/big5-test" element={<div>성격5요인 검사</div>} />
-          <Route path="/find-center" element={<div>센터찾기</div>} />
+          <Route path="/find-center" element={<CenterPage />} />
           <Route path="/recommend" element={<div>추천교육</div>} />
         </Routes>
       </div>
