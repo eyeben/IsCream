@@ -25,7 +25,7 @@ public class HtpTestController {
     @PostMapping(path = "/img", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "Htp Test 수행 4번해야함", tags = "htp")
     public ResponseEntity<?> img(@Login User user,
-                                 @RequestPart HtpTestCreateReq req,
+                                 @RequestPart(name = "htp") HtpTestCreateReq req,
                                  @RequestPart(required = false) MultipartFile file) {
         HtpTestReq htpTestReq = new HtpTestReq(
                 req.getChildId(),
