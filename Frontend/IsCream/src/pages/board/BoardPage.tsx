@@ -1,4 +1,4 @@
-import SearchBar from "../../components/SearchBar";
+import SearchBar from "../../components/Search/SearchBar";
 import BoardMain from "../../components/board/BoardMain";
 import PostCreatButton from "../../components/board/PostCreateButton";
 
