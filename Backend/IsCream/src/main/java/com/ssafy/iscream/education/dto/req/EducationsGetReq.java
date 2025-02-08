@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class EducationsGetReq {
-    Boolean recommand;
+    Boolean recommend;
     Integer childId;
 }

@@ -28,7 +28,7 @@ public class EducationFacade {
 
         List<EducationsGetRes> educationsGetResList = new ArrayList<>();
 
-        if (educationsGetReq.getRecommand()){
+        if (educationsGetReq.getRecommend()){
             // 권한 체크
             Child child = childrenService.getById(educationsGetReq.getChildId());
             if(!child.getUserId().equals(userId)){
