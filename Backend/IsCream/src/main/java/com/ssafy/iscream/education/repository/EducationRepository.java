@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface EducationRepository extends JpaRepository<Integer, Education> {
+public interface EducationRepository extends JpaRepository<Education, Integer> {
     List<EducationsGetRes> findAllByEmoji(Emoji emoji);
 }
