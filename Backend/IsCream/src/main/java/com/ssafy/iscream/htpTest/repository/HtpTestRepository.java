@@ -25,6 +25,4 @@ public interface HtpTestRepository extends JpaRepository<HtpTest, Integer> {
     );
 
     Optional<HtpTest> findFirstByChildIdOrderByCreatedAtDesc(Integer childId);
-
-
 }
