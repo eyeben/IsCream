@@ -39,4 +39,8 @@ public class HtpTestService {
         return htpTestRepository.findByChildIdAndDate(childId, selectedDate).orElse(null);
 
     }
+
+    public HtpTest getLastHtpTest(Integer childId) {
+        return htpTestRepository.findFirstByChildIdOrderByCreatedAtDesc(childId).orElse(null);
+    }
 }

@@ -29,17 +29,19 @@ public class EducationFacade {
         List<EducationsGetRes> educationsGetResList = new ArrayList<>();
 
         if (educationsGetReq.getRecommand()){
+            // 권한 체크
             Child child = childrenService.getById(educationsGetReq.getChildId());
             if(!child.getUserId().equals(userId)){
                 throw new UnauthorizedException(new ResponseData<>((ErrorCode.DATA_FORBIDDEN_ACCESS.getCode()),ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
             }
+            // 최신 htp 불러오기
             HtpTest htpTest = htpTestService.getLastHtpTest(educationsGetReq.getChildId());
-
             if (htpTest != null){
                 Emoji emoji = htpTest.getEmoji();
                 educationsGetResList = educationService.getByEmoji(emoji);
             }
         }
+        // htp 없으면 전체 반환
         if (educationsGetResList.isEmpty())
             educationsGetResList = educationService.getAll();
 
