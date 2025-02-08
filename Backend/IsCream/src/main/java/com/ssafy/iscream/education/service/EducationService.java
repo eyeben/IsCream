@@ -17,7 +17,12 @@ public class EducationService {
 
     private final EducationRepository educationRepository;
     public List<EducationsGetRes> getByEmoji(Emoji emoji) {
-        return educationRepository.findAllByEmoji(emoji);
+        List<Education> educationList = educationRepository.findAllByEmoji(emoji);
+        List<EducationsGetRes> educationsGetResList = new ArrayList<>();
+        for(Education education : educationList){
+            educationsGetResList.add(new EducationsGetRes(education));
+        }
+        return educationsGetResList;
     }
 
     public List<EducationsGetRes> getAll() {
