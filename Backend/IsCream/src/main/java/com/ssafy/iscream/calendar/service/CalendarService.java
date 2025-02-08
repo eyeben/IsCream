@@ -86,7 +86,7 @@ public class CalendarService {
 
     public Memo getByChildIdDate(Integer userId, Integer childId, LocalDate selectedDate) {
         Memo memo = memoRepository.findByChildIdAndDate(childId, selectedDate).orElse(null);
-        if(memo != null && memo.getUserId().equals(userId)) {
+        if(memo != null && !memo.getUserId().equals(userId)) {
             throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
         }
 

@@ -27,6 +27,7 @@ public class EducationFacade {
     public List<EducationsGetRes> getEducations(Integer userId, EducationsGetReq educationsGetReq) {
 
         List<EducationsGetRes> educationsGetResList = new ArrayList<>();
+
         if (educationsGetReq.getRecommand()){
             Child child = childrenService.getById(educationsGetReq.getChildId());
             if(!child.getUserId().equals(userId)){
