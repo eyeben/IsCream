@@ -5,12 +5,41 @@ import DetailActions from "../../components/board_detail/DetailAction";
 import DetailComments from "../../components/board_detail/DetailComments";
 import { boardData } from "../../mock/board";
 
+// 🔹 Post 타입 정의
+interface Author {
+  id: number;
+  nickname: string;
+  imageUrl: string;
+}
+
+interface Comment {
+  commentId: number;
+  parentId?: number;
+  content: string;
+  createdAt: string;
+  author: Author;
+}
+
+interface Post {
+  postId: number;
+  title: string;
+  content: string;
+  likes: number;
+  userLiked: boolean;
+  viewCount: number;
+  images: string[];
+  createAt: string;
+  author: Author;
+  comments: Comment[];
+}
+
 const BoardDetailPage = () => {
-  const [post, setPost] = useState(boardData.currentPost);
+  // 🔹 useState의 초기값을 `Post` 타입으로 설정
+  const [post, setPost] = useState<Post>(boardData.currentPost);
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
 
   const handleLike = () => {
-    setPost((prev) => ({
+    setPost((prev: Post) => ({
       ...prev,
       userLiked: !prev.userLiked,
       likes: prev.userLiked ? prev.likes - 1 : prev.likes + 1
@@ -18,12 +47,10 @@ const BoardDetailPage = () => {
   };
 
   const handleMessage = () => {
-    // 메시지 보내기 로직
     console.log("메시지 보내기 클릭");
   };
 
   const handleCommentSubmit = (content: string, parentId?: number) => {
-    // 댓글 작성 처리 로직
     console.log("댓글 작성:", content, "부모 댓글 ID:", parentId);
   };
 
