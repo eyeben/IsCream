@@ -5,7 +5,8 @@ import ChildModal from "../components/modal/ChildModal";
 import Pdf from "../components/profile/Pdf"
 import PAT from "../components/report/PAT";
 import Personality5 from "../components/report/Personality5";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getUserInfoAPI } from "@/api/mypageAPI";
 
 interface MyPageProps{
     name: string;
