@@ -9,11 +9,11 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # Nginx 설정 파일
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Nginx 설정 파일
       - ./Frontend/build:/usr/share/nginx/html   # React 빌드 파일 경로
       - /etc/letsencrypt:/etc/letsencrypt        # SSL 인증서 경로
     depends_on:
-      - backend-app
+      - backend
       - ai-server
 
   backend:
