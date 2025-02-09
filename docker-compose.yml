@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-   nginx:
+  nginx:
     image: nginx:latest
     container_name: nginx
     restart: always
@@ -14,7 +14,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt        # SSL 인증서 경로
     depends_on:
       - backend
-      - ai-server
+      - ai-server   
 
   backend:
     build:
