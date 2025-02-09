@@ -16,7 +16,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Nginx 설정 복사 (새로운 경로 반영)
-COPY ../nginx.conf /etc/nginx/nginx.conf  # nginx.conf가 루트 디렉토리에 있음
+COPY ../../nginx.conf /etc/nginx/nginx.conf  # nginx.conf가 루트 디렉토리에 있음
 
 # React 빌드 파일을 Nginx 디렉토리에 복사
 COPY --from=build /app/dist /usr/share/nginx/html
