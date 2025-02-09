@@ -13,8 +13,20 @@ services:
       - ./Frontend/IsCream/build:/usr/share/nginx/html       # React 빌드 결과물
       - /etc/letsencrypt:/etc/letsencrypt                   # SSL 인증서 경로
     depends_on:
+      - frontend  
       - backend
-      - ai-server   
+      - ai-server
+
+  frontend:
+    build:
+      context: ./Frontend/IsCream
+      dockerfile: Dockerfile
+    container_name: frontend-app
+    restart: always
+    ports:
+      - "3000:3000"  # 개발용, 배포 시 필요 없으면 삭제
+    volumes:
+      - ./Frontend/IsCream/build:/usr/share/nginx/html  # React 빌드 결과물 공유
 
   backend:
     build:
