@@ -22,6 +22,7 @@ import {
   VerifyEmailPage,
   ResetPasswordPage,
   ChatPage,
+  ChatRoomPage,
   CenterPage,
   CanvasPage,
 } from "./pages";
@@ -46,6 +47,7 @@ function App() {
 
           {/* 채팅 */}
           <Route path="/chat" element={<ChatPage />} />
+          <Route path="/chat/room/:roomId" element={<ChatRoomPage />} />
 
           {/* 마이페이지 관련 라우트 */}
           <Route path="/mypage" element={<MyPage />} />
