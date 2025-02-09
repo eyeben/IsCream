@@ -1,46 +1,19 @@
+// pages/board/BoardDetail.tsx
 import { useState } from "react";
 import DetailContent from "../../components/board_detail/DetailContent";
 import DetailActions from "../../components/board_detail/DetailAction";
 import DetailComments from "../../components/board_detail/DetailComments";
 import { boardData } from "../../mock/board";
 
-// 타입 정의
-interface Author {
-  id: number;
-  nickname: string;
-  imageUrl: string;
-}
-
-interface Comment {
-  commentId: number;
-  parentId?: number;
-  content: string;
-  createdAt: string;
-  author: Author;
-}
-
-interface Post {
-  postId: number;
-  title: string;
-  content: string;
-  likes: number;
-  userLiked: boolean;
-  viewCount: number;
-  images: string[];
-  createAt: string;
-  author: Author;
-  comments: Comment[];
-}
-
 const BoardDetailPage = () => {
-  const [post, setPost] = useState<Post>(boardData.currentPost); // 타입 명시
+  const [post, setPost] = useState(boardData.currentPost);
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
 
   const handleLike = () => {
     setPost((prev) => ({
       ...prev,
       userLiked: !prev.userLiked,
-      likes: prev.userLiked ? prev.likes - 1 : prev.likes + 1,
+      likes: prev.userLiked ? prev.likes - 1 : prev.likes + 1
     }));
   };
 
