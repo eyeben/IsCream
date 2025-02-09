@@ -9,11 +9,11 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Frontend/IsCream/nginx.conf:/etc/nginx/nginx.conf  # 정확한 경로
-      - ./Frontend/IsCream/build:/usr/share/nginx/html       # React 빌드 결과물
-      - /etc/letsencrypt:/etc/letsencrypt                   # SSL 인증서 경로
+      - ./nginx.conf:/etc/nginx/nginx.conf  # 📌 루트 nginx.conf 사용
+      - ./Frontend/IsCream/build:/usr/share/nginx/html  # React 빌드 파일 사용
+      - /etc/letsencrypt:/etc/letsencrypt  # SSL 인증서 경로
     depends_on:
-      - frontend  
+      - frontend  # 📌 frontend가 먼저 실행되어야 함
       - backend
       - ai-server
 
@@ -23,16 +23,17 @@ services:
       dockerfile: Dockerfile
     container_name: frontend-app
     restart: always
-    ports:
-      - "3000:3000"  # 개발용, 배포 시 필요 없으면 삭제
     volumes:
-      - ./Frontend/IsCream/build:/usr/share/nginx/html  # React 빌드 결과물 공유
+      - ./Frontend/IsCream/build:/usr/share/nginx/html  # 📌 React 빌드 결과물 공유
+    depends_on:
+      - backend  # 📌 백엔드 실행 후 프론트 실행 (필요 시)
 
   backend:
     build:
       context: ./Backend/IsCream
       dockerfile: Dockerfile
     container_name: backend-app
+    restart: always
     ports:
       - "8081:8080"
     environment:
@@ -43,6 +44,7 @@ services:
       context: ./AI
       dockerfile: Dockerfile
     container_name: ai-server
+    restart: always
     ports:
       - "8000:8000"
     volumes:
