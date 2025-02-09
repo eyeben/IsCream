@@ -34,7 +34,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ../../nginx.conf:/etc/nginx/nginx.conf
+      - ./Frontend/IsCream/nginx.conf:/etc/nginx/nginx.conf
 
   ai-server:
     build:
