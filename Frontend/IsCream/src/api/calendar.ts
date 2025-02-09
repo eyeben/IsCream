@@ -7,7 +7,7 @@ import {
   CalendarDetailQuery,
   MemoCreate,
   MemoUpdate
-} from "./types";
+} from "../types/calendar";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL
