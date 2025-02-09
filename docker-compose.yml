@@ -23,8 +23,6 @@ services:
       dockerfile: Dockerfile
     container_name: frontend-app
     restart: always
-    volumes:
-      - ./Frontend/IsCream/build:/usr/share/nginx/html  # 📌 React 빌드 결과물 공유
     depends_on:
       - backend  # 📌 백엔드 실행 후 프론트 실행 (필요 시)
 
