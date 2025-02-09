@@ -6,12 +6,11 @@ pipeline {
     }
 
     stages {
-
         stage('Check Environment') {
             steps {
-                sh 'whoami'            // 사용자 확인
-                sh 'git --version'     // Git 버전 확인
-                sh 'echo $PATH'        // PATH 확인
+                sh 'whoami'
+                sh 'git --version'
+                sh 'echo $PATH'
             }
         }
         
@@ -21,13 +20,12 @@ pipeline {
             }
         }
 
-        stage('Set Permissions') {
+        stage('Build Frontend') {
             steps {
-                dir('Backend/IsCream') {
-                    sh 'chmod +x ./gradlew'
-                }
                 dir('Frontend/IsCream') {
-                    sh 'chmod +x ./node_modules/.bin/* || true'
+                    sh 'rm -rf build node_modules package-lock.json'
+                    sh 'npm install'
+                    sh 'npm run build'
                 }
             }
         }
@@ -40,34 +38,14 @@ pipeline {
             }
         }
 
-        stage('Build Frontend') {
-            steps {
-                dir('Frontend/IsCream') {
-                    sh 'rm -rf node_modules package-lock.json'
-                    sh 'npm install'
-                    sh 'npm run build'
-                }
-            }
-        }
-
         stage('Stop Existing Containers') {
             steps {
-                script {
-                    sh '''
-                        docker ps -q --filter "name=backend-app" | xargs -r docker stop
-                        docker ps -aq --filter "name=backend-app" | xargs -r docker rm
-                        docker ps -q --filter "name=frontend-app" | xargs -r docker stop
-                        docker ps -aq --filter "name=frontend-app" | xargs -r docker rm
-                        docker ps -q --filter "name=ai-server" | xargs -r docker stop
-                        docker ps -aq --filter "name=ai-server" | xargs -r docker rm
-                    '''
-                }
+                sh 'docker-compose down || true'
             }
         }
 
         stage('Docker Compose Up') {
             steps {
-                sh 'docker-compose down'
                 sh 'docker-compose up -d --build'
             }
         }
