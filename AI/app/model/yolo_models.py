@@ -15,6 +15,7 @@ def load_model(model_name):
         raise FileNotFoundError(f"Model file not found at {model_path}")
     return YOLO(str(model_path))  # YOLOv8 모델 로드
 
+
 # 모델 로드
 house_model = load_model("house")
 tree_model = load_model("tree")
