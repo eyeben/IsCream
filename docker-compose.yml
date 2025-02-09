@@ -9,12 +9,21 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf          # Root 디렉토리 nginx.conf
-      - ./Frontend/IsCream/build:/usr/share/nginx/html  # React 빌드 파일
-      - /etc/letsencrypt:/etc/letsencrypt           # SSL 인증서 경로
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
+      - frontend
       - backend
       - ai-server
+
+  frontend:
+    build:
+      context: ./Frontend/IsCream
+      dockerfile: Dockerfile
+    container_name: frontend-app
+    restart: always
+    volumes:
+      - ./Frontend/IsCream/build:/usr/share/nginx/html  # 빌드 파일 공유
 
   backend:
     build:
@@ -34,4 +43,4 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - /home/ubuntu/models:/home/ubuntu/models  # 모델 경로 마운트
+      - /home/ubuntu/models:/home/ubuntu/models
