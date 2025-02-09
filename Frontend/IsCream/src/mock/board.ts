@@ -44,6 +44,7 @@ const generatePosts = (count: number) => {
         : [],
     createAt: getRandomDate(),
     author: {
+      id: index + 1, // 🔹 id 필드 추가
       nickname: [
         "행복한엄마",
         "초보아빠",
@@ -71,6 +72,7 @@ const generatePosts = (count: number) => {
         ][commentIndex % 5],
         createdAt: getRandomDate(),
         author: {
+          id: commentIndex + 1, // 🔹 id 필드 추가
           nickname: [
             "공감하는맘",
             "이해하는맘",
@@ -89,6 +91,7 @@ const generatePosts = (count: number) => {
                   content: "도움되는 의견 감사합니다.",
                   createdAt: getRandomDate(),
                   author: {
+                    id: 100 + commentIndex, // 🔹 id 필드 추가
                     nickname: "감사한마음",
                     imageUrl: getRandomProfileImage(index * 100 + commentIndex)
                   }
@@ -115,14 +118,11 @@ export const boardData = {
       getRandomPostImage(2),
       getRandomPostImage(3),
       getRandomPostImage(4),
-      getRandomPostImage(5),
-      getRandomPostImage(6),
-      getRandomPostImage(7),
-      getRandomPostImage(8),
-      getRandomPostImage(9)
+      getRandomPostImage(5)
     ],
     createAt: "2024-02-06",
     author: {
+      id: 1, // 🔹 id 필드 추가
       nickname: "김유정",
       imageUrl: getRandomProfileImage(999)
     },
@@ -133,6 +133,7 @@ export const boardData = {
           "저도 비슷한 경험이 있어요! 전문가와 상담을 해보시는 건 어떨까요?",
         createdAt: "2024-02-07",
         author: {
+          id: 2, // 🔹 id 필드 추가
           nickname: "서건호",
           imageUrl: getRandomProfileImage(998)
         }
@@ -143,6 +144,7 @@ export const boardData = {
         content: "좋은 제안 감사합니다. 상담을 고려해볼게요!",
         createdAt: "2024-02-07",
         author: {
+          id: 1, // 🔹 id 필드 추가
           nickname: "김유정",
           imageUrl: getRandomProfileImage(999)
         }
@@ -153,6 +155,7 @@ export const boardData = {
         content: "저도 같이 가고 싶어요!",
         createdAt: "2024-02-07",
         author: {
+          id: 3, // 🔹 id 필드 추가
           nickname: "박동민",
           imageUrl: getRandomProfileImage(997)
         }
@@ -162,6 +165,7 @@ export const boardData = {
         content: "아이와 함께 이야기를 나눠보는 건 어떨까요?",
         createdAt: "2024-02-07",
         author: {
+          id: 4, // 🔹 id 필드 추가
           nickname: "이재홍",
           imageUrl: getRandomProfileImage(996)
         }
@@ -171,6 +175,7 @@ export const boardData = {
         content: "1등 내공냠냠",
         createdAt: "2024-02-06",
         author: {
+          id: 5, // 🔹 id 필드 추가
           nickname: "권민채",
           imageUrl: getRandomProfileImage(995)
         }
