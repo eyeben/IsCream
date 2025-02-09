@@ -1,5 +1,4 @@
 import { TestType } from './types';
-import { useState } from 'react';
 
 interface TestSelectorProps {
     selectedTests: TestType[];

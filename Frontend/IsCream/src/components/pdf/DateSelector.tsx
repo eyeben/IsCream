@@ -1,5 +1,4 @@
 import { DateRange } from './types';
-import { useState } from 'react';
 import Input from '../input/input';
 
 interface DateSelectorProps {

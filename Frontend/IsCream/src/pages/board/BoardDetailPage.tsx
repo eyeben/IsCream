@@ -4,34 +4,8 @@ import DetailContent from "../../components/board_detail/DetailContent";
 import DetailActions from "../../components/board_detail/DetailAction";
 import DetailComments from "../../components/board_detail/DetailComments";
 import { boardData } from "../../mock/board";
+import { Post } from "@/components/board_detail/types";
 
-// 🔹 Post 타입 정의
-interface Author {
-  id: number;
-  nickname: string;
-  imageUrl: string;
-}
-
-interface Comment {
-  commentId: number;
-  parentId?: number;
-  content: string;
-  createdAt: string;
-  author: Author;
-}
-
-interface Post {
-  postId: number;
-  title: string;
-  content: string;
-  likes: number;
-  userLiked: boolean;
-  viewCount: number;
-  images: string[];
-  createAt: string;
-  author: Author;
-  comments: Comment[];
-}
 
 const BoardDetailPage = () => {
   // 🔹 useState의 초기값을 `Post` 타입으로 설정

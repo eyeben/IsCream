@@ -1,5 +1,5 @@
 export interface Author {
-  id: string; // 작성자 식별을 위한 id 추가
+  id: number; // 작성자 식별을 위한 id 추가
   nickname: string;
   imageUrl: string;
 }
@@ -14,14 +14,15 @@ export interface Post {
   images: string[];
   createAt: string;
   author: Author;
+  comments: Comment[];
 }
 
 export interface CommentItemProps {
   comment: Comment;
-  currentUserId?: string;
+  currentUserId?: number;
   onEdit?: (commentId: number) => void;
   onDelete?: (commentId: number) => void;
-  onChat?: (userId: string) => void;
+  onChat?: (userId: number) => void;
   onReply: () => void;
   onToggleReplies?: () => void;
   repliesCount?: number;
@@ -33,17 +34,17 @@ export interface Comment {
   commentId: number;
   content: string;
   author: Author;
-  parentId: number | null;
+  parentId?: number | undefined;
   createdAt: string;
   updatedAt?: string;
 }
 
 export interface CommentDropdownProps {
   comment: Comment;
-  currentUserId?: string;
+  currentUserId?: number;
   onEdit?: (commentId: number) => void;
   onDelete?: (commentId: number) => void;
-  onChat?: (userId: string) => void;
+  onChat?: (userId: number) => void;
   isOpen: boolean;
   onToggle: () => void;
 }
@@ -61,18 +62,18 @@ export interface DetailCommentsProps {
   comments: Comment[];
   onSubmit: (content: string, parentId?: number) => void;
   isCommentFormVisible: boolean;
-  currentUserId?: string;
+  currentUserId?: number;
   onEdit?: (commentId: number, content: string) => void; // 여기를 수정
   onDelete?: (commentId: number) => void;
-  onChat?: (userId: string) => void;
+  onChat?: (userId: number) => void;
 }
 
 export interface DetailContentProps {
   post: Post;
-  currentUserId?: string; // 추가
+  currentUserId?: number; // 추가
   onEdit?: () => void;
   onDelete?: () => void;
-  onChat?: (userId: string) => void; // 추가
+  onChat?: (userId: number) => void; // 추가
 }
 
 export interface CommentFormProps {

@@ -1,5 +1,5 @@
 import { TestResult } from './types';
-import { FileText, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useState } from 'react';
 
 // 스타일 추가
