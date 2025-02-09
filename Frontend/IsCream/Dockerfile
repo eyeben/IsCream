@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+RUN npm run build --omit=dev
 
 # Nginx 실행 환경
 FROM nginx:alpine
