@@ -1,5 +1,6 @@
 package com.ssafy.iscream.chat.dto;
 
+import com.ssafy.iscream.chat.domain.ChatRoom;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
