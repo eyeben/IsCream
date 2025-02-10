@@ -1,5 +1,5 @@
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/utils/common/queryClient';
+// import { QueryClientProvider } from '@tanstack/react-query';
+// import { queryClient } from '@/utils/common/queryClient';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BottomNavigation from "./components/nav/Nav";
 import Header from "./components/header/Header";
@@ -25,6 +25,10 @@ import {
   ChatRoomPage,
   CenterPage,
   CanvasPage,
+  AiAnalysisPage,
+  CameraPage,
+  PhotoCapturePage,
+  HTPResultsPage,
   Education
 } from "./pages";
 
@@ -70,7 +74,13 @@ function App() {
 
           {/* ✅ HTP 검사 (그림판) 추가 */}
           <Route path="/htp" element={<CanvasPage />} />
-
+          
+          {/* ✅ 새롭게 추가된 HTP 촬영 흐름 */}
+          <Route path="/ai-analysis" element={<AiAnalysisPage />} />
+          <Route path="/photo-capture" element={<PhotoCapturePage />} /> {/* 📌 추가 */}
+          <Route path="/camera" element={<CameraPage />} /> {/* 기존과 동일 */}
+          <Route path="/htp-results" element={<HTPResultsPage />} />
+          
           {/* 기타 기능 */}
           <Route path="/ai-analysis" element={<div>AI HTP검사 페이지</div>} />
           <Route

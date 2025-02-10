@@ -32,4 +32,8 @@ export { default as ChatPage } from "./ChatPage";
 export { default as ChatRoomPage } from "./chat/ChatRoomPage";
 
 // 🌟 HTP 검사 (그림판)
-export { default as CanvasPage } from "./CanvasPage";
+export { default as CanvasPage } from "./htp/CanvasPage";
+export { default as AiAnalysisPage } from "./htp/AiAnalysisPage";
+export { default as CameraPage } from "./htp/CameraPage";
+export { default as PhotoCapturePage } from "./htp/PhotoCapturePage";
+export { default as HTPResultsPage   } from "./htp/HTPResultsPage";
