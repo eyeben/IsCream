@@ -95,6 +95,7 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
                         .requestMatchers("/users/email/check", "/users/nickname/check").permitAll()
+                        .requestMatchers("/ws/**").permitAll()//
                         .anyRequest().authenticated());
 
         http
@@ -125,6 +126,7 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션 관리
+
 
         return http.build();
     }

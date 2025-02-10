@@ -30,6 +30,7 @@ public class RedisConfig {
      * - 메시지가 특정 채널(채팅방)에서 발행되었을 때 이를 감지하여 처리
      * - 기본적으로 채널을 설정하지 않으며, 채팅방이 생성될 때 서비스 레이어에서 동적으로 추가할 예정
      */
+    @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory connectionFactory) {
 
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
