@@ -15,10 +15,12 @@ import lombok.*;
 @AllArgsConstructor
 public class HtpTest extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    int htpTestId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer htpTestId;
+
     @NotNull
-    int childId;
+    Integer childId;
+
     String houseDrawingUrl;
     String treeDrawingUrl;
     String personDrawingUrl;

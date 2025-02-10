@@ -1,4 +1,4 @@
-package com.ssafy.iscream.calendar.domain;
+package com.ssafy.iscream.children.domain;
 
 import com.ssafy.iscream.common.entity.BaseTimeEntity;
 import jakarta.persistence.Entity;
@@ -10,19 +10,25 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class Memo extends BaseTimeEntity {
+public class Child extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer memoId;
-    Integer userId;
     Integer childId;
-    String content;
-    public void updateContent(String content) {
-        this.content = content;
+    Integer userId;
+    String nickname;
+    LocalDate birthDate;
+    Gender gender;
+
+    public void updateChild(String nickname, LocalDate birthDate, Gender gender) {
+        this.nickname = nickname;
+        this.birthDate = birthDate;
+        this.gender = gender;
     }
 }

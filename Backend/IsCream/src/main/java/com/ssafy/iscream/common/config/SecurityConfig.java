@@ -66,12 +66,12 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://70.12.60.176:5173"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://i12a407.p.ssafy.io"));
+                        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
-                        configuration.setExposedHeaders(Arrays.asList("x-access-token", "Set-Cookie"));
+                        configuration.setExposedHeaders(Arrays.asList("access", "Set-Cookie"));
 
                         return configuration;
                     }
