@@ -25,37 +25,22 @@ retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
 
 print("📁 저장된 문서 개수:", vectorstore._collection.count())
 
-# 프롬프트 설정 (RetrievalQA는 {context} 변수를 사용해야 함)
 prompt = PromptTemplate(
     template="""
     당신은 전문적인 HTP(집-나무-사람) 검사 해석을 수행하는 상담사입니다.
-    주어진 검사 결과를 바탕으로 각 요소의 심리적 의미를 분석하여 상세히 설명해주세요.
+    아래 검사 결과를 바탕으로 한글로 심리적 해석을 마크다운 언어로 작성하세요.
 
-    ### **HTP 검사 결과**
+    ### 검사 결과
     {context}
 
-    ### **해석 지침**
-    1. **집 검사 해석**  
-       - 문과 창문의 위치 및 크기  
-       - 지붕, 벽의 구조와 형태  
-    2. **나무 검사 해석**  
-       - 뿌리, 가지, 기둥의 의미  
-    3. **사람 검사 해석**  
-       - 얼굴, 손, 발의 크기와 위치  
-
-    ### **출력 예시**
-    🔹 **집 검사 해석**  
-    - 문이 작고 오른쪽에 위치 → 내향적인 성향  
-    - 창문이 작음 → 외부와의 소통 제한 가능성  
-
-    🔹 **나무 검사 해석**  
-    - 뿌리가 없음 → 정체성 부족 가능성  
-
-    🔹 **사람 검사 해석**  
-    - 얼굴이 작음 → 사회적 위축 가능성  
+    ### 요구사항
+    - 집, 나무, 사람 각각에 대해 심리적 의미를 자세히 분석하세요.
+    - 분석은 간결하고 명확하게 작성하세요.
     """,
-    input_variables=["context"],  # ✅ 반드시 `context` 변수 사용
+    input_variables=["context"]
 )
+
+
 
 # RetrievalQA 체인 생성
 qa_chain = RetrievalQA.from_chain_type(
@@ -70,7 +55,7 @@ qa_chain = RetrievalQA.from_chain_type(
 def process_predictions(query):
     # 문서 검색 수행
     docs = retriever.get_relevant_documents(query)
-
+    print(query)
     if not docs:
         print("❌ 검색된 문서가 없습니다. 벡터 DB를 다시 저장하세요.")
         return "검색된 문서가 없습니다."
