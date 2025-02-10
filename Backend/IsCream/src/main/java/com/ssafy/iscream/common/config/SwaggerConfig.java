@@ -21,11 +21,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(servers = {
-        @Server(url = "https://3.36.67.41:8082", description = "deploy server"),
-        @Server(url = "https://i12a407.p.ssafy.io", description = "deploy server"),
-        @Server(url = "http://localhost:8080", description = "local server"),
-        @Server(url = "http://3.36.67.41:8082", description = "local server"),
-        @Server(url = "http://i12a407.p.ssafy.io:8082", description = "local server")
+        @Server(url = "https://3.36.67.41:8082/api", description = "deploy server"),
+        @Server(url = "https://i12a407.p.ssafy.io/api", description = "deploy server"),
+        @Server(url = "http://localhost:8080/api", description = "local server"),
+        @Server(url = "http://3.36.67.41:8082/api", description = "local server"),
+        @Server(url = "http://i12a407.p.ssafy.io:8082/api", description = "local server")
 })
 public class SwaggerConfig {
 
@@ -126,5 +126,19 @@ public class SwaggerConfig {
                 ));
 
         return paths;
+    }
+    @Bean
+    public OpenApiCustomiser customGlobalPathPrefix() {
+        return openApi -> {
+            // 기존 경로를 가져옵니다.
+            Paths paths = openApi.getPaths();
+            Paths prefixedPaths = new Paths();
+
+            // 각 경로 앞에 "/api"를 추가
+            paths.forEach((path, pathItem) -> prefixedPaths.addPathItem("/api" + path, pathItem));
+
+            // 새로운 경로를 OpenAPI 설정에 적용
+            openApi.setPaths(prefixedPaths);
+        };
     }
 }
