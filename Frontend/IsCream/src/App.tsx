@@ -26,6 +26,10 @@ import {
   ChatRoomPage,
   CenterPage,
   CanvasPage,
+  AiAnalysisPage,
+  CameraPage,
+  PhotoCapturePage,
+  HTPResultsPage,
   Education
 } from "./pages";
 
