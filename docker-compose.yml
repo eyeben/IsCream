@@ -1,7 +1,5 @@
 version: '3.9'
 
-networks:
-  mynetwork:
 
 services:
   nginx:
@@ -44,3 +42,7 @@ services:
       - /home/ubuntu/models:/home/ubuntu/models
     networks:
       - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
