@@ -6,6 +6,15 @@ pipeline {
     }
 
     stages {
+
+        stage('Check Environment') {
+            steps {
+                sh 'whoami'            // 사용자 확인
+                sh 'git --version'     // Git 버전 확인
+                sh 'echo $PATH'        // PATH 확인
+            }
+        }
+        
         stage('Checkout') {
             steps {
                 checkout scm
