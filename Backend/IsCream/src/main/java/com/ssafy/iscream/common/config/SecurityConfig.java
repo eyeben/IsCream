@@ -71,7 +71,7 @@ public class SecurityConfig {
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
-                        configuration.setExposedHeaders(Arrays.asList("x-access-token", "Set-Cookie"));
+                        configuration.setExposedHeaders(Arrays.asList("access", "Set-Cookie"));
 
                         return configuration;
                     }
