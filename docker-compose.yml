@@ -1,8 +1,8 @@
 version: '3.9'
 
 networks:
-  mynetwork:  # 🔹 커스텀 네트워크 정의
-    driver: bridge  # 🌉 Docker의 기본 네트워크 드라이버 사용
+  mynetwork:
+    driver: bridge
 
 services:
   nginx:
@@ -20,7 +20,7 @@ services:
       - backend
       - ai-server
     networks:
-      - mynetwork  # 🔹 같은 네트워크 사용
+      - mynetwork
 
   backend:
     build:
@@ -28,11 +28,11 @@ services:
       dockerfile: Dockerfile
     container_name: backend-app
     ports:
-      - "8081:8080"
+      - "8082:8080"  # 🔹 8082로 변경
     environment:
       SPRING_PROFILES_ACTIVE: prod
     networks:
-      - mynetwork  # 🔹 같은 네트워크 사용
+      - mynetwork
 
   ai-server:
     build:
@@ -44,4 +44,4 @@ services:
     volumes:
       - /home/ubuntu/models:/home/ubuntu/models
     networks:
-      - mynetwork  # 🔹 같은 네트워크 사용
+      - mynetwork
