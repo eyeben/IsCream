@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pat-tests")
+@RequestMapping("/api/pat-tests")
 @Tag(name = "pat", description = "PAT 검사 API")
 public class PatTestController {
 
