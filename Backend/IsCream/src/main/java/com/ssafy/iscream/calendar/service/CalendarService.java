@@ -13,16 +13,13 @@ import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.NotFoundException;
 import com.ssafy.iscream.common.exception.UnauthorizedException;
 import com.ssafy.iscream.common.response.ResponseData;
-import com.ssafy.iscream.htpTest.domain.HtpTest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -87,9 +84,9 @@ public class CalendarService {
 
     }
 
-    public Memo getByChildIdDate(Integer childId, LocalDate selectedDate) {
+    public Memo getByChildIdDate(Integer userId, Integer childId, LocalDate selectedDate) {
         Memo memo = memoRepository.findByChildIdAndDate(childId, selectedDate).orElse(null);
-        if(memo != null && memo.getUserId().equals(childId)) {
+        if(memo != null && !memo.getUserId().equals(userId)) {
             throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
         }
 
