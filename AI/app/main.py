@@ -1,15 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from .routers import yolo_service
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 # FastAPI 애플리케이션 생성
-app = FastAPI()
+app = FastAPI(root_path="/ai")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 모든 도메인 허용
+    allow_origins=["https://i12a407.p.ssafy.io"], 
     allow_credentials=True,  # 인증 정보를 포함한 요청 허용
     allow_methods=["*"],  # 모든 HTTP 메서드 허용
     allow_headers=["*"],  # 모든 HTTP 헤더 허용
