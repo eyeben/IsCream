@@ -1,15 +1,23 @@
-import { DetailActionsProps } from "./types";
+// components/board_detail/DetailActions.tsx
+import React from "react";
 
-const DetailActions = ({
+interface DetailActionsProps {
+  onLike: () => void;
+  onCommentClick: () => void;
+  isLiked: boolean;
+  likeCount: number;
+  commentCount: number;
+}
+
+const DetailActions: React.FC<DetailActionsProps> = ({
   onLike,
   onCommentClick,
   isLiked,
   likeCount,
   commentCount
-}: DetailActionsProps) => {
+}) => {
   return (
     <div className="flex items-center border-b border-[#BEBEBE] space-x-4 px-4 py-3 mb-3">
-      {/* 좋아요 버튼 */}
       <button
         onClick={onLike}
         className={`flex items-center space-x-1 ${isLiked ? "text-red-500" : "text-gray-600"}`}
@@ -30,7 +38,6 @@ const DetailActions = ({
         <span>{likeCount} 좋아요</span>
       </button>
 
-      {/* 댓글 버튼 */}
       <button
         onClick={onCommentClick}
         className="flex items-center space-x-1 text-gray-600"
@@ -50,28 +57,6 @@ const DetailActions = ({
         </svg>
         <span>{commentCount} 댓글</span>
       </button>
-
-      {/* 메시지 보내기 버튼 */}
-      {/* <button
-        onClick={onMessage}
-        className="flex items-center space-x-1 text-gray-600"
-      >
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-          />
-        </svg>
-        <span>채팅</span>
-      </button> */}
     </div>
   );
 };
