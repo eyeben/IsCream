@@ -28,7 +28,7 @@ public class PostQueryRepository {
             predicate.and(post.content.contains(content));
         }
 
-        if (lastId != null) {
+        if (lastId != null && "create".equals(sort)) {
             predicate.and(post.postId.lt(lastId));
         }
 
@@ -42,6 +42,12 @@ public class PostQueryRepository {
             if (lastLikeCount != null) {
                 query.having(postLike.count().loe(Long.valueOf(lastLikeCount)));
             }
+
+            if (lastId != null) {
+                query.having(postLike.count().eq(postLike.count())
+                        .and(post.postId.lt(lastId)));
+            }
+
             query.orderBy(postLike.count().desc(), post.createdAt.desc(), post.postId.desc());
         } else {
             query.orderBy(post.createdAt.desc(), post.postId.desc());
