@@ -64,7 +64,7 @@ public class SwaggerConfig {
     GroupedOpenApi allApi() {
         return GroupedOpenApi.builder()
                 .group("all") // 그룹 이름 지정
-                .pathsToMatch("/users/**", "/board/**", "/comments/**")
+                .pathsToMatch("/users/**", "/board/**", "/comments/**", "/pat-tests/**")
                 .build();
     }
     @Bean
@@ -79,6 +79,14 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("children")
                 .pathsToMatch("/children/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi patApi() {
+        return GroupedOpenApi.builder()
+                .group("pat")
+                .pathsToMatch("/pat-tests/**")
                 .build();
     }
 
@@ -124,4 +132,5 @@ public class SwaggerConfig {
 
         return paths;
     }
+
 }
