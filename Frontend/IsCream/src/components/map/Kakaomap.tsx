@@ -57,7 +57,7 @@ export default function KakaoMap() {
       });
 
       const infoWindow = new kakao.maps.InfoWindow({
-        content: `<div style="padding:10px;"><h4>${center.name}</h4><p>${center.address}</p><p>${center.phone}</p></div>`,
+        content: `<div style="padding:10px; width:200px; height:auto; overflow:hidden; word-wrap:break-word;"><h4>${center.name}</h4><p>${center.address}</p><p>${center.phone}</p></div>`,
         removable: true
       });
 

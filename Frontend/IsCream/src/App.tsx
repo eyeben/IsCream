@@ -25,6 +25,7 @@ import {
   ChatRoomPage,
   CenterPage,
   CanvasPage,
+  Education
 } from "./pages";
 
 function App() {
@@ -78,7 +79,7 @@ function App() {
           />
           <Route path="/big5-test" element={<div>성격5요인 검사</div>} />
           <Route path="/find-center" element={<CenterPage />} />
-          <Route path="/recommend" element={<div>추천교육</div>} />
+          <Route path="/recommend" element={<Education />} />
         </Routes>
       </div>
       <BottomNavigation />
