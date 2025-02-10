@@ -127,18 +127,5 @@ public class SwaggerConfig {
 
         return paths;
     }
-    @Bean
-    public OpenApiCustomiser customGlobalPathPrefix() {
-        return openApi -> {
-            // 기존 경로를 가져옵니다.
-            Paths paths = openApi.getPaths();
-            Paths prefixedPaths = new Paths();
-
-            // 각 경로 앞에 "/api"를 추가
-            paths.forEach((path, pathItem) -> prefixedPaths.addPathItem("/api" + path, pathItem));
-
-            // 새로운 경로를 OpenAPI 설정에 적용
-            openApi.setPaths(prefixedPaths);
-        };
-    }
+    
 }
