@@ -1,4 +1,4 @@
-import { api } from "@/utils/common/axiosInstance";
+import { api } from "../utils/common/axiosInstance";
 import type {
   ApiResponse,
   MainBoardResponse,
@@ -21,6 +21,7 @@ export const boardKeys = {
   mains: () => [...boardKeys.all, "main"] as const,
   main: () => [...boardKeys.mains()] as const
 };
+
 export const boardApi = {
   // 게시글 작성
   createPost: (data: CreatePostRequest) => {

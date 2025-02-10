@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { boardApi, boardKeys } from "@/api/board";
-import type { BoardListRequest } from "@/types/board";
+import { boardApi, boardKeys } from "../../api/board";
+import type { BoardListRequest } from "../../types/board";
 
 export const useBoardList = (initialParams: BoardListRequest) => {
   return useInfiniteQuery({

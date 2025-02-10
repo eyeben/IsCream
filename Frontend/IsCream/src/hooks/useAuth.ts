@@ -21,7 +21,7 @@ export const useAuth = (): AuthHook => {
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  });
 
   const checkAuth = async (): Promise<boolean> => {
     const token = localStorage.getItem("accessToken");
