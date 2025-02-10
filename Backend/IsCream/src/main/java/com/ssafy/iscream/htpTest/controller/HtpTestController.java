@@ -23,13 +23,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class HtpTestController {
     private final HtpTestService htpTestService;
 
+    /**
+     * HTP 테스트 수행 (총 4번 진행해야 함)
+     */
     @PostMapping(path = "/img", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "Htp Test 수행 4번해야함", tags = "htp")
     public ResponseEntity<?> img(@Login User user,
                                  @RequestPart(name = "htp") HtpTestCreateReq req, // JSON 데이터
                                  @Parameter(name = "file")
                                  @RequestPart(name = "file", required = false) MultipartFile file) { // 파일 데이터
-        // 요청 데이터 검증 및 서비스 호출
+        // 요청 데이터를 HtpTestReq 객체로 변환
         HtpTestReq htpTestReq = new HtpTestReq(
                 req.getChildId(),
                 req.getTime(),
@@ -38,9 +41,8 @@ public class HtpTestController {
                 file
         );
 
+        // HTP 테스트 실행 후 결과 반환
         String result = htpTestService.htpTestCycle(user, htpTestReq);
         return ResponseUtil.success(result);
     }
-
-
 }

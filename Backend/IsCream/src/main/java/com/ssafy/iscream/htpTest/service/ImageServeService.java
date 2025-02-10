@@ -13,30 +13,34 @@ import java.util.List;
 public class ImageServeService {
     private final WebClient webClient;
 
+    /**
+     * WebClient를 이용해 AI 서버와 통신할 서비스 객체 생성
+     */
     public ImageServeService(WebClient.Builder webClientBuilder) {
-        // 서버 URL
         this.webClient = webClientBuilder.baseUrl("https://i12a407.p.ssafy.io/ai").build();
     }
 
+    /**
+     * AI 서버에 이미지 데이터를 전송하고 분석 결과를 반환
+     */
     public String sendImageData(User user, List<HtpTestDiagnosisReq> data) {
         if (data == null || data.isEmpty()) {
             return "No data to send.";
         }
+
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.set("files", objectMapper.valueToTree(data));
-        try {
-            String response = webClient.post()
-                    .uri("/ai/predict")  // 엔드포인트 설정
-                    .bodyValue(jsonObject)  // JSON 데이터 전송
-                    .retrieve()
-                    .bodyToMono(String.class)  // 응답을 String으로 변환
-                    .block();  // 동기적으로 응답 대기 후 반환
 
-            return response != null ? response : "No response from server.";
+        try {
+            return webClient.post()
+                    .uri("/ai/predict")
+                    .bodyValue(jsonObject)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
     }
-
 }
