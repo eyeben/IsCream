@@ -79,4 +79,10 @@ public class ChildrenService {
 
         childRepository.delete(childOriginal);
     }
+
+    public Child getById(Integer childId) {
+        return childRepository.findById(childId).orElseThrow(() -> new NotFoundException(
+                new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null)));
+    }
+
 }

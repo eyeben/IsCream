@@ -67,6 +67,7 @@ public class SwaggerConfig {
                 .pathsToMatch("/users/**", "/board/**", "/comments/**")
                 .build();
     }
+
     @Bean
     GroupedOpenApi calendarApi() {
         return GroupedOpenApi.builder()
@@ -74,11 +75,20 @@ public class SwaggerConfig {
                 .pathsToMatch("/calendars/**")
                 .build();
     }
+
     @Bean
     GroupedOpenApi childrenApi() {
         return GroupedOpenApi.builder()
                 .group("children")
                 .pathsToMatch("/children/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi educationApi() {
+        return GroupedOpenApi.builder()
+                .group("education")
+                .pathsToMatch("/educations/**")
                 .build();
     }
 
