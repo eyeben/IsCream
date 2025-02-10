@@ -1,0 +1,108 @@
+package com.ssafy.iscream.noti.service;
+
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.*;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
+import com.ssafy.iscream.common.exception.ErrorCode;
+import com.ssafy.iscream.common.exception.MinorException.*;
+import com.ssafy.iscream.noti.domain.Notify;
+import com.ssafy.iscream.noti.repository.NotifyRepository;
+import com.ssafy.iscream.noti.domain.NotifyType;
+import com.ssafy.iscream.user.domain.User;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.FieldValue;
+
+import java.util.concurrent.ExecutionException;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class NotifyService {
+
+    private final NotifyRepository notificationRepository;
+    private final Firestore db = FirestoreOptions.getDefaultInstance().getService();
+//    private final Firestore firestore;
+
+    // 댓글 푸시 알림 전송
+    @Transactional
+    public void sendCommentNotify(User user) {
+        sendNotification(user, "댓글 알림", "회원님의 게시글에 댓글이 작성되었습니다.", NotifyType.NOTIFY_COMMENT);
+    }
+
+    // TODO: 채팅 푸시 알림 전송
+
+    public void sendNotification(User user, String title, String body, NotifyType type) {
+        String token = null; // TODO: DB에 저장된 토큰 가져오기
+
+        Notification notification = Notification.builder()
+                .setTitle(title)
+                .setBody(body)
+                .build();
+
+        Message message = Message.builder()
+                .setToken(token)  // 푸시 알림을 받을 기기의 FCM 토큰
+                .setNotification(notification)
+                .build();
+
+        // DB에 알림 내역 저장
+        Notify notify = Notify.builder().title(title).content(body).type(type).build();
+        notificationRepository.save(notify);
+
+        try {
+            String result = FirebaseMessaging.getInstance().sendAsync(message).get();
+            log.info(result);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("푸시 알림 전송 실패", e);
+        }
+    }
+
+    // 알림 읽음 처리
+    @Transactional
+    public void updateNotifyStatus(Integer notifyId) {
+        Notify notify = notificationRepository.findById(notifyId)
+                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
+
+        notify.setRead(true);
+    }
+
+    // FCM 토큰 추가/갱신
+    public void addFcmToken(Integer userId, String token) {
+        DocumentReference userRef = db.collection("users").document(String.valueOf(userId));
+
+        // Firestore에 업데이트 요청
+        ApiFuture<WriteResult> future = userRef.update("fcmToken", token); // 토큰 저장
+
+        future.addListener(() -> {
+            try {
+                future.get();
+            } catch (Exception e) {
+                userRef.set(new UserToken(token));
+            }
+        }, Runnable::run);
+    }
+
+    // FCM 토큰 제거
+    public void removeFcmToken(Integer userId) {
+        DocumentReference userRef = db.collection("users").document(String.valueOf(userId));
+        userRef.update("fcmToken", FieldValue.delete());
+    }
+
+    // Firestore에 저장할 데이터 모델
+    static class UserToken {
+        public String fcmToken;
+
+        public UserToken(String fcmToken) {
+            this.fcmToken = fcmToken;
+        }
+    }
+
+    
+
+}

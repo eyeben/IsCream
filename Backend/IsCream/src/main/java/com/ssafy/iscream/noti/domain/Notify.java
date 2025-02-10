@@ -3,21 +3,21 @@ package com.ssafy.iscream.noti.domain;
 import com.ssafy.iscream.common.entity.BaseTimeEntity;
 import com.ssafy.iscream.user.domain.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Notification extends BaseTimeEntity {
+@DynamicUpdate @DynamicInsert
+public class Notify extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer notify_id;
+    private Integer notifyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -29,7 +29,7 @@ public class Notification extends BaseTimeEntity {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    private NotificationType type;
+    private NotifyType type;
 
     private boolean isRead;
 }

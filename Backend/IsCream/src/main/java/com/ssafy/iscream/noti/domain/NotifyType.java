@@ -1,5 +1,5 @@
 package com.ssafy.iscream.noti.domain;
 
-public enum NotificationType {
+public enum NotifyType {
     NEW_MESSAGE, NOTIFY_COMMENT, NOTIFY_CHAT
 }
