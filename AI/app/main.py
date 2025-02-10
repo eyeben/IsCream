@@ -6,7 +6,7 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 # FastAPI 애플리케이션 생성
-app = FastAPI()
+app = FastAPI(root_path="/ai")
 
 app.add_middleware(
     CORSMiddleware,
