@@ -1,3 +1,5 @@
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/utils/common/queryClient';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BottomNavigation from "./components/nav/Nav";
 import Header from "./components/header/Header";
@@ -20,6 +22,7 @@ import {
   VerifyEmailPage,
   ResetPasswordPage,
   ChatPage,
+  ChatRoomPage,
   CenterPage,
   CanvasPage,
   Education
@@ -45,6 +48,7 @@ function App() {
 
           {/* 채팅 */}
           <Route path="/chat" element={<ChatPage />} />
+          <Route path="/chat/room/:roomId" element={<ChatRoomPage />} />
 
           {/* 마이페이지 관련 라우트 */}
           <Route path="/mypage" element={<MyPage />} />
