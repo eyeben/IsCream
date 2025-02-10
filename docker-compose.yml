@@ -19,16 +19,6 @@ services:
     depends_on:
       - backend
       - ai-server
-      - frontend
-    networks:
-      - mynetwork  # 🔹 같은 네트워크 사용
-
-  frontend:
-    build:
-      context: ./Frontend/IsCream
-      dockerfile: Dockerfile
-    container_name: frontend-app
-    restart: always
     networks:
       - mynetwork  # 🔹 같은 네트워크 사용
 
