@@ -1,3 +1,5 @@
+from app.core.rag import process_predictions
+
 def diagnose(predictions):
     """ 모든 분석 결과를 하나의 문자열로 합쳐서 반환 """
     results = []
@@ -12,7 +14,7 @@ def diagnose(predictions):
         elif prediction["type"] == "female":
             results.append(female(prediction))
 
-    return "\n".join(results)  # 최종 문자열 반환
+    return  process_predictions("\n".join(results))
 
 
 def classify_position(cx_norm, cy_norm):

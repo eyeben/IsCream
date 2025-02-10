@@ -6,7 +6,6 @@ import pandas as pd
 from app.schemas.image import PredictionRequest
 from app.model.yolo_models import house_model, tree_model, male_model, female_model
 from app.core.core import diagnose
-
 router = APIRouter()
 
 # 기본 모델 설정 (house_model 사용)
