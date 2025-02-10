@@ -6,6 +6,10 @@ import com.ssafy.iscream.board.dto.request.PostReq;
 import com.ssafy.iscream.board.dto.request.PostUpdateReq;
 import com.ssafy.iscream.board.dto.response.PostDetail;
 import com.ssafy.iscream.board.dto.response.PostList;
+import com.ssafy.iscream.board.repository.PostImageRepository;
+import com.ssafy.iscream.board.repository.PostLikeRepository;
+import com.ssafy.iscream.board.repository.PostQueryRepository;
+import com.ssafy.iscream.board.repository.PostRepository;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.*;
 import com.ssafy.iscream.s3.service.S3Service;
@@ -49,6 +53,8 @@ public class PostService {
                 .content(postReq.getContent())
                 .user(user)
                 .build();
+
+        System.out.println(postReq.getContent());
 
         Post savePost = postRepository.save(post);
 

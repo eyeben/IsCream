@@ -1,5 +1,6 @@
-package com.ssafy.iscream.board.domain;
+package com.ssafy.iscream.board.repository;
 
+import com.ssafy.iscream.board.domain.PostImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

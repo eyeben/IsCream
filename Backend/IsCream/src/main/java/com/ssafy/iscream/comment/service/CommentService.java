@@ -1,7 +1,7 @@
 package com.ssafy.iscream.comment.service;
 
 import com.ssafy.iscream.board.domain.Post;
-import com.ssafy.iscream.board.domain.PostRepository;
+import com.ssafy.iscream.board.repository.PostRepository;
 import com.ssafy.iscream.comment.domain.Comment;
 import com.ssafy.iscream.comment.domain.CommentQueryRepository;
 import com.ssafy.iscream.comment.domain.CommentRepository;
