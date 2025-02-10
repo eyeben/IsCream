@@ -1,7 +1,5 @@
-package com.ssafy.iscream.chat.service;
+package com.ssafy.iscream.chat.listener;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.iscream.chat.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;

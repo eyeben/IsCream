@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class ChatMessageDto {
-
-    Integer roomId;
+    private String roomId;
+    private String sender;
+    private String message;
 }
