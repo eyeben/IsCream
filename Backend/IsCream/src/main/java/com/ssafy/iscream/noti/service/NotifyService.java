@@ -5,9 +5,11 @@ import com.google.cloud.firestore.*;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import com.ssafy.iscream.board.dto.response.PostList;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.*;
 import com.ssafy.iscream.noti.domain.Notify;
+import com.ssafy.iscream.noti.dto.response.NotifyInfo;
 import com.ssafy.iscream.noti.repository.NotifyRepository;
 import com.ssafy.iscream.noti.domain.NotifyType;
 import com.ssafy.iscream.user.domain.User;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -29,6 +32,22 @@ public class NotifyService {
     private final NotifyRepository notificationRepository;
     private final Firestore db = FirestoreOptions.getDefaultInstance().getService();
 //    private final Firestore firestore;
+
+    // 알림 목록 조회
+    public List<NotifyInfo> getNotifyList(Integer userId) {
+        return notificationRepository.findAllByUser_UserId(userId).stream()
+                .map(NotifyInfo::new)
+                .toList();
+    }
+
+    // 알림 읽음 처리
+    @Transactional
+    public void updateNotifyStatus(Integer notifyId) {
+        Notify notify = notificationRepository.findById(notifyId)
+                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
+
+        notify.setRead(true);
+    }
 
     // 댓글 푸시 알림 전송
     @Transactional
@@ -63,15 +82,6 @@ public class NotifyService {
         }
     }
 
-    // 알림 읽음 처리
-    @Transactional
-    public void updateNotifyStatus(Integer notifyId) {
-        Notify notify = notificationRepository.findById(notifyId)
-                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
-
-        notify.setRead(true);
-    }
-
     // FCM 토큰 추가/갱신
     public void addFcmToken(Integer userId, String token) {
         DocumentReference userRef = db.collection("users").document(String.valueOf(userId));
@@ -102,7 +112,5 @@ public class NotifyService {
             this.fcmToken = fcmToken;
         }
     }
-
-    
 
 }

@@ -1,19 +1,15 @@
 package com.ssafy.iscream.noti.controller;
 
 import com.ssafy.iscream.auth.user.Login;
-import com.ssafy.iscream.board.dto.request.PostCreateReq;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.noti.service.NotifyService;
 import com.ssafy.iscream.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -31,15 +27,16 @@ public class NotifyController {
         return ResponseUtil.success();
     }
 
-    @Operation(summary = "알림 내역 확인", tags = "notify")
+    @Operation(summary = "알림 목록 조회", tags = "notify")
     @GetMapping
     public ResponseEntity<?> getNotifyList(@Login User user) {
-        return ResponseUtil.success(null);
+        return ResponseUtil.success(notifyService.getNotifyList(user.getUserId()));
     }
 
     @Operation(summary = "알림 읽음 처리", tags = "notify")
     @GetMapping("/{notifyId}")
-    public ResponseEntity<?> updateNotifyStatus(@Login User user, @PathVariable Integer notifyId) {
+    public ResponseEntity<?> updateNotifyStatus(@PathVariable Integer notifyId) {
+        notifyService.updateNotifyStatus(notifyId);
         return ResponseUtil.success(null);
     }
 
