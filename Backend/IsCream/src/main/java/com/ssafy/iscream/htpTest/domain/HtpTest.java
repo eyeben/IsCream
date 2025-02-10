@@ -41,7 +41,8 @@ public class HtpTest extends BaseTimeEntity {
     @Column(name = "female_drawing_url", length = 255)
     private String femaleDrawingUrl;
 
-    @Column(name = "analysis_result", length = 255)
+    @Lob
+    @Column(name = "analysis_result", columnDefinition = "TEXT")
     private String analysisResult;
 
     @Column(name = "pdf_url", length = 255)

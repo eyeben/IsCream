@@ -15,7 +15,7 @@ public class ImageServeService {
 
     public ImageServeService(WebClient.Builder webClientBuilder) {
         // 서버 URL
-        this.webClient = webClientBuilder.baseUrl("http://3.36.67.41:8000").build();
+        this.webClient = webClientBuilder.baseUrl("https://i12a407.p.ssafy.io/ai").build();
     }
 
     public String sendImageData(User user, List<HtpTestDiagnosisReq> data) {
