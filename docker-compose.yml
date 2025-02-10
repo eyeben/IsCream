@@ -1,5 +1,9 @@
 version: '3.9'
 
+networks:
+  mynetwork:  # 🔹 커스텀 네트워크 정의
+    driver: bridge  # 🌉 Docker의 기본 네트워크 드라이버 사용
+
 services:
   nginx:
     image: nginx:latest
@@ -8,7 +12,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./Frontend/IsCream/dist:/usr/share/nginx/html  # React 빌드 결과물
@@ -17,6 +20,8 @@ services:
       - backend
       - ai-server
       - frontend
+    networks:
+      - mynetwork  # 🔹 같은 네트워크 사용
 
   frontend:
     build:
@@ -24,6 +29,8 @@ services:
       dockerfile: Dockerfile
     container_name: frontend-app
     restart: always
+    networks:
+      - mynetwork  # 🔹 같은 네트워크 사용
 
   backend:
     build:
@@ -34,6 +41,8 @@ services:
       - "8081:8080"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+    networks:
+      - mynetwork  # 🔹 같은 네트워크 사용
 
   ai-server:
     build:
@@ -44,3 +53,5 @@ services:
       - "8000:8000"
     volumes:
       - /home/ubuntu/models:/home/ubuntu/models
+    networks:
+      - mynetwork  # 🔹 같은 네트워크 사용
