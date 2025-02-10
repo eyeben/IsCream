@@ -1,5 +1,5 @@
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/utils/common/queryClient';
+// import { QueryClientProvider } from '@tanstack/react-query';
+// import { queryClient } from '@/utils/common/queryClient';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BottomNavigation from "./components/nav/Nav";
 import Header from "./components/header/Header";
