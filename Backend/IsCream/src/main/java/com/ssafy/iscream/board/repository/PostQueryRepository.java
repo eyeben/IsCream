@@ -28,11 +28,13 @@ public class PostQueryRepository {
         Integer lastLikeCount = req.getLastLikeCount();
         Integer lastId = req.getLastId();
 
-        if (title != null) {
+        if (title != null && content != null) {
+            predicate.and(
+                    post.title.contains(title).or(post.content.contains(content))
+            );
+        } else if (title != null) {
             predicate.and(post.title.contains(title));
-        }
-
-        if (content != null) {
+        } else if (content != null) {
             predicate.and(post.content.contains(content));
         }
 
