@@ -30,7 +30,7 @@ public class PostFacade {
         Post post = postService.getPost(postId, user, request);
 
         Boolean userLiked = postService.isUserLiked(post, user);
-        Integer viewCount = postService.getViews(post.getPostId());
+        Integer viewCount = postService.getViewCount(post.getPostId());
         Integer likes = postService.getPostLikes(post.getPostId());
 
         List<String> images = postService.getPostImages(post.getPostId());
@@ -53,6 +53,7 @@ public class PostFacade {
                         postService.getPostThumbnail(post.getPostId()),
                         userService.getUserNickname(post.getUserId()),
                         postService.getPostLikes(post.getPostId()),
+                        postService.getViewCount(post.getPostId()),
                         commentService.getCommentCount(post.getPostId())
                         )
                 )
@@ -75,6 +76,7 @@ public class PostFacade {
                         postService.getPostThumbnail(post.getPostId()),
                         userService.getUserNickname(post.getUserId()),
                         postService.getPostLikes(post.getPostId()),
+                        postService.getViewCount(post.getPostId()),
                         commentService.getCommentCount(post.getPostId())
                         )
                 )
@@ -87,6 +89,7 @@ public class PostFacade {
                         postService.getPostThumbnail(post.getPostId()),
                         userService.getUserNickname(post.getUserId()),
                         postService.getPostLikes(post.getPostId()),
+                        postService.getViewCount(post.getPostId()),
                         commentService.getCommentCount(post.getPostId())
                         )
                 )

@@ -4,7 +4,6 @@ import com.ssafy.iscream.board.domain.*;
 import com.ssafy.iscream.board.dto.request.PostCreateReq;
 import com.ssafy.iscream.board.dto.request.PostReq;
 import com.ssafy.iscream.board.dto.request.PostUpdateReq;
-import com.ssafy.iscream.board.dto.response.PostList;
 import com.ssafy.iscream.board.repository.PostImageRepository;
 import com.ssafy.iscream.board.repository.PostLikeRepository;
 import com.ssafy.iscream.board.repository.PostQueryRepository;
@@ -25,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -104,20 +101,20 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
-        increaseViewPost(post, user, request);
+        checkPostView(post, user, request);
 
         return post;
     }
 
     // 사용자 조회수 중복 확인
-    public void increaseViewPost(Post post, User user, HttpServletRequest request) {
-        String key = "post:viewed:" + post.getPostId() + ":" + getUserId(user, request);
+    public void checkPostView(Post post, User user, HttpServletRequest request) {
+        String key = "post:viewed:" + post.getPostId() + ":" + getViewUserId(user, request);
 
         Boolean isNotViewed = redisTemplate.opsForValue().setIfAbsent(key, "Viewed", Duration.ofHours(24));
 
         // 24시간 내에 조회한 적이 없을 경우 조회수 증가
         if (Boolean.TRUE.equals(isNotViewed)) {
-            incrementViews(post.getPostId());
+            incrementViewCount(post.getPostId());
         }
     }
 
@@ -188,24 +185,35 @@ public class PostService {
     }
 
     // 조회수 증가
-    public void incrementViews(Integer postId) {
+    public void incrementViewCount(Integer postId) {
         String key = "post:views:" + postId;
-        redisTemplate.opsForValue().increment(key);
+        Integer viewCount = (Integer) redisTemplate.opsForValue().get(key);
+
+        // Redis에 저장된 조회수가 없을 경우에만 DB에서 조회수 가져옴
+        if (viewCount == null) {
+            viewCount = postRepository.findById(postId)
+                    .map(Post::getViewCount)
+                    .orElse(0);
+
+            redisTemplate.opsForValue().set(key, viewCount);
+        }
+
+        redisTemplate.opsForValue().increment(key); // 조회수 증가
     }
 
     // Redis에 저장된 게시글 조회수 가져오기
-    public int getViews(Integer postId) {
+    public int getViewCount(Integer postId) {
         String key = "post:views:" + postId;
-        Object currentViews = redisTemplate.opsForValue().get(key);
+        Object viewCount = redisTemplate.opsForValue().get(key);
 
-        if (currentViews == null) {
-            int initialView = 0;
-            redisTemplate.opsForValue().set(key, initialView);
+        if (viewCount == null) {
+            int init = 0;
+            redisTemplate.opsForValue().set(key, init);
 
-            return initialView;
+            return init;
         }
 
-        return (int) currentViews;
+        return (int) viewCount;
     }
 
     // 일정 시간마다 DB에 조회수 저장
@@ -216,19 +224,25 @@ public class PostService {
 
         for (String key : keys) {
             Integer postId = Integer.parseInt(key.split(":")[2]);
-            Integer views = (Integer) redisTemplate.opsForValue().get(key);
+            Integer viewCount = (Integer) redisTemplate.opsForValue().get(key);
 
-            if (views != null) {
+            if (viewCount != null) {
                 Post post = postRepository.findById(postId).orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
-                post.updateViews(views);
+
+                Integer dbViewCount = post.getViewCount();
+
+                // Redis 조회수와 DB와 일치하지 않을 경우에만 업데이트
+                if (!viewCount.equals(dbViewCount)) {
+                    post.updateViewCount(viewCount);
+                }
             }
         }
 
         redisTemplate.delete(keys);
     }
 
-    // Redis에 저장될 사용자 아이디 만들기
-    private String getUserId(User user, HttpServletRequest request) {
+    // 조회수 증가 시 Redis에 저장될 사용자 아이디 만들기
+    private String getViewUserId(User user, HttpServletRequest request) {
         String userIdentifier;
 
         // 로그인한 경우 userId 사용, 비회원은 IP 주소와 User-Agent를 사용
@@ -254,5 +268,10 @@ public class PostService {
 
         return userIdentifier;
     }
+
+    // Redis 게시글 좋아요 개수 증가
+
+
+    // Redis 게시글 좋아요 개수 감소
 
 }
