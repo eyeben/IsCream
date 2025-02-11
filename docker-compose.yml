@@ -39,19 +39,11 @@ services:
       - "8000:8000"
     volumes:
       - /home/ubuntu/models:/home/ubuntu/models
+      - /home/ubuntu/models:/chroma
     networks:
       - mynetwork
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-
-  chromadb:
-    image: chromadb/chroma
-    ports:
-      - "7000:7000"
-    volumes:
-      - /home/ubuntu/models/chroma_db:/chroma
-    networks:
-      - mynetwork
       
 networks:
   mynetwork:
