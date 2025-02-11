@@ -10,10 +10,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class HtpTestDetailDto {
     private Integer testId;   // HTP 검사 ID
+
     private String title;     // 제목
+
     private String date;      // 검사 날짜
+
     private String pdf;       // PDF URL
+
     private String result;    // 검사 결과
+
     public HtpTestDetailDto(HtpTest htpTest) {
         this.testId = htpTest.getHtpTestId();
         this.title = "HTP 검사"; // 고정된 제목 값

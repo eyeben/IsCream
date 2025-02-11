@@ -1,6 +1,8 @@
 package com.ssafy.iscream.htpTest.service;
 
 import com.ssafy.iscream.children.service.ChildrenService;
+import com.ssafy.iscream.common.exception.ErrorCode;
+import com.ssafy.iscream.common.exception.MinorException;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.dto.response.HtpTestDetailDto;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
@@ -39,8 +41,10 @@ public class HtpSelectService {
      * @return HtpTestDetailDto 객체 (HTP 테스트 상세 정보)
      */
     public HtpTestDetailDto getHtpTestById(Integer htpTestId) {
-        HtpTest htpTest = htpTestRepository.findById(htpTestId)
-                .orElse(null); // ID가 존재하지 않으면 null 반환
+        HtpTest htpTest = htpTestRepository
+                .findById(htpTestId)
+                .orElseThrow(() -> new MinorException.DataException(ErrorCode.DATA_NOT_FOUND));
+
         return new HtpTestDetailDto(htpTest);
     }
 }
