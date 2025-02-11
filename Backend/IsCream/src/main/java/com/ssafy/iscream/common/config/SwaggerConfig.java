@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(servers = {
         @Server(url = "http://localhost:8080/api", description = "local server"),
-        @Server(url = "http://i12a407.p.ssafy.io:8082/api", description = "deploy server")
+        @Server(url = "https://i12a407.p.ssafy.io:8082/api", description = "deploy server")
 })
 public class SwaggerConfig {
 
