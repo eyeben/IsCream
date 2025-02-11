@@ -2,7 +2,7 @@ package com.ssafy.iscream.htpTest.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.ssafy.iscream.htpTest.domain.request.HtpTestDiagnosisReq;
+import com.ssafy.iscream.htpTest.dto.request.HtpTestDiagnosisReq;
 import com.ssafy.iscream.user.domain.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
