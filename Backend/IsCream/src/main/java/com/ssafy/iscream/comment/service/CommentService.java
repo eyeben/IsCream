@@ -20,7 +20,6 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentQueryRepository commentQueryRepository;
-    private final PostRepository postRepository;
 
     // 댓글/대댓글 작성
     public Integer createComment(User user, CommentCreateReq req) {
@@ -65,6 +64,11 @@ public class CommentService {
     // 댓글 조회
     public List<Comment> getComments(Integer postId) {
         return commentQueryRepository.findCommentByPostId(postId);
+    }
+
+    // 댓글 개수
+    public Integer getCommentCount(Integer postId) {
+        return commentRepository.countByPostId(postId);
     }
 
 }

@@ -4,6 +4,7 @@ import com.ssafy.iscream.board.domain.Post;
 import com.ssafy.iscream.board.dto.request.PostReq;
 import com.ssafy.iscream.board.dto.response.PostDetail;
 import com.ssafy.iscream.board.dto.response.PostList;
+import com.ssafy.iscream.comment.service.CommentService;
 import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.dto.response.UserProfile;
 import com.ssafy.iscream.user.service.UserService;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class PostFacade {
 
     private final PostService postService;
+    private final CommentService commentService;
     private final UserService userService;
 
     // 게시글 상세 조회
@@ -50,7 +52,8 @@ public class PostFacade {
                         postService.isUserLiked(post, user),
                         postService.getPostThumbnail(post.getPostId()),
                         userService.getUserNickname(post.getUserId()),
-                        postService.getPostLikes(post.getPostId())
+                        postService.getPostLikes(post.getPostId()),
+                        commentService.getCommentCount(post.getPostId())
                         )
                 )
                 .toList();
@@ -71,7 +74,8 @@ public class PostFacade {
                         postService.isUserLiked(post, user),
                         postService.getPostThumbnail(post.getPostId()),
                         userService.getUserNickname(post.getUserId()),
-                        postService.getPostLikes(post.getPostId())
+                        postService.getPostLikes(post.getPostId()),
+                        commentService.getCommentCount(post.getPostId())
                         )
                 )
                 .toList();
@@ -82,7 +86,8 @@ public class PostFacade {
                         postService.isUserLiked(post, user),
                         postService.getPostThumbnail(post.getPostId()),
                         userService.getUserNickname(post.getUserId()),
-                        postService.getPostLikes(post.getPostId())
+                        postService.getPostLikes(post.getPostId()),
+                        commentService.getCommentCount(post.getPostId())
                         )
                 )
                 .toList();

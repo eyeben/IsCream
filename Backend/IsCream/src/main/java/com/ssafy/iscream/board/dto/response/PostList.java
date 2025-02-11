@@ -24,9 +24,10 @@ public class PostList {
             Boolean userLiked,
             Integer viewCount,
             String createdAt,
-            String authorName
+            String authorName,
+            Integer commentCount
     ) {
-        public PostInfo(Post post, boolean userLiked, String thumbnail, String authorName, Integer likes) {
+        public PostInfo(Post post, boolean userLiked, String thumbnail, String authorName, Integer likes, Integer commentCount) {
             this(
                     post.getPostId(),
                     post.getTitle(),
@@ -36,7 +37,8 @@ public class PostList {
                     userLiked,
                     post.getViewCount(),
                     DateUtil.format(post.getCreatedAt()),
-                    authorName
+                    authorName,
+                    commentCount
             );
         }
     }

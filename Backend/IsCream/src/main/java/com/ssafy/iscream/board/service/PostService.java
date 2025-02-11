@@ -193,7 +193,6 @@ public class PostService {
         redisTemplate.opsForValue().increment(key);
     }
 
-
     // Redis에 저장된 게시글 조회수 가져오기
     public int getViews(Integer postId) {
         String key = "post:views:" + postId;
