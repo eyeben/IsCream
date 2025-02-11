@@ -24,5 +24,7 @@ public interface HtpTestRepository extends JpaRepository<HtpTest, Integer> {
             @Param("selectedDate") LocalDate selectedDate
     );
 
+    List<HtpTest> findByChildId(Integer childId);
+
     Optional<HtpTest> findFirstByChildIdOrderByCreatedAtDesc(Integer childId);
 }
