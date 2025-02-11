@@ -15,14 +15,15 @@ public class BigFiveTest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer bigFiveTestId;
+    @Column(name = "big_five_test_id")
+    private Integer testId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private String testDate;
+    @Column(name = "test_date",nullable = false)
+    private String date;
 
     @Column(nullable = false)
     private Double conscientiousness;

@@ -13,7 +13,7 @@ import lombok.Setter;
 public class BigFiveTestRes {
 
     @Schema(description = "날짜", example = "2025-02-11")
-    private String testDate;
+    private String date;
 
     @Schema(description = "성실성", example = "5")
     private Double conscientiousness;
@@ -30,6 +30,4 @@ public class BigFiveTestRes {
     @Schema(description = "개방성", example = "1")
     private Double openness;
 
-    @Schema(description = "PDF URL", example = "http://example.com/report.pdf")
-    private String pdfUrl;
 }
