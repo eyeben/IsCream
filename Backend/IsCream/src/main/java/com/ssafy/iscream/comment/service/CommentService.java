@@ -9,6 +9,7 @@ import com.ssafy.iscream.comment.dto.request.CommentCreateReq;
 import com.ssafy.iscream.comment.dto.response.CommentList;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.*;
+import com.ssafy.iscream.noti.service.NotifyService;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final PostRepository postRepository;
+
+    private final NotifyService notifyService;
 
     // 댓글/대댓글 작성
     public Integer createComment(User user, CommentCreateReq req) {
@@ -44,6 +47,8 @@ public class CommentService {
                 .build();
 
         Comment saveComment = commentRepository.save(comment);
+
+        notifyService.sendCommentNotify(post.getUser()); // 게시글 작성자에게 알림 전송
 
         return saveComment.getCommentId();
     }

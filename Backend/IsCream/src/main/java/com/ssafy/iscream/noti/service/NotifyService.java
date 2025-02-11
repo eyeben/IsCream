@@ -30,8 +30,7 @@ import java.util.concurrent.ExecutionException;
 public class NotifyService {
 
     private final NotifyRepository notificationRepository;
-    private final Firestore db = FirestoreOptions.getDefaultInstance().getService();
-//    private final Firestore firestore;
+    private final Firestore firestore;
 
     // 알림 목록 조회
     public List<NotifyInfo> getNotifyList(Integer userId) {
@@ -49,16 +48,16 @@ public class NotifyService {
         notify.setRead(true);
     }
 
+    // TODO: 채팅 푸시 알림 전송
+
     // 댓글 푸시 알림 전송
     @Transactional
     public void sendCommentNotify(User user) {
         sendNotification(user, "댓글 알림", "회원님의 게시글에 댓글이 작성되었습니다.", NotifyType.NOTIFY_COMMENT);
     }
 
-    // TODO: 채팅 푸시 알림 전송
-
     public void sendNotification(User user, String title, String body, NotifyType type) {
-        String token = null; // TODO: DB에 저장된 토큰 가져오기
+        String token = getFcmToken(user.getUserId()); // TODO: DB에 저장된 토큰 가져오기
 
         Notification notification = Notification.builder()
                 .setTitle(title)
@@ -84,7 +83,7 @@ public class NotifyService {
 
     // FCM 토큰 추가/갱신
     public void addFcmToken(Integer userId, String token) {
-        DocumentReference userRef = db.collection("users").document(String.valueOf(userId));
+        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
 
         // Firestore에 업데이트 요청
         ApiFuture<WriteResult> future = userRef.update("fcmToken", token); // 토큰 저장
@@ -93,24 +92,31 @@ public class NotifyService {
             try {
                 future.get();
             } catch (Exception e) {
-                userRef.set(new UserToken(token));
+                userRef.set(token);
             }
         }, Runnable::run);
     }
 
     // FCM 토큰 제거
     public void removeFcmToken(Integer userId) {
-        DocumentReference userRef = db.collection("users").document(String.valueOf(userId));
+        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
         userRef.update("fcmToken", FieldValue.delete());
     }
 
-    // Firestore에 저장할 데이터 모델
-    static class UserToken {
-        public String fcmToken;
+    // FCM 토큰 가져오기
+    private String getFcmToken(Integer userId) {
+        DocumentReference userRef = firestore.collection("users").document(String.valueOf(userId));
+        ApiFuture<DocumentSnapshot> future = userRef.get();
 
-        public UserToken(String fcmToken) {
-            this.fcmToken = fcmToken;
+        try {
+            DocumentSnapshot document = future.get();
+            if (document.exists() && document.contains("fcmToken")) {
+                return document.getString("fcmToken");
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            Thread.currentThread().interrupt(); // 인터럽트 발생 시 현재 스레드 중단
         }
+        return null; // 사용자가 없거나 토큰이 없는 경우
     }
 
 }
