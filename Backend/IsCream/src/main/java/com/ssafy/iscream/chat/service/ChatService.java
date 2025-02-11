@@ -22,13 +22,17 @@ public class ChatService {
     private final UnreadMessageService unreadMessageService;
 
     public void sendMessage(ChatMessageDto chatMessageDto) {
+        // ✅ MongoDB에 메시지 저장
         chatMessageRepository.save(chatMessageDto.toEntity());
 
-        // Redis에서 Set<String>으로 변환
+        // ✅ Redis에 접속 중인 사용자 리스트 가져오기
         Set<Object> userObjects = redisTemplate.opsForSet().members("roomUsers:" + chatMessageDto.getRoomId());
         Set<String> userIds = userObjects != null ? userObjects.stream().map(Object::toString).collect(Collectors.toSet()) : new HashSet<>();
 
-        // 메시지를 보낼 때, 읽지 않은 메시지 개수를 증가
+        // ✅ 디버깅 로그 추가 (접속 중인 사용자 확인)
+        System.out.println("👥 접속 중인 사용자: " + userIds);
+
+        // ✅ 읽지 않은 메시지 개수 업데이트
         if (userIds != null) {
             for (String userId : userIds) {
                 if (!userId.equals(chatMessageDto.getSender())) {
@@ -37,30 +41,11 @@ public class ChatService {
             }
         }
 
-        redisTemplate.convertAndSend("chatroom-" + chatMessageDto.getRoomId(), chatMessageDto);
+        // ✅ Redis Pub/Sub 발행 (디버깅 로그 추가)
+        String channel = "chatroom-" + chatMessageDto.getRoomId();
+        System.out.println("📤 Redis Pub/Sub 발행: 채널 - " + channel);
+        System.out.println("📩 발행된 메시지: " + chatMessageDto);
 
-        try (RedisConnection connection = redisTemplate.getConnectionFactory().getConnection()) {
-            String channelName = "chatroom-" + chatMessageDto.getRoomId();
-            byte[][] commandArgs = { "NUMSUB".getBytes(), channelName.getBytes() };
-
-            // PUBSUB NUMSUB 명령 실행
-            Object result = connection.execute("PUBSUB", commandArgs);
-
-            // 반환값 강제 출력 (디버깅)
-            System.out.println("🛠 Redis PUBSUB 실행 결과: " + result);
-
-            // 반환값이 List인지 확인 후 처리
-            if (result instanceof List<?> listResult) {
-                System.out.println("🔍 Redis 채널: " + channelName);
-                for (Object obj : listResult) {
-                    System.out.println("🔹 값: " + obj);
-                }
-            } else {
-                System.out.println("⚠️ 예상치 못한 응답 형식: " + result);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        redisTemplate.convertAndSend(channel, chatMessageDto);
     }
 }

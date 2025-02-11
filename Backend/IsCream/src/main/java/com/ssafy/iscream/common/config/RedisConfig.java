@@ -12,6 +12,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
@@ -38,6 +39,19 @@ public class RedisConfig {
      * - 메시지가 특정 채널(채팅방)에서 발행되었을 때 이를 감지하여 처리
      * - `RedisSubscriber`를 메시지 리스너로 등록하여 WebSocket 전송 가능하도록 함
      */
+//    @Bean
+//    public RedisMessageListenerContainer redisMessageListenerContainer(
+//            RedisConnectionFactory connectionFactory,
+//            MessageListenerAdapter messageListenerAdapter) {
+//
+//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//        container.setConnectionFactory(connectionFactory);
+//
+//        // ✅ 모든 채팅방의 메시지를 구독하도록 설정 (chatroom-* 채널)
+//        container.addMessageListener(messageListenerAdapter, new PatternTopic("chatroom-*"));
+//
+//        return container;
+//    }
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(
             RedisConnectionFactory connectionFactory,
@@ -46,8 +60,10 @@ public class RedisConfig {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
-        // ✅ 모든 채팅방의 메시지를 구독하도록 설정 (chatroom-* 채널)
-        container.addMessageListener(messageListenerAdapter, new PatternTopic("chatroom-*"));
+        System.out.println("🟢 Redis Pub/Sub 구독 시작: chatroom-1");
+
+        // 🔥 chatroom-1 채널을 직접 추가
+        container.addMessageListener(messageListenerAdapter, new ChannelTopic("chatroom-1"));
 
         return container;
     }
