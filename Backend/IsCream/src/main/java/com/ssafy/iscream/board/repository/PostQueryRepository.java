@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.iscream.board.domain.Post;
+import com.ssafy.iscream.board.dto.request.PostReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +19,14 @@ import static com.ssafy.iscream.board.domain.QPostLike.postLike;
 public class PostQueryRepository {
     private final JPAQueryFactory queryFactory;
 
-    public Page<Post> searchPosts(Integer lastId, Integer lastLikeCount, String sort, String title, String content, Pageable pageable) {
+    public Page<Post> searchPosts(PostReq req, Pageable pageable) {
         BooleanBuilder predicate = new BooleanBuilder();
+
+        String title = req.getTitle();
+        String content = req.getContent();
+        String sort = req.getSort();
+        Integer lastLikeCount = req.getLastLikeCount();
+        Integer lastId = req.getLastId();
 
         if (title != null) {
             predicate.and(post.title.contains(title));

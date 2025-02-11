@@ -54,8 +54,6 @@ public class PostService {
                 .user(user)
                 .build();
 
-        System.out.println(postReq.getContent());
-
         Post savePost = postRepository.save(post);
 
         saveImage(savePost, files); // 게시글 이미지 저장
@@ -125,12 +123,14 @@ public class PostService {
         }
     }
 
+    // 조회수 증가
     public void incrementViews(Integer postId) {
         String key = "post:views:" + postId;
         redisTemplate.opsForValue().increment(key);
     }
 
 
+    // Redis에 저장된 게시글 조회수 가져오기
     public int getViews(Integer postId) {
         String key = "post:views:" + postId;
         Object currentViews = redisTemplate.opsForValue().get(key);
@@ -164,6 +164,7 @@ public class PostService {
         redisTemplate.delete(keys);
     }
 
+    // Redis에 저장될 사용자 아이디 만들기
     private String getUserId(User user, HttpServletRequest request) {
         String userIdentifier;
 
@@ -196,8 +197,7 @@ public class PostService {
         Pageable pageable = PageRequest.of(0, req.getSize());
 
         Page<Post> posts = postQueryRepository
-                .searchPosts(req.getLastId(), req.getLastLikeCount(), req.getSort(),
-                        req.getTitle(), req.getContent(), pageable);
+                .searchPosts(req, pageable);
 
         boolean hasNext = posts.hasNext();
 
