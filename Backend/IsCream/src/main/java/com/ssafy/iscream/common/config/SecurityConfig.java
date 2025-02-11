@@ -27,6 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -100,6 +101,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/board/post/{postId}", "/board/main").permitAll()
                         .requestMatchers(HttpMethod.POST, "/board").permitAll()
                         .requestMatchers(HttpMethod.GET, "/comments/{postId}").permitAll()
+                        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .anyRequest().authenticated());
 
         http
