@@ -153,6 +153,14 @@ public class PostService {
 
     // 게시글 좋아요
     public void addPostLike(Integer postId, User user) {
+        // Redis에 좋아요 상태 저장
+        String key = "post:" + postId + ":likes";
+        redisTemplate.opsForSet().add(key, user.getUserId().toString());
+
+        // Redis에서 좋아요 개수 증가
+        getLikeCount(postId);
+        redisTemplate.opsForValue().increment(key + ":count", 1);
+
         postLikeRepository.save(PostLike.builder().userId(user.getUserId()).postId(postId).build());
     }
 
@@ -187,9 +195,16 @@ public class PostService {
     // 조회수 증가
     public void incrementViewCount(Integer postId) {
         String key = "post:views:" + postId;
+        getViewCount(postId); // Redis에 조회수 저장되어 있는지 확인
+
+        redisTemplate.opsForValue().increment(key); // 조회수 증가
+    }
+
+    // Redis에 저장된 게시글 조회수 가져오기
+    public Integer getViewCount(Integer postId) {
+        String key = "post:views:" + postId;
         Integer viewCount = (Integer) redisTemplate.opsForValue().get(key);
 
-        // Redis에 저장된 조회수가 없을 경우에만 DB에서 조회수 가져옴
         if (viewCount == null) {
             viewCount = postRepository.findById(postId)
                     .map(Post::getViewCount)
@@ -198,22 +213,23 @@ public class PostService {
             redisTemplate.opsForValue().set(key, viewCount);
         }
 
-        redisTemplate.opsForValue().increment(key); // 조회수 증가
+        return viewCount;
     }
 
-    // Redis에 저장된 게시글 조회수 가져오기
-    public int getViewCount(Integer postId) {
-        String key = "post:views:" + postId;
-        Object viewCount = redisTemplate.opsForValue().get(key);
+    // 좋아요 개수 가져오기
+    public int getLikeCount(Integer postId) {
+        String key = "post:" + postId + ":likes";
+        Integer likeCount = (Integer) redisTemplate.opsForValue().get(key + ":count");
 
-        if (viewCount == null) {
-            int init = 0;
-            redisTemplate.opsForValue().set(key, init);
+        if (likeCount == null) {
+            likeCount = postRepository.findById(postId)
+                    .map(Post::getLikeCount)
+                    .orElse(0);
 
-            return init;
+            redisTemplate.opsForValue().set(key + ":count", likeCount);
         }
 
-        return (int) viewCount;
+        return likeCount;
     }
 
     // 일정 시간마다 DB에 조회수 저장
@@ -269,9 +285,9 @@ public class PostService {
         return userIdentifier;
     }
 
-    // Redis 게시글 좋아요 개수 증가
+    // TODO: Redis 게시글 좋아요 개수 감소, 좋아요 취소 시에 어떻게 삭제할지 생각해야함
 
+    // TODO: 일정 시간마다 좋아요 수, 좋아요 상태 DB에 저장
 
-    // Redis 게시글 좋아요 개수 감소
 
 }
