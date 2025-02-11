@@ -52,21 +52,38 @@ public class RedisConfig {
 //
 //        return container;
 //    }
+//    @Bean
+//    public RedisMessageListenerContainer redisMessageListenerContainer(
+//            RedisConnectionFactory connectionFactory,
+//            MessageListenerAdapter messageListenerAdapter) {
+//
+//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//        container.setConnectionFactory(connectionFactory);
+//
+//        System.out.println("🟢 Redis Pub/Sub 구독 시작: chatroom-1");
+//
+//        // 🔥 chatroom-1 채널을 직접 추가
+//        container.addMessageListener(messageListenerAdapter, new ChannelTopic("chatroom-1"));
+//
+//        return container;
+//    }
+
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(
             RedisConnectionFactory connectionFactory,
-            MessageListenerAdapter messageListenerAdapter) {
+            RedisSubscriber redisSubscriber) { // RedisSubscriber를 리스너로 사용
 
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
-        System.out.println("🟢 Redis Pub/Sub 구독 시작: chatroom-1");
+        System.out.println("🟢 Redis Pub/Sub 구독 시작: chatroom-*");
 
-        // 🔥 chatroom-1 채널을 직접 추가
-        container.addMessageListener(messageListenerAdapter, new ChannelTopic("chatroom-1"));
+        // ✅ 모든 채팅방의 메시지를 구독하도록 설정 (chatroom-* 채널)
+        container.addMessageListener(redisSubscriber, new PatternTopic("chatroom-*"));
 
         return container;
     }
+
 
     /**
      * ✅ Redis Pub/Sub 메시지를 처리하는 리스너
