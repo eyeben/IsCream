@@ -1,6 +1,7 @@
-package com.ssafy.iscream.comment.domain;
+package com.ssafy.iscream.comment.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.iscream.comment.domain.Comment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
