@@ -20,8 +20,9 @@ public class ChatContoller {
      * 사용자가 채팅방에 입장할 때 읽음 처리
      */
     @MessageMapping("/chat/read")
-    public void readMessages(@Payload String roomId, String userId) {
-        unreadMessageService.resetUnreadCount(roomId, userId);
+    public void readMessages(@Payload ChatMessageDto chatMessageDto) {
+        System.out.println("📩 받은 메시지: " + chatMessageDto);
+        unreadMessageService.resetUnreadCount(chatMessageDto.getRoomId(), chatMessageDto.getSender());
     }
 
 }
