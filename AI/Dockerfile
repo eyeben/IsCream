@@ -1,5 +1,15 @@
-# Python 3.10.11 기본 이미지 사용
+# Python 3.10.11 기반 이미지 사용
 FROM python:3.10.11
+
+# 필수 시스템 패키지 설치
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # 작업 디렉토리 설정
 WORKDIR /app
