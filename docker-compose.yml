@@ -1,6 +1,5 @@
 version: '3.9'
 
-
 services:
   nginx:
     image: nginx:latest
@@ -42,7 +41,9 @@ services:
       - /home/ubuntu/models:/home/ubuntu/models
     networks:
       - mynetwork
-
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      
 networks:
   mynetwork:
     driver: bridge
