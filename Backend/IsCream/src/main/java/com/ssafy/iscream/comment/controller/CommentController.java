@@ -2,6 +2,7 @@ package com.ssafy.iscream.comment.controller;
 
 import com.ssafy.iscream.auth.user.Login;
 import com.ssafy.iscream.comment.dto.request.CommentCreateReq;
+import com.ssafy.iscream.comment.service.CommentFacade;
 import com.ssafy.iscream.comment.service.CommentService;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
@@ -17,7 +18,8 @@ import java.util.Map;
 @RequestMapping("/comments")
 @RequiredArgsConstructor
 public class CommentController {
-    
+
+    private final CommentFacade commentFacade;
     private final CommentService commentService;
 
     @Operation(summary = "댓글/대댓글 작성", tags = "comments")
@@ -47,7 +49,7 @@ public class CommentController {
     @Operation(summary = "댓글 조회", tags = "comments")
     @GetMapping("/{postId}")
     public ResponseEntity<?> getComments(@PathVariable Integer postId) {
-        return ResponseUtil.success(commentService.getComments(postId));
+        return ResponseUtil.success(commentFacade.getCommentList(postId));
     }
 
 }

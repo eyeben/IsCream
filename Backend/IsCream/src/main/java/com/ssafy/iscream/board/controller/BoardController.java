@@ -4,6 +4,7 @@ import com.ssafy.iscream.auth.user.Login;
 import com.ssafy.iscream.board.dto.request.PostCreateReq;
 import com.ssafy.iscream.board.dto.request.PostReq;
 import com.ssafy.iscream.board.dto.request.PostUpdateReq;
+import com.ssafy.iscream.board.service.PostFacade;
 import com.ssafy.iscream.board.service.PostService;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequestMapping("/board")
 public class BoardController {
 
+    private final PostFacade postFacade;
     private final PostService postService;
 
     @Operation(summary = "게시글 작성", tags = "board")
@@ -52,14 +54,14 @@ public class BoardController {
     @Operation(summary = "게시글 상세 조회", tags = "board")
     @GetMapping(value = "/post/{postId}")
     public ResponseEntity<?> getPost(@PathVariable Integer postId, @Login User user, HttpServletRequest request) {
-        return ResponseUtil.success(postService.getPostDetail(postId, user, request));
+        return ResponseUtil.success(postFacade.getPostDetail(postId, user, request));
     }
 
     @Operation(summary = "게시글 목록 조회 (검색 포함)", tags = "board")
     @PostMapping
     public ResponseEntity<?> getPosts(@Login User user,
                                       @RequestBody PostReq req) {
-        return ResponseUtil.success(postService.getPostList(user, req));
+        return ResponseUtil.success(postFacade.getPostList(user, req));
     }
 
     @Operation(summary = "게시글 좋아요", tags = "board")
@@ -79,7 +81,7 @@ public class BoardController {
     @Operation(summary = "메인 페이지 게시글 조회", tags = "board")
     @GetMapping("/main")
     public ResponseEntity<?> getMainPost(@Login User user) {
-        return ResponseUtil.success(postService.getMainPost(user));
+        return ResponseUtil.success(postFacade.getMainPostList(user));
     }
 
 }
