@@ -42,8 +42,6 @@ services:
       - /home/ubuntu/models:/chroma
     networks:
       - mynetwork
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
       
 networks:
   mynetwork:

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from .routers import yolo_service
 
-load_dotenv()
+load_dotenv("/home/ubuntu/models/.env")
 # FastAPI 애플리케이션 생성
 app = FastAPI(root_path="/ai")
 
