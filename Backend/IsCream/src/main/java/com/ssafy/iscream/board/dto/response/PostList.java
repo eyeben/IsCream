@@ -1,7 +1,6 @@
 package com.ssafy.iscream.board.dto.response;
 
 import com.ssafy.iscream.board.domain.Post;
-import com.ssafy.iscream.board.domain.PostImage;
 import com.ssafy.iscream.common.util.DateUtil;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,17 +26,17 @@ public class PostList {
             String createdAt,
             String authorName
     ) {
-        public PostInfo(Post post, boolean userLiked) {
+        public PostInfo(Post post, boolean userLiked, String thumbnail, String authorName, Integer likes) {
             this(
                     post.getPostId(),
                     post.getTitle(),
                     post.getContent(),
-                    extractThumbnail(post),
-                    post.getPostLikes().size(),
+                    thumbnail,
+                    likes,
                     userLiked,
                     post.getViewCount(),
                     DateUtil.format(post.getCreatedAt()),
-                    post.getUser().getNickname()
+                    authorName
             );
         }
     }
@@ -51,10 +50,5 @@ public class PostList {
                 .hasNext(hasNext)
                 .info(info)
                 .build();
-    }
-
-    private static String extractThumbnail(Post post) {
-        List<PostImage> images = post.getPostImages();
-        return (images != null && !images.isEmpty()) ? images.get(0).getImageUrl() : null;
     }
 }

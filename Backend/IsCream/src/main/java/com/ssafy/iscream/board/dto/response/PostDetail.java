@@ -21,24 +21,19 @@ public record PostDetail(
         UserProfile author,
         String userImageUrl
 ) {
-    public PostDetail(Post post, User user, Boolean userLiked, Integer viewCount) {
+    public PostDetail(Post post, User user, Boolean userLiked, Integer viewCount,
+                      UserProfile author, List<String> images, Integer likes) {
         this(
                 post.getPostId(),
                 post.getTitle(),
                 post.getContent(),
-                post.getPostLikes().size(),
+                likes,
                 userLiked,
                 viewCount,
-                extractImageUrls(post),
+                images,
                 DateUtil.format(post.getCreatedAt()),
-                new UserProfile(post.getUser()),
+                author,
                 user != null ? user.getImageUrl() : null
         );
-    }
-
-    private static List<String> extractImageUrls(Post post) {
-        return post.getPostImages().stream()
-                .map(PostImage::getImageUrl)
-                .collect(Collectors.toList());
     }
 }

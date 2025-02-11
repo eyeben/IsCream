@@ -1,12 +1,10 @@
 package com.ssafy.iscream.comment.service;
 
-import com.ssafy.iscream.board.domain.Post;
 import com.ssafy.iscream.board.repository.PostRepository;
 import com.ssafy.iscream.comment.domain.Comment;
 import com.ssafy.iscream.comment.repository.CommentQueryRepository;
 import com.ssafy.iscream.comment.repository.CommentRepository;
 import com.ssafy.iscream.comment.dto.request.CommentCreateReq;
-import com.ssafy.iscream.comment.dto.response.CommentList;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.*;
 import com.ssafy.iscream.user.domain.User;
@@ -26,21 +24,11 @@ public class CommentService {
 
     // 댓글/대댓글 작성
     public Integer createComment(User user, CommentCreateReq req) {
-        Post post = postRepository.findById(req.getPostId())
-                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
-
-        Comment parent = null;
-
-        if (req.getCommentId() != null) {
-            parent = commentRepository.findById(req.getCommentId())
-                    .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
-        }
-
         Comment comment = Comment.builder()
-                .post(post)
+                .postId(req.getPostId())
                 .content(req.getContent())
-                .user(user)
-                .parentComment(parent)
+                .userId(user.getUserId())
+                .parentCommentId(req.getCommentId())
                 .build();
 
         Comment saveComment = commentRepository.save(comment);
@@ -54,7 +42,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
-        if (!userId.equals(comment.getUser().getUserId())) {
+        if (!userId.equals(comment.getUserId())) {
             throw new DataException(ErrorCode.DATA_FORBIDDEN_UPDATE);
         }
 
@@ -67,7 +55,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
-        if (!userId.equals(comment.getUser().getUserId())) {
+        if (!userId.equals(comment.getUserId())) {
             throw new DataException(ErrorCode.DATA_FORBIDDEN_UPDATE);
         }
 
@@ -75,10 +63,8 @@ public class CommentService {
     }
 
     // 댓글 조회
-    public CommentList getComments(Integer postId) {
-        List<Comment> commentList = commentQueryRepository.findCommentByPostId(postId);
-
-        return CommentList.of(commentList, commentList.size());
+    public List<Comment> getComments(Integer postId) {
+        return commentQueryRepository.findCommentByPostId(postId);
     }
 
 }

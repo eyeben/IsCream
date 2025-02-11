@@ -1,7 +1,6 @@
 package com.ssafy.iscream.board.domain;
 
 import com.ssafy.iscream.common.entity.BaseTimeEntity;
-import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.comment.domain.Comment;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,9 +22,8 @@ public class Post extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer postId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private Integer userId;
 
     @Column(nullable = false)
     private String title;
@@ -35,15 +33,6 @@ public class Post extends BaseTimeEntity {
 
     @Column
     private Integer viewCount;
-
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
-    private List<PostImage> postImages = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
-    private List<PostLike> postLikes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
-    private List<Comment> comments = new ArrayList<>();
 
     public void updateViews(int views) {
         this.viewCount = views;
