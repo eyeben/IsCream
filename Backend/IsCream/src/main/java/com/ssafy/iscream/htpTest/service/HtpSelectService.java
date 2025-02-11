@@ -1,37 +1,50 @@
 package com.ssafy.iscream.htpTest.service;
 
+import com.ssafy.iscream.children.service.ChildrenService;
+import com.ssafy.iscream.common.exception.ErrorCode;
+import com.ssafy.iscream.common.exception.MinorException;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
-import com.ssafy.iscream.htpTest.domain.response.HtpTestResponseDto;
+import com.ssafy.iscream.htpTest.dto.response.HtpTestDetailDto;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
 import com.ssafy.iscream.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * HTP 테스트 데이터를 조회하는 서비스 클래스
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class HtpSelectService {
-    private final HtpTestRepository htpTestRepository;
-    private final S3Service s3Service;
+
+    private final HtpTestRepository htpTestRepository; // HTP 테스트 관련 DB 접근 Repository
+    private final S3Service s3Service; // S3 파일 관련 서비스
 
     /**
-     * 특정 사용자의 HTP 테스트 목록을 조회하여 DTO 리스트로 반환
+     * 특정 자녀(childId)의 모든 HTP 테스트 목록을 조회하여 반환
+     *
+     * @param childId 자녀 ID
+     * @return 해당 자녀의 HTP 테스트 목록
      */
-    public List<HtpTestResponseDto> getHtpTestList(Integer childId) {
-        List<HtpTest> htpTests = null;
+    public List<HtpTest> getHtpTestList(Integer childId) {
+        return htpTestRepository.findByChildId(childId);
+    }
 
-        // HtpTest 엔티티를 HtpTestResponseDto로 변환
-        return htpTests.stream()
-                .map(htpTest -> new HtpTestResponseDto(
-                        htpTest.getHtpTestId(),
-                        "HTP 검사", // 제목이 따로 없다면 기본값 지정
-                        htpTest.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) // 날짜 포맷
-                ))
-                .collect(Collectors.toList());
+    /**
+     * 특정 HTP 테스트 ID로 조회하여 상세 DTO로 변환 후 반환
+     *
+     * @param htpTestId 조회할 HTP 테스트 ID
+     * @return HtpTestDetailDto 객체 (HTP 테스트 상세 정보)
+     */
+    public HtpTestDetailDto getHtpTestById(Integer htpTestId) {
+        HtpTest htpTest = htpTestRepository
+                .findById(htpTestId)
+                .orElseThrow(() -> new MinorException.DataException(ErrorCode.DATA_NOT_FOUND));
+
+        return new HtpTestDetailDto(htpTest);
     }
 }

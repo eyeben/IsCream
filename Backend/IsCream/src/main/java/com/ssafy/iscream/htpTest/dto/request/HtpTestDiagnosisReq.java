@@ -1,4 +1,4 @@
-package com.ssafy.iscream.htpTest.domain.request;
+package com.ssafy.iscream.htpTest.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
