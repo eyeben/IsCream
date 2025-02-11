@@ -8,9 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HtpTestCreateReq {
+public class HtpTestReq {
     Integer childId;
     String time;
     String type;
     Integer index;
+    MultipartFile file;
 }
