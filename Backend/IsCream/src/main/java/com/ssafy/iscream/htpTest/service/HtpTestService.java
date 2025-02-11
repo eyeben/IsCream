@@ -46,13 +46,7 @@ public class HtpTestService {
         return days;
     }
 
-    /**
-     * HTP 테스트 프로세스를 진행
-     *
-     * @param user 요청한 사용자
-     * @param req  HTP 테스트 요청 데이터
-     * @return 분석 결과 (house, tree는 빈 문자열 반환)
-     */
+    // house, tree, male, female
     public String htpTestCycle(User user, HtpTestReq req) {
         String result = "";
         if (req.getType().equals("house")) {
@@ -69,9 +63,6 @@ public class HtpTestService {
         return result;
     }
 
-    /**
-     * 집 그림을 저장하는 메서드
-     */
     public void testHouse(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
@@ -79,9 +70,6 @@ public class HtpTestService {
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getHouseDrawingUrl()));
     }
 
-    /**
-     * 나무 그림을 저장하는 메서드
-     */
     public void testTree(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
@@ -89,18 +77,13 @@ public class HtpTestService {
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getTreeDrawingUrl()));
     }
 
-    /**
-     * 남성 그림을 저장하고 마지막 그림이면 분석 수행
-     *
-     * @return 분석 결과 문자열
-     */
     public String testMale(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setMaleDrawingUrl(url);
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getMaleDrawingUrl()));
         String result = "";
-        if (req.getIndex().equals(4)) { // 마지막 그림이 입력될 경우 분석 수행
+        if (req.getIndex().equals(4)) {
             ArrayList<HtpTestDiagnosisReq> files = imageMap.get(user.getUserId());
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
@@ -108,18 +91,13 @@ public class HtpTestService {
         return result;
     }
 
-    /**
-     * 여성 그림을 저장하고 마지막 그림이면 분석 수행
-     *
-     * @return 분석 결과 문자열
-     */
     public String testFemale(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setFemaleDrawingUrl(url);
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getFemaleDrawingUrl()));
         String result = "";
-        if (req.getIndex().equals(4)) { // 마지막 그림이면 분석 수행
+        if (req.getIndex().equals(4)) {
             ArrayList<HtpTestDiagnosisReq> files = imageMap.get(user.getUserId());
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
@@ -127,15 +105,11 @@ public class HtpTestService {
         return result;
     }
 
-    /**
-     * 새로운 HTP 테스트를 초기화
-     */
+
     public void init(User user, HtpTestReq req) {
         HtpTest htpTest = new HtpTest();
         htpTest.setChildId(req.getChildId());
         htpTestRepository.save(htpTest);
-
-        // 기존 데이터가 있다면 초기화, 없으면 새로 추가
         if (imageMap.containsKey(user.getUserId())) {
             imageMap.get(user.getUserId()).clear();
         } else {
@@ -143,9 +117,6 @@ public class HtpTestService {
         }
     }
 
-    /**
-     * 오늘 수행된 HTP 테스트가 있는 경우 삭제
-     */
     public void checkTodayHtpTest(Integer childId) {
         List<HtpTest> htpTest = getHtpTestByChildIdAndDate(childId);
         if (!htpTest.isEmpty()) {
@@ -154,9 +125,7 @@ public class HtpTestService {
         }
     }
 
-    /**
-     * 특정 자녀(childId)의 오늘 날짜 기준 HTP 테스트 조회
-     */
+
     public List<HtpTest> getHtpTestByChildIdAndDate(Integer childId) {
         LocalDate today = LocalDate.now();  // 오늘 날짜
         LocalDateTime startOfDay = today.atStartOfDay();  // 오늘 00:00:00
