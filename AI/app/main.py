@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from .routers import yolo_service
+import os
 
+openai_api_key = os.getenv("OPENAI_API_KEY")
+print(f"Loaded OpenAI API Key: {openai_api_key}")
 load_dotenv("/home/ubuntu/models/.env")
 # FastAPI 애플리케이션 생성
 app = FastAPI(root_path="/ai")
