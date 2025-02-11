@@ -3,34 +3,44 @@ package com.ssafy.iscream.htpTest.service;
 import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.dto.response.HtpTestDetailDto;
-import com.ssafy.iscream.htpTest.dto.response.HtpTestResponseDto;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
 import com.ssafy.iscream.s3.service.S3Service;
-import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * HTP 테스트 데이터를 조회하는 서비스 클래스
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class HtpSelectService {
-    private final HtpTestRepository htpTestRepository;
-    private final S3Service s3Service;
+
+    private final HtpTestRepository htpTestRepository; // HTP 테스트 관련 DB 접근 Repository
+    private final S3Service s3Service; // S3 파일 관련 서비스
 
     /**
-     * 특정 사용자의 HTP 테스트 목록을 조회하여 DTO 리스트로 반환
+     * 특정 자녀(childId)의 모든 HTP 테스트 목록을 조회하여 반환
+     *
+     * @param childId 자녀 ID
+     * @return 해당 자녀의 HTP 테스트 목록
      */
     public List<HtpTest> getHtpTestList(Integer childId) {
-        List<HtpTest> htpTests = htpTestRepository.findByChildId(childId);
-        return htpTests;
+        return htpTestRepository.findByChildId(childId);
     }
 
-
+    /**
+     * 특정 HTP 테스트 ID로 조회하여 상세 DTO로 변환 후 반환
+     *
+     * @param htpTestId 조회할 HTP 테스트 ID
+     * @return HtpTestDetailDto 객체 (HTP 테스트 상세 정보)
+     */
     public HtpTestDetailDto getHtpTestById(Integer htpTestId) {
-        HtpTest htpTest = htpTestRepository.findById(htpTestId).orElse(null);
+        HtpTest htpTest = htpTestRepository.findById(htpTestId)
+                .orElse(null); // ID가 존재하지 않으면 null 반환
         return new HtpTestDetailDto(htpTest);
     }
 }

@@ -33,7 +33,7 @@ public class HtpTestController {
      */
 
     @PostMapping(path = "/img", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "Htp Test 수행 4번해야함", tags = "htp")
+    @Operation(summary = "Htp 테스트 수행 4번해야함", tags = "htp")
     public ResponseEntity<?> img(@Login User user,
                                  @RequestPart(name = "htp") HtpTestCreateReq req, // JSON 데이터
                                  @Parameter(name = "file")
@@ -53,7 +53,7 @@ public class HtpTestController {
 
 
     @GetMapping
-    @Operation(summary = "user 자녀의 htp테스트 리스트", tags = "htp")
+    @Operation(summary = "user 자녀의 HTP 테스트 리스트", tags = "htp")
     public ResponseEntity<?> getHtpTests(@Login User user) {
         List<HtpTestResponseDto> htpTestList = htpFercade.getHtpTestList(user);
         return ResponseUtil.success(htpTestList);
