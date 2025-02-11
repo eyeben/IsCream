@@ -39,7 +39,7 @@ services:
       - "8000:8000"
     volumes:
       - /home/ubuntu/models:/home/ubuntu/models
-      - /home/ubuntu/models:/chroma
+      - /home/ubuntu/models/chroma_db:/chroma
     networks:
       - mynetwork
     environment:
