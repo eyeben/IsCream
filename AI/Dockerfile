@@ -1,14 +1,5 @@
-# Python 3.10.11 기반 경량 이미지 사용
-FROM python:3.10.11-slim
-
-# 시스템 패키지 업데이트 및 필수 라이브러리 설치
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    sqlite3 \
-    libsqlite3-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Python 3.10.11 기본 이미지 사용
+FROM python:3.10.11
 
 # 작업 디렉토리 설정
 WORKDIR /app
