@@ -17,8 +17,10 @@ llm = ChatOpenAI(model="gpt-4-turbo")
 # OpenAI 임베딩 모델 설정
 embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002")
 
+CHROMA_DB_HOST = "http://chromadb:7000"  # Docker Compose에서 정의한 서비스명 사용
+
 # ChromaDB 벡터 저장소 로드
-vectorstore = Chroma(persist_directory="/home/ubuntu/models/chroma_db", embedding_function=embedding_function)
+vectorstore = Chroma(client=CHROMA_DB_HOST,collection_name="htp_analysis", embedding_function=embedding_function)
 
 # Retriever 생성
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
