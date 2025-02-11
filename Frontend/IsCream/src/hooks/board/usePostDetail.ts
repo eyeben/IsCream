@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { boardApi, boardKeys } from "@/api/board";
+import { boardApi, boardKeys } from "../../api/board";
 
 export const usePostDetail = (postId: number) => {
   return useQuery({

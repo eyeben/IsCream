@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { boardApi, boardKeys } from "@/api/board";
+import { boardApi, boardKeys } from "../../api/board";
 
 export const useDeletePost = () => {
   const queryClient = useQueryClient();
