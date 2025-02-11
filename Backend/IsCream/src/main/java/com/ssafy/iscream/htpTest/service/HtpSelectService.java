@@ -1,16 +1,17 @@
 package com.ssafy.iscream.htpTest.service;
 
+import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
-import com.ssafy.iscream.htpTest.domain.response.HtpTestResponseDto;
+import com.ssafy.iscream.htpTest.dto.response.HtpTestDetailDto;
+import com.ssafy.iscream.htpTest.dto.response.HtpTestResponseDto;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
 import com.ssafy.iscream.s3.service.S3Service;
+import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,16 +23,14 @@ public class HtpSelectService {
     /**
      * 특정 사용자의 HTP 테스트 목록을 조회하여 DTO 리스트로 반환
      */
-    public List<HtpTestResponseDto> getHtpTestList(Integer childId) {
-        List<HtpTest> htpTests = null;
+    public List<HtpTest> getHtpTestList(Integer childId) {
+        List<HtpTest> htpTests = htpTestRepository.findByChildId(childId);
+        return htpTests;
+    }
 
-        // HtpTest 엔티티를 HtpTestResponseDto로 변환
-        return htpTests.stream()
-                .map(htpTest -> new HtpTestResponseDto(
-                        htpTest.getHtpTestId(),
-                        "HTP 검사", // 제목이 따로 없다면 기본값 지정
-                        htpTest.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) // 날짜 포맷
-                ))
-                .collect(Collectors.toList());
+
+    public HtpTestDetailDto getHtpTestById(Integer htpTestId) {
+        HtpTest htpTest = htpTestRepository.findById(htpTestId).orElse(null);
+        return new HtpTestDetailDto(htpTest);
     }
 }
