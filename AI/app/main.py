@@ -5,7 +5,7 @@ from .routers import yolo_service
 
 load_dotenv()
 # FastAPI 애플리케이션 생성
-app = FastAPI()
+app = FastAPI(root_path="/ai")
 
 app.add_middleware(
     CORSMiddleware,
