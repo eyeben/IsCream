@@ -44,9 +44,9 @@ public class PostQueryRepository {
 
         JPAQuery<Post> query = queryFactory
                 .selectFrom(post)
-                .leftJoin(postLike).on(postLike.post.eq(post))
+                .leftJoin(postLike).on(postLike.postId.eq(post.postId))
                 .where(predicate)
-                .groupBy(post);
+                .groupBy(post.postId);
 
         if ("like".equals(sort)) {
             if (lastLikeCount != null) {
@@ -72,8 +72,8 @@ public class PostQueryRepository {
         return queryFactory
                 .select(post)
                 .from(post)
-                .leftJoin(post.postLikes, postLike)
-                .groupBy(post)
+                .leftJoin(postLike).on(postLike.postId.eq(post.postId))
+                .groupBy(post.postId)
                 .orderBy(postLike.count().desc(), post.createdAt.desc())
                 .limit(5)
                 .fetch();

@@ -18,10 +18,9 @@ public class CommentQueryRepository {
     public List<Comment> findCommentByPostId(Integer postId) {
         return queryFactory
                 .selectFrom(comment)
-                .leftJoin(comment.parentComment).fetchJoin()
-                .where(comment.post.postId.eq(postId))
+                .where(comment.postId.eq(postId))
                 .orderBy(
-                        comment.parentComment.commentId.coalesce(comment.commentId).desc(),
+                        comment.parentCommentId.coalesce(comment.commentId).desc(),
                         comment.commentId.asc()
                 )
                 .fetch();
