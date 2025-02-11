@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PatTestCreateReq {
     @Schema(description = "A유형 개수", example = "5")
-    private int scoreA;
+    private Integer scoreA;
     @Schema(description = "B유형 개수", example = "3")
-    private int scoreB;
+    private Integer scoreB;
     @Schema(description = "C유형 개수", example = "8")
-    private int scoreC;
+    private Integer scoreC;
 }

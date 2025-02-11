@@ -14,13 +14,13 @@ public class PatTestRes {
     private String testDate;
 
     @Schema(description = "A유형 개수", example = "5")
-    private int scoreA;
+    private Integer scoreA;
 
     @Schema(description = "A유형 개수", example = "3")
-    private int scoreB;
+    private Integer scoreB;
 
     @Schema(description = "A유형 개수", example = "8")
-    private int scoreC;
+    private Integer scoreC;
 
     @Schema(description = "결과 보고서", example = "결과 보고서")
     private String result;
