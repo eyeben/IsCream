@@ -1,10 +1,9 @@
-// components/board_detail/DetailContent.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface DetailContentProps {
   post: {
-    postId: number; // string에서 number로 변경
+    postId: number;
     title: string;
     content: string;
     author: {
@@ -12,23 +11,20 @@ interface DetailContentProps {
       nickname: string;
       imageUrl: string;
     };
-    createdAt: string; // createAt에서 createdAt으로 변경
+    createdAt: string;
     images?: string[];
   };
-  currentUserId: string | undefined;
   onDelete: () => void;
-  onChat?: (authorId: string) => void; // optional로 변경
+  onChat?: (authorId: string) => void;
 }
 
 const DetailContent: React.FC<DetailContentProps> = ({
   post,
-  currentUserId,
   onDelete,
   onChat
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
-  const isAuthor = currentUserId === post.author.id;
 
   const handleEditClick = () => {
     navigate(`/board/edit/${post.postId}`, { state: { post } });
@@ -68,35 +64,32 @@ const DetailContent: React.FC<DetailContentProps> = ({
 
           {showDropdown && (
             <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
-              {isAuthor ? (
-                <>
-                  <button
-                    onClick={handleEditClick}
-                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-t-lg"
-                  >
-                    수정하기
-                  </button>
-                  <button
-                    onClick={() => {
-                      onDelete();
-                      setShowDropdown(false);
-                    }}
-                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 rounded-b-lg"
-                  >
-                    삭제하기
-                  </button>
-                </>
-              ) : onChat ? (
+              <button
+                onClick={handleEditClick}
+                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-t-lg"
+              >
+                수정하기
+              </button>
+              <button
+                onClick={() => {
+                  onDelete();
+                  setShowDropdown(false);
+                }}
+                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600"
+              >
+                삭제하기
+              </button>
+              {onChat && (
                 <button
                   onClick={() => {
                     onChat(post.author.id);
                     setShowDropdown(false);
                   }}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-lg"
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-b-lg"
                 >
                   채팅하기
                 </button>
-              ) : null}
+              )}
             </div>
           )}
         </div>

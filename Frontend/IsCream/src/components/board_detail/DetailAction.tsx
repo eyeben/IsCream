@@ -1,6 +1,3 @@
-// components/board_detail/DetailActions.tsx
-import React from "react";
-
 interface DetailActionsProps {
   onLike: () => void;
   onCommentClick: () => void;

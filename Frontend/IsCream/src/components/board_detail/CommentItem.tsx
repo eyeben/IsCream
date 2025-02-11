@@ -1,6 +1,5 @@
-// CommentItem.tsx
 import { useState } from "react";
-import { CommentItemProps } from "./types";
+import type { CommentItemProps } from "../../types/board";
 import CommentDropdown from "./CommentDropdown";
 
 const CommentItem = ({
@@ -16,8 +15,7 @@ const CommentItem = ({
   children,
   isReply = false
 }: CommentItemProps) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const isEdited = comment.updatedAt && comment.updatedAt !== comment.createdAt;
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   return (
     <div className={`${isReply ? "pl-4" : ""}`}>
@@ -35,23 +33,23 @@ const CommentItem = ({
               <span className="text-sm font-medium">
                 {comment.author.nickname}
               </span>
-              <span className="text-xs text-gray-500">
-                {comment.createdAt}
-                {isEdited && " (수정됨)"}
-              </span>
             </div>
             <p className="text-gray-800 mt-1 break-words">{comment.content}</p>
             <div className="flex items-center space-x-4 mt-2">
-              {!isReply && (
+              {/* 답글달기 버튼 - 대댓글이 아닐 때만 표시 */}
+              {!isReply && onReply && (
                 <button
+                  type="button"
                   onClick={onReply}
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >
                   답글달기
                 </button>
               )}
+              {/* 답글 토글 버튼 - 대댓글이 있을 때만 표시 */}
               {!isReply && repliesCount > 0 && onToggleReplies && (
                 <button
+                  type="button"
                   onClick={onToggleReplies}
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >
@@ -62,6 +60,7 @@ const CommentItem = ({
           </div>
         </div>
 
+        {/* 드롭다운 메뉴 - hover시에만 표시 */}
         <div className="opacity-0 group-hover:opacity-100 transition-opacity">
           <CommentDropdown
             comment={comment}
@@ -75,6 +74,7 @@ const CommentItem = ({
         </div>
       </div>
 
+      {/* 대댓글 영역 */}
       {!isReply && children && (
         <div className="ml-8 mt-2 space-y-4 border-l-2 border-[#BEBEBE]">
           {children}
