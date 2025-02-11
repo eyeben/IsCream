@@ -1,6 +1,10 @@
 package com.ssafy.iscream.htpTest.service;
 
 import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
+import com.ssafy.iscream.common.exception.ErrorCode;
+import com.ssafy.iscream.common.exception.NotFoundException;
+import com.ssafy.iscream.common.exception.UnauthorizedException;
+import com.ssafy.iscream.common.response.ResponseData;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.domain.request.HtpTestDiagnosisReq;
 import com.ssafy.iscream.htpTest.domain.request.HtpTestReq;
@@ -32,18 +36,17 @@ public class HtpTestService {
 
     private final ImageServeService imageServeService;
 
-    public List<Integer> getDaysByYearMonth(CalendarGetReq calendarGetReq) {
-        int year = calendarGetReq.getYearMonth().getYear();
-        Month month = calendarGetReq.getYearMonth().getMonth();
-        LocalDateTime startDate = LocalDateTime.of(year, month, 1, 0, 0);
+    public List<HtpTest> getByYearMonth(Integer userId, CalendarGetReq calendarGetReq) {
+        LocalDateTime startDate = LocalDateTime.of(calendarGetReq.getYear(), calendarGetReq.getMonth(), 1, 0, 0);
         LocalDateTime endDate = startDate.plusMonths(1); // 다음 달 1일 (해당 월의 끝까지 포함)
 
-        List<HtpTest> htpTests = htpTestRepository.findByChildIdAndCreatedAtBetween(calendarGetReq.getChildId(), startDate, endDate);
-        List<Integer> days = new ArrayList<>();
-        for (HtpTest htpTest : htpTests) {
-            days.add(htpTest.getCreatedAt().getDayOfMonth());
+        // 권한 없는 경우
+        List<HtpTest> htpTests = htpTestRepository.findByChildIdAndCreatedAtBetween( calendarGetReq.getChildId(), startDate, endDate);
+        if (!htpTests.isEmpty() && !userId.equals(htpTests.get(0).getChildId())) {
+            throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
         }
-        return days;
+
+        return htpTests;
     }
 
     // house, tree, male, female
@@ -133,4 +136,12 @@ public class HtpTestService {
         return htpTestRepository.findByChildIdAndCreatedAtBetween(childId, startOfDay, endOfDay);
     }
 
+    public HtpTest getByChildIdAndDate(Integer childId, LocalDate selectedDate) {
+        return htpTestRepository.findByChildIdAndDate(childId, selectedDate).orElse(null);
+
+    }
+
+    public HtpTest getLastHtpTest(Integer childId) {
+        return htpTestRepository.findFirstByChildIdOrderByCreatedAtDesc(childId).orElse(null);
+    }
 }

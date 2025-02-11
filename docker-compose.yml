@@ -1,23 +1,35 @@
 version: '3.9'
 
+
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./Frontend/IsCream/dist:/usr/share/nginx/html  # React 빌드 결과물
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - backend
+      - ai-server
+    networks:
+      - mynetwork
+
   backend:
     build:
       context: ./Backend/IsCream
       dockerfile: Dockerfile
     container_name: backend-app
     ports:
-      - "8081:8080"
+      - "8082:8080"  # 🔹 8082로 변경
     environment:
       SPRING_PROFILES_ACTIVE: prod
-
-  frontend:
-    build:
-      context: ./Frontend/IsCream
-      dockerfile: Dockerfile
-    container_name: frontend-app
-    ports:
-      - "80:80"
+    networks:
+      - mynetwork
 
   ai-server:
     build:
@@ -27,4 +39,11 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - /home/ubuntu/models:/home/ubuntu/models  # 모델 경로 마운트
+      - /home/ubuntu/models:/home/ubuntu/models
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+    external: true 

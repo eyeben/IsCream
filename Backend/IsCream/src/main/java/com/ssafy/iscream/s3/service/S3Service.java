@@ -105,7 +105,12 @@ public class S3Service {
             log.error("File delete fail error : {}", e.getMessage());
             throw new S3UploadException(FILE_DELETE_IS_FAILED);
         }
+    }
 
+    public void deleteFile(List<String> fileUrls) {
+        for (String fileUrl : fileUrls) {
+            deleteFile(fileUrl);
+        }
     }
 
     // 파일 존재 여부 확인

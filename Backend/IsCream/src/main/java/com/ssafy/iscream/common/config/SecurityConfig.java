@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,6 +30,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -65,12 +67,13 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8080", "http://127.0.0.1:8080"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        //configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://i12a407.p.ssafy.io"));
+                        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+                        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
-                        configuration.setExposedHeaders(Arrays.asList("x-access-token", "Set-Cookie"));
+                        configuration.setExposedHeaders(Arrays.asList("access", "Set-Cookie"));
 
                         return configuration;
                     }
@@ -95,6 +98,9 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
                         .requestMatchers("/users/email/check", "/users/nickname/check").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/board/post/{postId}", "/board/main").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/board").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/comments/{postId}").permitAll()
                         .anyRequest().authenticated());
 
         http

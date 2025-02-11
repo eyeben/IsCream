@@ -21,8 +21,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(servers = {
-        @Server(url = "https://3.36.67.41:8081", description = "deploy server"),
-        @Server(url = "http://localhost:8080", description = "local server")
+        @Server(url = "https://3.36.67.41:8082/api", description = "deploy server"),
+        @Server(url = "https://i12a407.p.ssafy.io/api", description = "deploy server"),
+        @Server(url = "http://localhost:8080/api", description = "local server"),
+        @Server(url = "http://3.36.67.41:8082/api", description = "local server"),
+        @Server(url = "http://i12a407.p.ssafy.io:8082/api", description = "local server")
 })
 public class SwaggerConfig {
 
@@ -41,6 +44,16 @@ public class SwaggerConfig {
     }
 
     @Bean
+    GroupedOpenApi commentApi() {
+        return GroupedOpenApi.builder().group("comment").pathsToMatch("/comments/**").build();
+    }
+
+    @Bean
+    GroupedOpenApi boardApi() {
+        return GroupedOpenApi.builder().group("board").pathsToMatch("/board/**").build();
+    }
+
+    @Bean
     GroupedOpenApi userApi() {
         return GroupedOpenApi.builder().group("users").pathsToMatch("/users/**").build();
     }
@@ -55,6 +68,7 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("all") // 그룹 이름 지정
                 .pathsToMatch( "/users/**", "/htp-tests/**")
+                .pathsToMatch("/users/**", "/board/**", "/comments/**")
                 .build();
     }
     @Bean
@@ -77,6 +91,14 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("htp")
                 .pathsToMatch("/htp-tests/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi educationApi() {
+        return GroupedOpenApi.builder()
+                .group("education")
+                .pathsToMatch("/educations/**")
                 .build();
     }
 

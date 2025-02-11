@@ -5,8 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface HtpTestRepository extends JpaRepository<HtpTest, Integer> {
     @Query("SELECT h FROM HtpTest h WHERE h.childId = :childId AND h.createdAt >= :startDate AND h.createdAt < :endDate")
@@ -16,5 +18,11 @@ public interface HtpTestRepository extends JpaRepository<HtpTest, Integer> {
             @Param("endDate") LocalDateTime endDate
     );
 
+    @Query("SELECT h FROM HtpTest h WHERE h.childId = :childId AND FUNCTION('DATE', h.createdAt) = :selectedDate")
+    Optional<HtpTest> findByChildIdAndDate(
+            @Param("childId") int childId,
+            @Param("selectedDate") LocalDate selectedDate
+    );
 
+    Optional<HtpTest> findFirstByChildIdOrderByCreatedAtDesc(Integer childId);
 }
