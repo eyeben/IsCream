@@ -21,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(servers = {
-        @Server(url = "https://3.36.67.41:8081", description = "deploy server"),
-        @Server(url = "http://localhost:8080", description = "local server")
+        @Server(url = "http://localhost:8080/api", description = "local server"),
+        @Server(url = "http://i12a407.p.ssafy.io:8082/api", description = "deploy server")
 })
 public class SwaggerConfig {
 
@@ -38,6 +38,15 @@ public class SwaggerConfig {
                 .components(securityComponents())
                 .addSecurityItem(new SecurityRequirement().addList("access"))
                 .paths(customPaths());
+    }
+
+    @Bean
+    GroupedOpenApi allApi() {
+        return GroupedOpenApi.builder()
+                .group("all") // 그룹 이름 지정
+                .pathsToMatch( "/users/**", "/htp-tests/**", "/board/**", "/comments/**",
+                        "/calendars/**", "/children/**", "/educations/**", "/pat-tests/**")
+                .build();
     }
 
     @Bean
@@ -61,21 +70,12 @@ public class SwaggerConfig {
     }
 
     @Bean
-    GroupedOpenApi allApi() {
-        return GroupedOpenApi.builder()
-                .group("all") // 그룹 이름 지정
-                .pathsToMatch("/users/**", "/board/**", "/comments/**", "/pat-tests/**")
-                .build();
-    }
-
-    @Bean
     GroupedOpenApi calendarApi() {
         return GroupedOpenApi.builder()
                 .group("calendar")
                 .pathsToMatch("/calendars/**")
                 .build();
     }
-
     @Bean
     GroupedOpenApi childrenApi() {
         return GroupedOpenApi.builder()
@@ -89,6 +89,14 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("pat")
                 .pathsToMatch("/pat-tests/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi htpTestApi() {
+        return GroupedOpenApi.builder()
+                .group("htp")
+                .pathsToMatch("/htp-tests/**")
                 .build();
     }
 
