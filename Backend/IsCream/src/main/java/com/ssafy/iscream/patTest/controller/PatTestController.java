@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/pat-tests")
+@RequestMapping("/pat-tests")
 @Tag(name = "pat", description = "PAT 검사 API")
 public class PatTestController {
 
@@ -34,8 +34,15 @@ public class PatTestController {
     }
 
     @Operation(summary = "PAT 검사 결과 조회", tags = "pat")
-    @GetMapping
+    @GetMapping("/recent")
     public ResponseEntity<?> getPatTestResult(@Login User user){
         return ResponseUtil.success(patTestService.getPatTestResult(user));
     }
+
+    @Operation(summary = "PAT 검사 결과 목록 조회", tags = "pat")
+    @GetMapping
+    public ResponseEntity<?> getPatTestResultList(@Login User user){
+        return ResponseUtil.success(patTestService.getPatTestResultList(user));
+    }
+
 }

@@ -8,6 +8,7 @@ import com.ssafy.iscream.patTest.dto.request.PatTestCreateReq;
 import com.ssafy.iscream.patTest.dto.response.PatTestQuestionRes;
 import com.ssafy.iscream.patTest.dto.response.PatTestRes;
 import com.ssafy.iscream.patTest.repository.PatQuestionRepository;
+import com.ssafy.iscream.patTest.repository.PatTestListRepository;
 import com.ssafy.iscream.patTest.repository.PatTestRepository;
 import com.ssafy.iscream.user.domain.User;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class PatTestService {
 
     private final PatQuestionRepository patQuestionRepository;
     private final PatTestRepository patTestRepository;
+    private final PatTestListRepository patTestListRepository;
 
     // PAT 검사 질문 조회
     public List<PatTestQuestionRes> getPatTestList(User user) {
@@ -62,12 +64,10 @@ public class PatTestService {
         );
     }
 
-    // PAT 검사 결과 조회
+    // PAT 검사 결과 최신 조회
     public PatTestRes getPatTestResult(User user) {
-        PatTest patTest = patTestRepository.findByUser(user)
+        PatTest patTest = patTestRepository.findLatestByUser(user)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
-
-
         return new PatTestRes(
                 patTest.getTestDate(),
                 patTest.getAScore(),
@@ -75,6 +75,20 @@ public class PatTestService {
                 patTest.getCScore(),
                 patTest.getResult().getDescription()
         );
+    }
+
+    // PAT 검사 결과 리스트 조회
+    public List<PatTestRes> getPatTestResultList(User user) {
+        List<PatTest> patTestList = patTestListRepository.findByUser(user);
+        return patTestList.stream()
+                .map(l -> new PatTestRes(
+                        l.getTestDate(),
+                        l.getAScore(),
+                        l.getBScore(),
+                        l.getCScore(),
+                        l.getResult().getDescription()
+                ))
+                .collect(Collectors.toList());
     }
 
     private PatTest.ResultType calculateResult(int scoreA, int scoreB, int scoreC){
