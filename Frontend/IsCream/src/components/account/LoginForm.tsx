@@ -3,7 +3,6 @@ import { useGoogleLogin } from "@react-oauth/google";
 import axios, { AxiosError } from "axios";
 import LoginLogo from "../../assets/icons/login_logo.png";
 import GoogleLogo from "../../assets/icons/google_logo.png";
-import LongButton from "../../components/button/LongButton"; // ✅ 버튼 컴포넌트 추가
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -82,16 +81,12 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-
-        {/* ✅ 기존 버튼을 LongButton으로 변경 */}
-        <LongButton
-          type="submit"
-          color="green"
-          className="w-full p-3 rounded hover:bg-green-600 text-base"
+        <button
+          className="w-full p-3 bg-green-500 text-white rounded hover:bg-green-600"
           onClick={handleLogin}
         >
           로그인
-        </LongButton>
+        </button>
       </div>
 
       {error && <p className="text-red-500 mt-2">{error}</p>}
@@ -104,7 +99,7 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
 
         {/* 비밀번호 찾기 & 회원가입 */}
         <div className="mt-4 flex items-center w-full justify-center">
-          <a href="/find-password" className="hover:underline mr-2">비밀번호 찾기</a>
+          <a href="/forgot-password" className="hover:underline mr-2">비밀번호 찾기</a>
           <span className="mx-2">|</span>
           <a href="/signup" className="hover:underline ml-2">회원가입</a>
         </div>

@@ -14,12 +14,11 @@ const HeaderController = () => {
   if (location.pathname === "/" || location.pathname === "/mypage") {
     return <HeaderMain onChildSelect={handleChildSelect} />;
   }
-  else return <HeaderNormal />;
 
   // 게시판 페이지를 제외한 모든 페이지에서 HeaderNormal 사용
-  // if (location.pathname !== "/" || location.pathname !== "/mypage") {
-  //   return <HeaderNormal />;
-  // }
+  if (location.pathname !== "/board") {
+    return <HeaderNormal />;
+  }
 
   // 게시판(`/board`)에서는 헤더 없음
   return null;

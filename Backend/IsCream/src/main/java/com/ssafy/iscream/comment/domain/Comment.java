@@ -31,7 +31,7 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "parent_comment_id")
     private Comment parentComment;
 
-    @Column(nullable = false, length = 1024)
+    @Column(length = 1024)
     private String content;
 
 }

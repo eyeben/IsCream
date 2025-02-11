@@ -53,7 +53,7 @@ public class CalendarFacade {
 
     public CalendarGetDetailRes getCalendarDetail(Integer userId, CalendarGetDetailReq calendarGetDetailReq) {
         HtpTest htpTest = htpTestService.getByChildIdAndDate(calendarGetDetailReq.getChildId(),calendarGetDetailReq.getSelectedDate());
-        Memo memo = calendarService.getByChildIdDate(calendarGetDetailReq.getChildId(),calendarGetDetailReq.getSelectedDate());
+        Memo memo = calendarService.getByChildIdDate(userId, calendarGetDetailReq.getChildId(),calendarGetDetailReq.getSelectedDate());
         return new CalendarGetDetailRes(htpTest, memo);
     }
 }

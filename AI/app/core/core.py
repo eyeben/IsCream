@@ -28,37 +28,29 @@ def classify_size(obj_width, obj_height, image_width, image_height):
     return "작음" if size_ratio <= 0.33 else "중간" if size_ratio <= 0.66 else "큼"
 
 
-def analyze_object(obj, category, image_width, image_height):
-    """ 개별 객체(요소)의 위치와 크기 해석 """
-    x_pos, y_pos = classify_position(obj["cx_norm"], obj["cy_norm"])
-    size = classify_size(
-        obj["xmax"] - obj["xmin"], obj["ymax"] - obj["ymin"],
-        image_width, image_height
-    )
-
-    result = [f"- {obj['name']} ({category}) 있음"]
-    result.append(f"  위치: {x_pos} / {y_pos}")
-    result.append(f"  크기: {size}")
-    return "\n".join(result)
-
-
-def analyze_missing_objects(prediction, category, expected_objects):
-    """ 없는 객체를 확인하여 결과에 추가 """
-    existing_objects = {obj["name"] for obj in prediction["predictions"]}
-    missing_objects = set(expected_objects) - existing_objects
-    return [f"- {obj} ({category}) 없음" for obj in missing_objects]
-
-
 def house(prediction):
     """ 집(House) 그림 해석 """
     result = ["집 검사 결과"]
-    image_width = prediction.get("image_width", 1)  # 기본값 지정
-    image_height = prediction.get("image_height", 1)
-    expected_objects = ["집전체", "지붕", "집벽", "문", "창문", "굴뚝", "연기", "울타리", "길", "연못", "산", "나무", "꽃", "잔디", "태양"]
 
     for obj in prediction["predictions"]:
-        result.append(analyze_object(obj, "집", image_width, image_height))
-    result.extend(analyze_missing_objects(prediction, "집", expected_objects))
+        if obj["name"] == "집전체":
+            x_pos, y_pos = classify_position(obj["cx_norm"], obj["cy_norm"])
+            size = classify_size(obj["xmax"] - obj["xmin"], obj["ymax"] - obj["ymin"], prediction["image_width"],
+                                 prediction["image_height"])
+
+            result.append(f"- 위치: {x_pos} / {y_pos}")
+            result.append(f"- 크기: {size}")
+
+            if x_pos == "왼쪽":
+                result.append("- 과거에 대한 집착 경향이 있음.")
+            elif x_pos == "오른쪽":
+                result.append("- 미래 지향적인 사고를 가질 가능성이 높음.")
+            if y_pos == "상":
+                result.append("- 공상적인 성향, 현실 도피 경향이 있음.")
+            if size == "큼":
+                result.append("- 자신감이 강하고 외향적인 성향.")
+            elif size == "작음":
+                result.append("- 위축되거나 불안정한 심리 상태.")
 
     return "\n".join(result)
 
@@ -66,13 +58,26 @@ def house(prediction):
 def tree(prediction):
     """ 나무(Tree) 그림 해석 """
     result = ["나무 검사 결과"]
-    image_width = prediction.get("image_width", 1)
-    image_height = prediction.get("image_height", 1)
-    expected_objects = ["나무전체", "기둥", "수관", "가지", "뿌리", "나뭇잎", "꽃", "열매", "그네", "새", "다람쥐", "구름", "달", "별"]
 
     for obj in prediction["predictions"]:
-        result.append(analyze_object(obj, "나무", image_width, image_height))
-    result.extend(analyze_missing_objects(prediction, "나무", expected_objects))
+        if obj["name"] == "나무전체":
+            x_pos, y_pos = classify_position(obj["cx_norm"], obj["cy_norm"])
+            size = classify_size(obj["xmax"] - obj["xmin"], obj["ymax"] - obj["ymin"], prediction["image_width"],
+                                 prediction["image_height"])
+
+            result.append(f"- 위치: {x_pos} / {y_pos}")
+            result.append(f"- 크기: {size}")
+
+            if x_pos == "왼쪽":
+                result.append("- 과거에 대한 집착이 강함.")
+            elif x_pos == "오른쪽":
+                result.append("- 미래를 향한 성장 욕구가 강함.")
+            if y_pos == "상":
+                result.append("- 높은 목표를 가지고 있지만 현실 도피적일 수 있음.")
+            if size == "큼":
+                result.append("- 자아 강도가 높고 자신감이 강함.")
+            elif size == "작음":
+                result.append("- 무력감이나 불안정한 성향이 있음.")
 
     return "\n".join(result)
 
@@ -80,13 +85,26 @@ def tree(prediction):
 def male(prediction):
     """ 남성(Male) 그림 해석 """
     result = ["남성 검사 결과"]
-    image_width = prediction.get("image_width", 1)
-    image_height = prediction.get("image_height", 1)
-    expected_objects = ["사람전체", "머리", "얼굴", "눈", "코", "입", "귀", "머리카락", "목", "상체", "팔", "손", "다리", "발", "단추", "주머니", "운동화", "남자구두"]
 
     for obj in prediction["predictions"]:
-        result.append(analyze_object(obj, "남자 사람", image_width, image_height))
-    result.extend(analyze_missing_objects(prediction, "남자 사람", expected_objects))
+        if obj["name"] == "사람전체":
+            x_pos, y_pos = classify_position(obj["cx_norm"], obj["cy_norm"])
+            size = classify_size(obj["xmax"] - obj["xmin"], obj["ymax"] - obj["ymin"], prediction["image_width"],
+                                 prediction["image_height"])
+
+            result.append(f"- 위치: {x_pos} / {y_pos}")
+            result.append(f"- 크기: {size}")
+
+            if x_pos == "왼쪽":
+                result.append("- 전통적인 가치관을 중요시하는 성향.")
+            elif x_pos == "오른쪽":
+                result.append("- 미래지향적이고 독립적인 성향.")
+            if y_pos == "상":
+                result.append("- 이상주의적인 성향.")
+            if size == "큼":
+                result.append("- 자기주장이 강하고 자신감이 높음.")
+            elif size == "작음":
+                result.append("- 낮은 자존감, 위축된 성향.")
 
     return "\n".join(result)
 
@@ -94,12 +112,25 @@ def male(prediction):
 def female(prediction):
     """ 여성(Female) 그림 해석 """
     result = ["여성 검사 결과"]
-    image_width = prediction.get("image_width", 1)
-    image_height = prediction.get("image_height", 1)
-    expected_objects = ["사람전체", "머리", "얼굴", "눈", "코", "입", "귀", "머리카락", "목", "상체", "팔", "손", "다리", "발", "단추", "주머니", "운동화", "여자구두"]
 
     for obj in prediction["predictions"]:
-        result.append(analyze_object(obj, "여자 사람", image_width, image_height))
-    result.extend(analyze_missing_objects(prediction, "여자 사람", expected_objects))
+        if obj["name"] == "사람전체":
+            x_pos, y_pos = classify_position(obj["cx_norm"], obj["cy_norm"])
+            size = classify_size(obj["xmax"] - obj["xmin"], obj["ymax"] - obj["ymin"], prediction["image_width"],
+                                 prediction["image_height"])
+
+            result.append(f"- 위치: {x_pos} / {y_pos}")
+            result.append(f"- 크기: {size}")
+
+            if x_pos == "왼쪽":
+                result.append("- 감정적이고 과거를 중요시하는 성향.")
+            elif x_pos == "오른쪽":
+                result.append("- 진취적이고 독립적인 성향.")
+            if y_pos == "상":
+                result.append("- 이상주의적이고 공상적인 경향.")
+            if size == "큼":
+                result.append("- 사회적으로 자신감이 높고 적극적인 성향.")
+            elif size == "작음":
+                result.append("- 내향적이고 위축된 성향.")
 
     return "\n".join(result)

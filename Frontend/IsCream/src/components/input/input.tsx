@@ -1,12 +1,9 @@
-// 사용방법
+// 사용방법법
 // <Input
 //         placeholder='hello@example.com'
 //         type='email'
 //         required={true}
 //         />
-
-import { useState } from "react";
-import { Eye, EyeOff } from 'lucide-react';
 
 //       <Input
 //         placeholder="홍길동"
@@ -18,50 +15,40 @@ import { Eye, EyeOff } from 'lucide-react';
 
 
 interface InputProps {
+
     placeholder?: string;
-    type?: 'email' | 'tel' | 'text' | 'calendar' | 'password';
+    type?: 'email' | 'tel' | 'text' | 'calendar';
     required?: boolean;
     className?: string;
     withButton?: boolean,
     buttonText?: string;
     onButtonClick?: () => void;
     value?: string; // 달력 값
-    onChange?: (value: string) => void;
+    onChange?: (value: string) => void; // 달력 변경
 }
 
 const Input = ({
-  placeholder = "",
-  type = "email",
-  required = false,
-  className = "",
-  withButton = false,
-  buttonText = "중복 확인",
-  onButtonClick,
-  value,
-  onChange,
+    placeholder = '',
+    type = 'email',
+    required = false,
+    className='',
+    withButton = false,
+    buttonText = '중복 확인',
+    onButtonClick,
+    value,
+    onChange
 }: InputProps) => {
     
-    const [showPassword, setShoePassword] = useState(false);
-    const inputType = type === 'calendar' 
-        ? 'date' 
-        : type === 'password'
-            ? (showPassword ? 'text' : 'password')
-            : type;
-
-    const handlerInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputType = type === 'calendar' ? 'date' : type;
+    const handlerDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if(onChange){
             onChange(e.target.value);
         }
     }
-
-    const togglePasswordVisibility = () => {
-        setShoePassword(!showPassword);
-    }
-    
     return (
         <>
-            <div className="w-[95%] ">
-                <div className="w-full max-w-[706px] p-3 bg-white border border-gray-300 rounded flex items-center">
+            <div className="w-[95%] relative">
+                <div className="w-full p-3 bg-white border border-gray-300 rounded flex items-center">
                     <input
                         type={inputType}
                         placeholder={placeholder}
@@ -70,29 +57,15 @@ const Input = ({
                             type === 'calendar' ? 'cursor-pointer' : ''
                         }`}
                         value={value}
-                        onChange={handlerInputChange}
+                        onChange={type === 'calendar' ? handlerDateChange : undefined}
                     />
                     {withButton && (
                         <button
                             onClick={onButtonClick}
-                            className="px-3 py-1 bg-green-600 text-white text-xs rounded-[15px] hover:bg-green-700"
+                            className="px-2 py-0 bg-green-600 text-white rounded hover:bg-green-700"
                         >
                             {buttonText}
                         </button>
-                    )}
-
-                    {type === 'password' && (
-                        <button
-                        onClick={togglePasswordVisibility}
-                        className="p-1 text-gray-500 hover:text-gray-700"
-                        type="button"
-                    >
-                        {showPassword ? (
-                            <Eye className="w-5 h-5" />
-                        ) : (
-                        <EyeOff className="w-5 h-5" />
-                        )}
-                    </button>
                     )}
                 </div>
             </div>
