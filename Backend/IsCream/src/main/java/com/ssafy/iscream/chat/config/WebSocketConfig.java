@@ -31,6 +31,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.enableSimpleBroker("/sub") // 구독 경로 설정
                 .setTaskScheduler(taskScheduler())
                 .setHeartbeatValue(new long[]{10000, 10000}); // 10초마다 하트비트 설정
+
+
         registry.setApplicationDestinationPrefixes("/pub"); // 발행 경로 설정
     }
 
