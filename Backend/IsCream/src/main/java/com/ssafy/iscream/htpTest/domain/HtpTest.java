@@ -49,5 +49,5 @@ public class HtpTest extends BaseTimeEntity {
     private String pdfUrl;
 
     @Column(name = "emoji")
-    private Byte emoji;
+    private Emoji emoji;
 }
