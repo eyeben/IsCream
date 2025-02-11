@@ -82,7 +82,7 @@ public class RedisConfig {
      */
     @Bean
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
-        return new StringRedisTemplate(connectionFactory);
+        return new StringRedisTemplate(connectionFactory); // 🔥 String 전용 RedisTemplate 사용
     }
 
     /**
@@ -93,15 +93,8 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        // ✅ Jackson ObjectMapper 설정
-        ObjectMapper objectMapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule()) // LocalDateTime 지원
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) // ISO 8601 포맷 유지
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // 알 수 없는 필드 무시
-
         // ✅ JSON 직렬화 설정
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
-
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
         template.setKeySerializer(new StringRedisSerializer());  // Key 직렬화
         template.setValueSerializer(serializer); // Value 직렬화
         template.setHashKeySerializer(new StringRedisSerializer());
@@ -110,4 +103,26 @@ public class RedisConfig {
         template.afterPropertiesSet();
         return template;
     }
+//    @Bean
+//    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+//        RedisTemplate<String, Object> template = new RedisTemplate<>();
+//        template.setConnectionFactory(connectionFactory);
+//
+//        // ✅ Jackson ObjectMapper 설정
+//        ObjectMapper objectMapper = new ObjectMapper()
+//                .registerModule(new JavaTimeModule()) // LocalDateTime 지원
+//                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) // ISO 8601 포맷 유지
+//                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // 알 수 없는 필드 무시
+//
+//        // ✅ JSON 직렬화 설정
+//        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+//
+//        template.setKeySerializer(new StringRedisSerializer());  // Key 직렬화
+//        template.setValueSerializer(serializer); // Value 직렬화
+//        template.setHashKeySerializer(new StringRedisSerializer());
+//        template.setHashValueSerializer(serializer);
+//
+//        template.afterPropertiesSet();
+//        return template;
+//    }
 }
