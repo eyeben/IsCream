@@ -1,5 +1,5 @@
 # Python 3.10.11 기반 이미지 사용
-FROM python:3.10.11-bookworm
+FROM python:3.11-bookworm
 
 # 필수 시스템 패키지 설치
 RUN apt-get update && apt-get install -y \
