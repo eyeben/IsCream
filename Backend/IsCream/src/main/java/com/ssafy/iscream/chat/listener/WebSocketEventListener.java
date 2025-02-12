@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.Map;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -22,18 +24,25 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        String sessionId = headerAccessor.getSessionId();
+        Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
+
+        // ✅ STOMP 헤더에서 userId와 roomId 가져오기
         String userId = headerAccessor.getFirstNativeHeader("userId");
         String roomId = headerAccessor.getFirstNativeHeader("roomId");
 
+        // ✅ 가져온 값들을 세션 속성에 저장
+        if (userId != null) sessionAttributes.put("userId", userId);
+        if (roomId != null) sessionAttributes.put("roomId", roomId);
+
+        log.info("🔗 WebSocket 연결됨: 세션ID={}, 사용자ID={}, 채팅방ID={}", sessionId, userId, roomId);
+
+        // ✅ Redis에 사용자 추가 (구독 관리)
         if (userId != null && roomId != null) {
             String redisKey = "chatroom-" + roomId;
-
-            // ✅ Redis에 유저 추가
             redisTemplate.opsForSet().add(redisKey, userId);
-            log.info("✅ Redis에 사용자 추가: 채팅방={}, 사용자={}", roomId, userId);
+            log.info("✅ 사용자 구독 추가됨: 채팅방={}, 사용자={}", roomId, userId);
         }
-
-        log.info("🔗 WebSocket 연결됨: 세션ID={}, 헤더={}", headerAccessor.getSessionId(), headerAccessor.toNativeHeaderMap());
     }
     /**
      * ✅ 클라이언트가 WebSocket 연결을 종료할 때 로그 출력
@@ -42,15 +51,17 @@ public class WebSocketEventListener {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = headerAccessor.getSessionId();
-        String userId = (String) headerAccessor.getSessionAttributes().get("userId");
-        String roomId = (String) headerAccessor.getSessionAttributes().get("roomId");
+
+        // ✅ 세션에서 userId와 roomId 가져오기
+        Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
+        String userId = (sessionAttributes != null) ? (String) sessionAttributes.get("userId") : null;
+        String roomId = (sessionAttributes != null) ? (String) sessionAttributes.get("roomId") : null;
 
         log.info("❌ WebSocket 연결 종료됨: 세션ID={}, 사용자ID={}, 채팅방ID={}", sessionId, userId, roomId);
 
+        // ✅ Redis에서 유저 삭제
         if (userId != null && roomId != null) {
             String redisKey = "chatroom-" + roomId;
-
-            // ✅ Redis에서 유저 삭제
             redisTemplate.opsForSet().remove(redisKey, userId);
             log.info("🚪 사용자 구독 해제됨: 채팅방={}, 사용자={}", roomId, userId);
         }
