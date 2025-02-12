@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface BigFiveQuestionRepository extends JpaRepository<BigFiveQuestion, Integer> {
-    List<BigFiveQuestion> findByUserId(@Param("userId") Integer userId);
+    List<BigFiveQuestion> findAll();
 }

@@ -32,7 +32,7 @@ public class BigFiveTestService {
 
     // 성격 5요인 질문 목록 조회
     public List<BigFiveTestQuestionRes> getBigFiveTestList(User user) {
-        List<BigFiveQuestion> questions = bigFiveQuestionRepository.findAll(user.getUserId());
+        List<BigFiveQuestion> questions = bigFiveQuestionRepository.findAll();
         return questions.stream()
                 .map(q -> new BigFiveTestQuestionRes(
                         q.getQuestion(),
