@@ -2,41 +2,35 @@ package com.ssafy.iscream.board.dto.response;
 
 import com.ssafy.iscream.board.domain.Post;
 import com.ssafy.iscream.common.util.DateUtil;
-import com.ssafy.iscream.user.domain.User;
-import com.ssafy.iscream.user.dto.response.UserProfile;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
-@Builder
-@Getter
-public class PostDetail {
-
+@Builder @Getter
+public class PostInfo {
     private Integer postId;
     private String title;
     private String content;
+    private String thumbnail;
     private Integer likes;
     private Boolean userLiked;
     private Integer viewCount;
-    private List<String> images;
     private String createdAt;
-    private UserProfile author;
-    private String userImageUrl;
+    private String authorName;
+    private Integer commentCount;
 
-    public static PostDetail of(Post post, User user, Boolean userLiked, Integer viewCount,
-                                List<String> images, Integer likes, UserProfile author) {
-        return PostDetail.builder()
+    public static PostInfo of(Post post, String thumbnail, boolean userLiked,
+                              Integer likes, Integer viewCount, String authorName, Integer commentCount) {
+        return PostInfo.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .thumbnail(thumbnail)
                 .likes(likes)
                 .userLiked(userLiked)
                 .viewCount(viewCount)
-                .images(images)
                 .createdAt(DateUtil.format(post.getCreatedAt()))
-                .author(author)
-                .userImageUrl(user != null ? user.getImageUrl() : null)
+                .authorName(authorName)
+                .commentCount(commentCount)
                 .build();
     }
 }

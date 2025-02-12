@@ -28,7 +28,12 @@ public class Post extends BaseTimeEntity {
     private String content;
 
     @Column
-    private Integer viewCount;
+    private Integer viewCount = 0;
+
+    public void updatePost(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 
     public void updateViewCount(int views) {
         this.viewCount = views;
