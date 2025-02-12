@@ -1,7 +1,9 @@
 package com.ssafy.iscream.chat.controller;
 
+import com.ssafy.iscream.auth.user.Login;
 import com.ssafy.iscream.chat.domain.ChatRoom;
 import com.ssafy.iscream.chat.service.ChatRoomService;
+import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +17,8 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
     @GetMapping("/{userId}")
-    public List<ChatRoom> getUserChatRooms(@PathVariable String userId) {
-        return chatRoomService.getUserChatRooms(userId);
+    public List<ChatRoom> getUserChatRooms(@Login User user) {
+        return chatRoomService.getUserChatRooms(user.getUserId());
     }
 
     @PostMapping("/create")

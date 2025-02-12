@@ -24,27 +24,28 @@ public class ChatRoomService {
     /**
      * ✅ 사용자가 속한 채팅방 목록 조회
      */
-    public List<ChatRoom> getUserChatRooms(String userId) {
-        return chatRoomRepository.findByParticipantIdsContaining(userId);
+    public List<ChatRoom> getUserChatRooms(Integer userId) {
+        return chatRoomRepository.findByParticipantIdsContaining(String.valueOf(userId));
     }
 
     /**
      * ✅ 1:1 채팅방 생성 또는 기존 채팅방 반환
      */
     public ChatRoom createOrGetChatRoom(String user1, String user2) {
-        List<String> participants = Arrays.asList(user1, user2);
+        // 두 사용자가 포함된 채팅방이 이미 있는지 확인
+        Optional<ChatRoom> existingRoom = chatRoomRepository.findByParticipants(user1, user2);
 
-        // 기존 채팅방이 있는지 확인
-        Optional<ChatRoom> existingRoom = chatRoomRepository.findByParticipantIds(participants);
         if (existingRoom.isPresent()) {
-            return existingRoom.get();
+            return existingRoom.get(); // 기존 채팅방 반환
         }
 
-        // 없으면 새 채팅방 생성
+        // 새로운 채팅방 생성
         ChatRoom newRoom = ChatRoom.builder()
-                .participantIds(participants)
-                .createdAt(LocalDateTime.now())
+                .participantIds(List.of(user1, user2))
+                .lastMessageTimestamp(LocalDateTime.now()) // 생성 시 현재 시간으로 설정
                 .build();
+
         return chatRoomRepository.save(newRoom);
     }
+
 }
