@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
   return (
     <GoogleOAuthProvider clientId="500251459785-jt83i1u8dq66ecvjr6it8mc6orcj40m7.apps.googleusercontent.com">
       <div className="flex flex-col items-center justify-center min-h-screen w-full">
-        <LoginForm onLoginSuccess={() => console.log("로그인 성공!")} />
+        <LoginForm />
       </div>
     </GoogleOAuthProvider>
   );

@@ -38,8 +38,10 @@ export default defineConfig({
       "/api": {
         target: "https://i12a407.p.ssafy.io",
         changeOrigin: true,
-        secure: false
-        // rewrite: (path) => path.replace(/^\/api/, '')
+        secure: true,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        }
       }
     }
   }
