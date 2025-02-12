@@ -32,17 +32,18 @@ interface MyPageProps {
   };
 }
 const MyPage: React.FC = () => {
-
+    
     console.log('MyPage 컴포넌트 렌더링 시작');
     
     const [userData, setUserData] = useState<MyPageProps>({
         nickname: "",
-        profileImage: ".././assets/image/character.png",
+        profileImage: "",
         phone: "",
         birthDate: "",
         relation: "",
         children: []
     });
+    
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingChildIndex, setEditingChildIndex] = useState<number | null>(
     null
@@ -71,13 +72,13 @@ const MyPage: React.FC = () => {
                         relation: response.data.relation,      // 추가
                         children: []
                     });
-                    
-                }else{
+                    console.log(userData.profileImage);
+                  }else{
                     console.error("사용자 정보 로딩 실패: ", response.message);
+                  }
+                }catch (error) {
+                  console.error("사용자 정보 로딩 에러: ", error);
                 }
-            }catch (error) {
-                console.error("사용자 정보 로딩 에러: ", error);
-            }
         };
 
         fetchUserData();

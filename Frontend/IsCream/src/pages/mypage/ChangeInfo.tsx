@@ -2,13 +2,29 @@ import ProfileImage from "../../components/profile/ProfileImage";
 import ProfileForm from "../../components/profile/ProfileForm";
 import React, {useState, useRef} from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
+import { updateUserInfoAPI } from "../../api/userAPI";
 
-const ChangeInfo: React.FC = () => {
+interface LocationState  {
+    profileImage: string;
+    nickname: string;
+    phone: string;
+    birthDate: string;
+    relation: "MOTHER" | "FATHER" | "REST";
+}
+
+interface UpdateUserInfoRequest {
+  nickname: string;
+  phone: string;
+  birthDate: string;
+  relation: "MOTHER" | "FATHER" | "REST";
+}
+
+const ChangeInfo = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const userData = location.state;
-  const profileImageRef = useRef<any>(null);
+  const userData = location.state as LocationState;
+  const profileImageRef = useRef<{ uploadImage: () => Promise<File | null> }>(null);
 
   const [birthDate, setBirthDate] = useState(userData?.birthDate || '');
 
@@ -20,23 +36,27 @@ const ChangeInfo: React.FC = () => {
   }) => {
     try {
       // 이미지 파일 가져오기
-      const imageFile = await profileImageRef.current.uploadImage();
+      console.log("이미지 업로드 시도");
+      const imageFile = await profileImageRef.current?.uploadImage();
+      console.log("이미지 업로드 시도");
 
-      // file
-      // API 호출
-      const request = await updateUserInfoAPI(
-        {
-          nickname: formData.nickname,
-          birthDate: formData.birthDate,
-          phone: formData.phone,
-          relation: formData.relation
-        },
-        imageFile
-      );
+      const updateData: UpdateUserInfoRequest = {
+        nickname: formData.nickname,
+        birthDate: formData.birthDate,
+        phone: formData.phone,
+        relation: formData.relation as "MOTHER" | "FATHER" | "REST"
+      };
+ 
+      console.log("전송할 데이터:", updateData);
+      const response = await updateUserInfoAPI(updateData, imageFile || undefined);
+      console.log("서버 응답:", response);
 
-      // 성공 시 처리
-      alert('프로필이 성공적으로 업데이트되었습니다.');
-      navigate('/profile'); // 프로필 페이지로 이동
+      if (response.code === 'S0000') {
+        alert('프로필이 성공적으로 업데이트되었습니다.');
+        navigate('/mypage');
+      } else {
+        alert(`프로필 업데이트 실패: ${response.message}`);
+      }
     } catch (error) {
       console.error('프로필 업데이트 중 오류 발생:', error);
       alert('프로필 업데이트에 실패했습니다.');
@@ -48,7 +68,10 @@ const ChangeInfo: React.FC = () => {
 
       <div>
         {/* 프로필 이미지 */}
-          <ProfileImage />
+          <ProfileImage 
+          initialProfileImage={userData?.profileImage}
+          ref={profileImageRef}
+          />
       </div>
       <div className="flex justify-center">
         {/* 입력 폼 */}

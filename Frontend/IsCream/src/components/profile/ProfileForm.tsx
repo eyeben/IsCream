@@ -23,7 +23,7 @@ interface ProfileFormProps {
   }) => void;
 }
 
-  const ProfileForm: React.FC<ProfileFormProps> = ({ birthDate, setBirthDate, initialData }: ProfileFormProps) => {
+  const ProfileForm: React.FC<ProfileFormProps> = ({ birthDate, setBirthDate, initialData, onSubmit }: ProfileFormProps) => {
 
     console.log('전달받은 initialData:', initialData);
     console.log('nickname:', initialData?.nickname);        // "test수정"
@@ -37,32 +37,22 @@ interface ProfileFormProps {
 
     const navigate = useNavigate();
 
-    const handleSubmit = async () => {
-      const formData = {
+    const handleSubmit = () => {
+
+      if (!nickname || !phone || !birthDate || !selectedRelation) {
+        alert('모든 필수 항목을 입력해주세요.');
+        return;
+      }
+      
+      onSubmit({
         nickname,
         phone,
         birthDate,
         relation: selectedRelation
-      };
-      console.log("입력된 폼데이터 제출:", formData);
-      
-      try{
-        const response = await updateUserInfoAPI(formData);
+      });
+    };
+  
 
-        if(response.code == 'S0000'){
-          console.log('사용자 정보 업데이트 성공');
-          navigate('/mypage');
-        }else{
-          console.log("업데이트 실패: ", response.message);
-        }
-      }catch (error) {
-        console.log("업데이트 에러: ", error);
-        
-      }
-
-      console.log("입력된 폼데이터 제출:", formData);
-
-  }
   return (
     <div className="w-full max-w-[706px]">
     <div className="space-y-4 w-full">

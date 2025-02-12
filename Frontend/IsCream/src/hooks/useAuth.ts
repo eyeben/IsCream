@@ -19,6 +19,8 @@ export const useAuth = (): AuthHook => {
   const isAuthenticated = !!localStorage.getItem("accessToken");
 
   const login = async (loginData: LoginRequest): Promise<LoginResponse> => {
+    // console.log("로그인 요청 데이터 ", loginData);
+    
     const response = await api.post<LoginResponse>("/users/login", loginData);
 
     console.log('전체 응답 헤더:', response.headers); // 디버깅용

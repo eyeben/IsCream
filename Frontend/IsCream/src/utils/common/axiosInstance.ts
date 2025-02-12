@@ -43,6 +43,8 @@ api.interceptors.response.use(
       console.log("401 error - clearing auth state");
       localStorage.removeItem("accessToken");
       queryClient.setQueryData(["auth"], { isAuthenticated: false });
+
+      console.log("Response data:", error.response.data);
     }
     return Promise.reject(error);
   }
