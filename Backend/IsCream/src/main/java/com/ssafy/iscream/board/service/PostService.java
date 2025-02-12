@@ -146,28 +146,66 @@ public class PostService {
         return postRepository.findTop5ByOrderByCreatedAtDesc();
     }
 
+    private String getLikeKey(Integer postId) {
+        return "post:" + postId + ":likes";
+    }
+
+    private String getLikesCountKey(Integer postId) {
+        return "post:" + postId + ":likesCount";
+    }
+
     // 게시글 좋아요 개수
     public Integer getPostLikes(Integer postId) {
-        return postLikeRepository.countByPostId(postId);
+        String countKey = getLikesCountKey(postId);
+
+        // Redis에서 좋아요 개수 조회
+        Integer count = (Integer) redisTemplate.opsForValue().get(countKey);
+        return count != null ? count : 0;
     }
 
     // 게시글 좋아요
     public void addPostLike(Integer postId, User user) {
-        // Redis에 좋아요 상태 저장
-        String key = "post:" + postId + ":likes";
-        redisTemplate.opsForSet().add(key, user.getUserId().toString());
+        String likeKey = getLikeKey(postId);
+        redisTemplate.opsForSet().add(likeKey, user.getUserId().toString());
 
-        // Redis에서 좋아요 개수 증가
-        getLikeCount(postId);
-        redisTemplate.opsForValue().increment(key + ":count", 1);
-
-        postLikeRepository.save(PostLike.builder().userId(user.getUserId()).postId(postId).build());
+        // 좋아요 개수 증가
+        redisTemplate.opsForValue().increment(getLikesCountKey(postId), 1);
     }
 
     // 게시글 좋아요 취소
     @Transactional
     public void deletePostLike(Integer postId, Integer userId) {
+        String likeKey = getLikeKey(postId);
+        redisTemplate.opsForSet().remove(likeKey, userId.toString());
+
+        // 좋아요 개수 감소
+        redisTemplate.opsForValue().increment(getLikesCountKey(postId), -1);
+
         postLikeRepository.deleteByPostIdAndUserId(postId, userId);
+    }
+
+    @Scheduled(cron = "0 */30 * * * ?")
+    @Transactional
+    public void updateLikeToDatabase() {
+        Set<String> keys = redisTemplate.keys("post:*:likes");
+
+        if (keys.isEmpty()) {
+            return;
+        }
+
+        for (String key : keys) {
+            Integer postId = Integer.parseInt(key.split(":")[1]);
+            Set<Object> userIds = redisTemplate.opsForSet().members(key);
+
+            if (userIds == null || userIds.isEmpty()) {
+                continue;
+            }
+
+            // 중복 방지
+            userIds.forEach(userId -> postLikeRepository.insertIgnore(postId, (Integer) userId));
+
+            redisTemplate.delete(key); // 동기화 후 삭제
+        }
     }
 
     // 사용자 좋아요 여부 확인
@@ -176,6 +214,15 @@ public class PostService {
             return false;
         }
 
+        String likeKey = getLikeKey(post.getPostId());
+
+        Boolean isMember = redisTemplate.opsForSet().isMember(likeKey, user.getUserId().toString());
+
+        if (Boolean.TRUE.equals(isMember)) {
+            return true;
+        }
+
+        // Redis에 없는 경우에만 DB에서 조회
         return postLikeRepository.existsByPostIdAndUserId(post.getPostId(), user.getUserId());
     }
 
@@ -214,22 +261,6 @@ public class PostService {
         }
 
         return viewCount;
-    }
-
-    // 좋아요 개수 가져오기
-    public int getLikeCount(Integer postId) {
-        String key = "post:" + postId + ":likes";
-        Integer likeCount = (Integer) redisTemplate.opsForValue().get(key + ":count");
-
-        if (likeCount == null) {
-            likeCount = postRepository.findById(postId)
-                    .map(Post::getLikeCount)
-                    .orElse(0);
-
-            redisTemplate.opsForValue().set(key + ":count", likeCount);
-        }
-
-        return likeCount;
     }
 
     // 일정 시간마다 DB에 조회수 저장

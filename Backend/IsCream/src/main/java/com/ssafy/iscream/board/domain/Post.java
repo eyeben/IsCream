@@ -30,15 +30,8 @@ public class Post extends BaseTimeEntity {
     @Column
     private Integer viewCount;
 
-    @Column
-    private Integer likeCount;
-
     public void updateViewCount(int views) {
         this.viewCount = views;
-    }
-
-    public void updateLikeCount(int likes) {
-        this.likeCount = likes;
     }
 
 }
