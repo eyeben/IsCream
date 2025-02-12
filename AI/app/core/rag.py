@@ -17,7 +17,7 @@ llm = ChatOpenAI(model="gpt-4-turbo")
 
 # OpenAI 임베딩 모델 설정
 embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002")
-persist_directory="ai/app/core/chroma_db"
+persist_directory="/app/app/core/chroma_db"
 
 
 # ChromaDB 벡터 저장소 로드
