@@ -6,7 +6,7 @@ import Pdf from "../components/profile/Pdf"
 import PAT from "../components/report/PAT";
 import Personality5 from "../components/report/Personality5";
 import React, { useEffect, useState } from 'react';
-import { getUserInfoAPI } from "@/api/mypageAPI";
+import { getUserInfoAPI } from "../api/mypageAPI";
 
 interface MyPageProps{
     name: string;
@@ -30,14 +30,40 @@ interface MyPageProps{
 }
 const MyPage: React.FC = () => {
 
+    console.log('MyPage 컴포넌트 렌더링 시작');
+    
     const [userData, setUserData] = useState<MyPageProps>({
-        name: "사용자",
-        profileImage: "default-profile.jpg",
+        name: "",
+        profileImage: ".././assets/image/character.png",
         children: []
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingChildIndex, setEditingChildIndex ] = useState<number | null>(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try{
+                console.log('유저 정보 요청 시작');
+                const response = await getUserInfoAPI();
+                console.log('API 응답:', response);
+
+                if(response.code == 'S0000'){
+                    setUserData({
+                        name: response.data.nickname,
+                        profileImage: response.data.imageUrl,
+                        children: [],
+                    });
+                }else{
+                    console.error("사용자 정보 로딩 실패: ", response.message);
+                }
+            }catch (error) {
+                console.error("사용자 정보 로딩 에러: ", error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const handleAddChild = () => {
         if (userData.children && userData.children.length < 2) {

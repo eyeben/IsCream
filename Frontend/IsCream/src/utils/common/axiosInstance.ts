@@ -1,7 +1,9 @@
+// utils/common/axiosInstance.ts
 import axios from "axios";
 import { queryClient } from "./queryClient";
 
 const { VITE_BASE_API } = import.meta.env;
+
 export const api = axios.create({
   baseURL: VITE_BASE_API,
   withCredentials: true,
@@ -10,12 +12,37 @@ export const api = axios.create({
   }
 });
 
+// 요청 전에 토큰을 헤더에 추가
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+    console.log("Making request to:", config.url);
+    console.log("Current token:", token);
+
+    if (token) {
+      // Authorization 대신 access 헤더로 변경
+      config.headers["access"] = token;
+      // 설정된 헤더 확인
+      console.log("Final request headers:", config.headers);
+    } else {
+      console.log("No token found in localStorage");
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// 응답 인터셉터는 간단하게 유지
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
+      console.log("401 error - clearing auth state");
+      localStorage.removeItem("accessToken");
       queryClient.setQueryData(["auth"], { isAuthenticated: false });
-      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
