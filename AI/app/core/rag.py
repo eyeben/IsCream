@@ -24,8 +24,7 @@ collection_name=""
 if collections:
     collection_name = collections[0].name  # 첫 번째 컬렉션의 이름을 가져옴
     print(f"✅ 자동으로 '{collection_name}' 컬렉션을 선택합니다.")
-else:
-    raise ValueError("⚠️ 저장된 컬렉션이 없습니다. 데이터를 먼저 저장하세요.")
+
 # ChromaDB 벡터 저장소 로드
 vectorstore = Chroma(persist_directory=persist_directory,collection_name=collection_name, embedding_function=embedding_function)
 
