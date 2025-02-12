@@ -17,11 +17,11 @@ llm = ChatOpenAI(model="gpt-4-turbo")
 
 # OpenAI 임베딩 모델 설정
 embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002")
-persist_directory="/app/app/core/chroma_db"
+persist_directory="app/core/chroma_db"
 
 
 # ChromaDB 벡터 저장소 로드
-vectorstore = Chroma(persist_directory=persist_directory,  collection_name="langchain",embedding_function=embedding_function)
+vectorstore = Chroma(persist_directory=persist_directory, embedding_function=embedding_function)
 
 # Retriever 생성
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
