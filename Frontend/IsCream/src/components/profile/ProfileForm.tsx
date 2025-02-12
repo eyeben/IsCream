@@ -4,35 +4,63 @@ import ProfileFormLabel from "./ProfileFormLabel";
 import RelationButtons from "../../components/profile/RelationButtons";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { updateUserInfoAPI } from "../../api/userAPI"
 
 interface ProfileFormProps {
   birthDate: string;
   setBirthDate: (date: string) => void;
   initialData?: {
     nickname?: string;
-    phoneNumber?: string;
+    phone?: string;
     birthDate?: string;
     relation?: string;
   }
+  onSubmit: (formData: {
+    nickname: string;
+    phone: string;
+    birthDate: string;
+    relation: string;
+  }) => void;
 }
 
-const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
-  const [nickname, setNickname] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [selectedRelation, setSelectedRelation] = useState<string>(''); 
-  
-  const navigate = useNavigate();
+  const ProfileForm: React.FC<ProfileFormProps> = ({ birthDate, setBirthDate, initialData }: ProfileFormProps) => {
 
-  const handleSubmit = () => {
+    console.log('전달받은 initialData:', initialData);
+    console.log('nickname:', initialData?.nickname);        // "test수정"
+    console.log('phone:', initialData?.phone);  // undefined
+    console.log('birthDate:', initialData?.birthDate);      // undefined
+    console.log('relation:', initialData?.relation);
 
-    const formData = {
-      nickname,
-      phoneNumber,
-      birthDate,
-      relation: selectedRelation
-    };
+    const [nickname, setNickname] = useState(initialData?.nickname || "");
+    const [phone, setPhone] = useState(initialData?.phone || "");
+    const [selectedRelation, setSelectedRelation] = useState<string>(initialData?.relation || ''); 
 
-    console.log("입력된 폼데이터 제출:", formData);
+    const navigate = useNavigate();
+
+    const handleSubmit = async () => {
+      const formData = {
+        nickname,
+        phone,
+        birthDate,
+        relation: selectedRelation
+      };
+      console.log("입력된 폼데이터 제출:", formData);
+      
+      try{
+        const response = await updateUserInfoAPI(formData);
+
+        if(response.code == 'S0000'){
+          console.log('사용자 정보 업데이트 성공');
+          navigate('/mypage');
+        }else{
+          console.log("업데이트 실패: ", response.message);
+        }
+      }catch (error) {
+        console.log("업데이트 에러: ", error);
+        
+      }
+
+      console.log("입력된 폼데이터 제출:", formData);
 
   }
   return (
@@ -64,8 +92,8 @@ const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
           placeholder="010-1234-5678"
           type="tel"
           required={true}
-          value={phoneNumber}
-          onChange={(value) => setPhoneNumber(value)}
+          value={phone}
+          onChange={(value) => setPhone(value)}
         />
       </ProfileFormLabel>
 

@@ -18,13 +18,14 @@ interface UpdateUserInfoRequest {
     nickname: string;
     birthDate: string;
     phone: string;
-    relation: 'MOTHER' | 'FATHER' | 'ETC';
+    relation: 'MOTHER' | 'FATHER' | 'REST';
 }
 
 interface UpdateUserResponse{
     code: 'S0000' | 'E4002';
     message: string;
 }
+
 // 사용자 정보 확인(이메일, 이름, 전화번호 확인)
 export const getUserInfoAPI = async () : Promise<GetUserInfoResponse> => {
 
@@ -37,14 +38,14 @@ export const getUserInfoAPI = async () : Promise<GetUserInfoResponse> => {
 }
 
 export const updateUserInfoAPI = async (
-    updateDate: UpdateUserInfoRequest,
+    updateData: UpdateUserInfoRequest,
     file?: File
-) : Promise<UpdateUserInfoRequest> => {
+) : Promise<UpdateUserResponse> => {
 
     const formData = new FormData();
 
     const userBlob = new Blob(
-        [JSON.stringify(updateDate)],
+        [JSON.stringify(updateData)],
         {type: 'application/json'}
     );
     formData.append('updateUser', userBlob);
@@ -53,7 +54,7 @@ export const updateUserInfoAPI = async (
         formData.append('file', file);
     }
 
-    const response = await api.put('/user/info', formData,{
+    const response = await api.put('/users/info', formData,{
         headers: {
             'Content-Type': 'multipart/form-data'
         }

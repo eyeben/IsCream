@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { getUserInfoAPI } from "../api/userAPI";
 
 interface MyPageProps {
-  name: string;
+  nickname: string;
   profileImage: string;
   phone: string;
   birthDate: string;
@@ -36,7 +36,7 @@ const MyPage: React.FC = () => {
     console.log('MyPage 컴포넌트 렌더링 시작');
     
     const [userData, setUserData] = useState<MyPageProps>({
-        name: "",
+        nickname: "",
         profileImage: ".././assets/image/character.png",
         phone: "",
         birthDate: "",
@@ -64,10 +64,14 @@ const MyPage: React.FC = () => {
 
                 if(response.code == 'S0000'){
                     setUserData({
-                        name: response.data.nickname,
+                        nickname: response.data.nickname,
                         profileImage: response.data.imageUrl,
-                        children: [],
+                        phone: response.data.phone,      // 추가
+                        birthDate: response.data.birthDate,    // 추가
+                        relation: response.data.relation,      // 추가
+                        children: []
                     });
+                    
                 }else{
                     console.error("사용자 정보 로딩 실패: ", response.message);
                 }
@@ -123,7 +127,10 @@ const MyPage: React.FC = () => {
         {/* 프로필 이미지 영역 */}
         <ProfileHeader
           profileImage={userData.profileImage}
-          profileNickname={userData.name}
+          nickname={userData.nickname}
+          phone={userData.phone}
+          birthDate={userData.birthDate}
+          relation={userData.relation}
         />
 
         {/* 자녀 정보 영역 */}

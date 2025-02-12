@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface ProfileHeaderProps{
     profileImage?: string;
-    profileNickname?: string;
+    nickname?: string;
     phone?: string;
     birthDate?: string;
     relation?: string;
@@ -11,7 +11,7 @@ interface ProfileHeaderProps{
 
 const ProfileHeader = ({ 
     profileImage, 
-    profileNickname,
+    nickname,
     phone,
     birthDate,
     relation,
@@ -23,7 +23,7 @@ const ProfileHeader = ({
         navigate('/mypage/changeInfo',{
             state: {
                 profileImage,
-                profileNickname,
+                nickname,
                 phone,
                 birthDate,
                 relation
@@ -41,7 +41,7 @@ const ProfileHeader = ({
                                 src={profileImage} 
                                 alt="Profile"
                                 className="w-12 h-12 rounded-full w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200" />
-                            <span className="ml-4 text-[25px]">{profileNickname}님</span>
+                            <span className="ml-4 text-[25px]">{nickname}님</span>
                         </div>
                         <button 
                             className="ml-auto m-3"

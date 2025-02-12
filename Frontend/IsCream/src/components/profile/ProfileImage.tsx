@@ -1,7 +1,43 @@
-const ProfileImage = () => {
+import { useRef, useState } from "react";
+
+
+interface ProfileImageProps{
+  initialProfileImage?: string;
+}
+
+const ProfileImage: React.FC<ProfileImageProps> = ({
+  initialProfileImage = '/profile-placehoder.jpg',
+  onImageUpload
+}) => {
+  
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [preview, setPreview] = useState<string>(initialProfileImage);
+  const [file, setFile] = useState<File | undefined>(undefined);
+
+  const handleUploadButtonClick = () => {
+    if(inputRef.current) {
+      inputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const selectedFile = event.target.files[0];
+      // setFile(selectedFile);
+    }
+  };
+
+  const uploadImage = async () => {
+    if (file) {
+      return file;
+    }
+    return null;
+  };
+  
   return (
     <div className="w-11/12 flex justify-center mb-6">
       <div className="relative">
+
         {/* 프로필 이미지 */}
         <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200">
           <img
@@ -14,7 +50,7 @@ const ProfileImage = () => {
         {/* 카메라 버튼 */}
         <button
           className="absolute bottom-0 right-0 bg-white p-1.5 rounded-full border border-gray-300 shadow-sm hover:bg-gray-50"
-          onClick={() => console.log("이미지 업로드 클릭")}
+          onClick={ handleUploadButtonClick }
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +72,17 @@ const ProfileImage = () => {
               d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
+
         </button>
+
+        {/* 숨겨진 파일 입력 */}
+        <input
+          type="file"
+          ref={inputRef}
+          onChange={handleFileChange}
+          accept="image/jpeg,image/png,image/gif"
+          className="hidden"
+        />
       </div>
     </div>
   );
