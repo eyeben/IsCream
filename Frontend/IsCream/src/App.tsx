@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BottomNavigation from "./components/nav/Nav";
 import Header from "./components/header/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { useEffect } from "react";
+import { api } from "./utils/common/axiosInstance";
 
 // pages 폴더에서 필요한 컴포넌트들을 가져옴
 import {
@@ -27,13 +29,25 @@ import {
   CenterPage,
   CanvasPage,
   AiAnalysisPage,
-  CameraPage,
-  PhotoCapturePage,
-  HTPResultsPage,
+  // CameraPage,
+  // PhotoCapturePage,
+  // HTPResultsPage,
   Education
 } from "./pages";
 
+// 앱 시작시 인증 설정
+const setupAxiosInterceptors = () => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
+};
+
 function App() {
+  useEffect(() => {
+    setupAxiosInterceptors();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -151,7 +165,7 @@ function App() {
               path="/ai-analysis"
               element={
                 <ProtectedRoute>
-                  <div>AI HTP검사 페이지</div>
+                  <AiAnalysisPage />
                 </ProtectedRoute>
               }
             />

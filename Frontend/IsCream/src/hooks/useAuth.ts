@@ -1,70 +1,38 @@
-import { useState, useEffect } from "react";
-import axios from "axios"; // API 요청을 위한 axios
-
-interface User {
-  id: string;
-  username: string;
-  // 필요한 다른 사용자 정보 필드
-}
+// hooks/useAuth.ts
+import { api } from "../utils/common/axiosInstance";
+import type { LoginRequest, LoginResponse } from "../types/auth";
 
 interface AuthHook {
   isAuthenticated: boolean;
-  user: User | null;
-  login: (token: string) => Promise<void>;
+  login: (loginData: LoginRequest) => Promise<LoginResponse>;
   logout: () => void;
-  checkAuth: () => Promise<boolean>;
 }
 
 export const useAuth = (): AuthHook => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
+  const isAuthenticated = !!localStorage.getItem("accessToken");
 
-  useEffect(() => {
-    console.log(
-      "컴포넌트 마운트됨, accessToken 확인:",
-      localStorage.getItem("accessToken")
-    );
-    checkAuth(); // 🔥 강제로 인증 체크 실행
-  }, []);
+  const login = async (loginData: LoginRequest): Promise<LoginResponse> => {
+    const response = await api.post<LoginResponse>("/users/login", loginData);
 
-  const checkAuth = async (): Promise<boolean> => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      setIsAuthenticated(false);
-      setUser(null);
-      return false;
+    if (response.data.code === "S0000") {
+      const accessToken = response.headers["access"];
+      if (accessToken) {
+        localStorage.setItem("accessToken", accessToken);
+        api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+      }
     }
 
-    try {
-      const response = await axios.get("/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setIsAuthenticated(true);
-      setUser(response.data);
-      return true;
-    } catch (error) {
-      console.error("Authentication failed", error);
-      logout();
-      return false;
-    }
+    return response.data;
   };
 
-  const login = async (token: string): Promise<void> => {
-    localStorage.setItem("accessToken", token);
-    await checkAuth();
-  };
-
-  const logout = (): void => {
+  const logout = () => {
     localStorage.removeItem("accessToken");
-    setIsAuthenticated(false);
-    setUser(null);
+    delete api.defaults.headers.common["Authorization"];
   };
 
   return {
     isAuthenticated,
-    user,
     login,
-    logout,
-    checkAuth
+    logout
   };
 };

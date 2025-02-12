@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { boardApi, boardKeys } from "@/api/board";
-import type { CreatePostRequest } from "@/types/board";
+import { boardApi, boardKeys } from "../../api/board";
+import type { CreatePostRequest } from "../../types/board";
 
 export const useCreatePost = () => {
   const queryClient = useQueryClient();

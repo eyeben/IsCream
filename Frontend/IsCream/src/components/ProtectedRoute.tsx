@@ -1,29 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { checkAuth, isAuthenticated } = useAuth();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const verifyAuth = async () => {
-      await checkAuth();
-      setLoading(false);
-    };
-    verifyAuth();
-  }, [checkAuth]);
-
-  if (loading) {
-    return <div>로딩 중...</div>; // 🎯 인증 확인이 끝날 때까지 기다리기
-  }
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
