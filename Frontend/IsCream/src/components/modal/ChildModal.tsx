@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
+import { childApi } from "../../api/child";
 
 interface ChildeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (childData: {
     childNickname: string;
-    childSex: string;
+    childGender: string;
     childBirth: string;
   }) => void;
   initialData?: {
     childNickname: string;
-    childSex: string;
+    childGender: string;
     childBirth: string;
   };
 }
@@ -23,7 +24,7 @@ const ChildeModal: React.FC<ChildeModalProps> = ({
 }) => {
   const [childData, setChildData] = useState({
     childNickname: "",
-    childSex: "",
+    childGender: "",
     childBirth: ""
   });
 
@@ -35,7 +36,7 @@ const ChildeModal: React.FC<ChildeModalProps> = ({
     } else if (isOpen) {
       setChildData({
         childNickname: "",
-        childSex: "",
+        childGender: "",
         childBirth: ""
       });
     }
@@ -69,9 +70,9 @@ const ChildeModal: React.FC<ChildeModalProps> = ({
             <div className="mb-4">
               <label className="block mb-2">성별</label>
               <select
-                value={childData.childSex}
+                value={childData.childGender}
                 onChange={(e) =>
-                  setChildData({ ...childData, childSex: e.target.value })
+                  setChildData({ ...childData, childGender: e.target.value })
                 }
                 className="w-full border p-2 rounded"
               >
