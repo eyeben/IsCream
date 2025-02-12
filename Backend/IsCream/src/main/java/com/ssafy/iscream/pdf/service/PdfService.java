@@ -1,20 +1,24 @@
 package com.ssafy.iscream.pdf.service;
 
-import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.properties.BorderRadius;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import com.ssafy.iscream.children.domain.Child;
+import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.s3.service.S3Service;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +26,15 @@ public class PdfService {
 
     private final S3Service s3Service;
 
-    public String generatePdf(User user, String text) {
+    // 🎨 색상 정의 (DeviceRgb)
+    private static final DeviceRgb LIGHT_BLUE = new DeviceRgb(173, 216, 230);
+    private static final DeviceRgb LIGHT_YELLOW = new DeviceRgb(255, 255, 153);
+    private static final DeviceRgb DARK_GRAY = new DeviceRgb(64, 64, 64);
+    private static final DeviceRgb LIGHT_GRAY = new DeviceRgb(211, 211, 211);
+    private static final DeviceRgb WHITE = new DeviceRgb(255, 255, 255);
+    private static final DeviceRgb BLACK = new DeviceRgb(0, 0, 0);
+
+    public String generatePdf(User user, Child child, String text, HtpTest htpTest) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         try (PdfWriter writer = new PdfWriter(outputStream);
@@ -30,52 +42,57 @@ public class PdfService {
              Document document = new Document(pdfDocument)) {
 
             // ✅ 한글 폰트 설정
-            InputStream fontStream = getClass().getClassLoader().getResourceAsStream("static/NanumGothic.ttf");
-            PdfFont font = PdfFontFactory.createFont(fontStream.readAllBytes(), "Identity-H");
+            PdfFont font = PdfFontFactory.createFont("static/NanumGothic.ttf", PdfEncodings.IDENTITY_H);
             document.setFont(font);
 
             // ✅ 제목 추가
-            Paragraph title = new Paragraph("< HTP 검사 보고서 >")
-                    .setFontSize(18)
-                    .setBold()
+            document.add(new Paragraph("< HTP 검사 보고서 >")
+                    .setFontSize(22).setBold()
+                    .setFontColor(WHITE)
+                    .setBackgroundColor(DARK_GRAY)
                     .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginBottom(20);
-            document.add(title);
+                    .setPadding(10).setMarginBottom(20));
 
-            // ✅ 사용자 정보 테이블 추가
-            document.add(getSectionTitle("기본 정보"));
-            Table userTable = new Table(UnitValue.createPercentArray(new float[]{3, 3, 3}))
-                    .useAllAvailableWidth()
-                    .setMarginBottom(10);
+            // ✅ 부모 정보
+            document.add(getSectionTitle("부모 정보", DARK_GRAY, WHITE));
+            document.add(getRoundedTable(new String[][]{
+                    {"이름: " + user.getUsername(), "이메일: " + user.getEmail()},
+                    {"전화번호: " + (user.getPhone() != null ? user.getPhone() : "미입력"), ""}
+            }));
 
-            userTable.addCell(getCell("이름: " + user.getUsername(), TextAlignment.LEFT));
-            userTable.addCell(getCell("나이: " + (user.getBirthDate() != null ? user.getBirthDate().toString() : ""), TextAlignment.LEFT));
-            userTable.addCell(getCell("성별: " + user.getStatus(), TextAlignment.LEFT));
-            userTable.addCell(getCell("이메일: " + user.getEmail(), TextAlignment.LEFT, 3));
-            userTable.addCell(getCell("전화번호: " + user.getPhone(), TextAlignment.LEFT, 3));
-            userTable.addCell(getCell("닉네임: " + user.getNickname(), TextAlignment.LEFT));
-            userTable.addCell(getCell("직업: " + "심리학과 대학생", TextAlignment.LEFT, 2));
-            document.add(userTable);
+            // ✅ 자녀 정보
+            document.add(getSectionTitle("자녀 정보", DARK_GRAY, WHITE));
+            document.add(getRoundedTable(new String[][]{
+                    {"닉네임: " + child.getNickname(), "생년월일: " + child.getBirthDate(), "성별: " + child.getGender()}
+            }));
 
-            // ✅ HTP 검사 목적
-            document.add(getSectionTitle("검사의 목적"));
-            document.add(new Paragraph("HTP 검사를 통해 자신의 심리나 생활에 대해서 알고자 함")
-                    .setFontSize(12).setMarginBottom(10));
+            // ✅ HTP 그림 (2×2 중앙 정렬)
+            document.add(getSectionTitle("HTP 검사 그림", LIGHT_BLUE, BLACK));
+            Table imageTable = new Table(UnitValue.createPercentArray(new float[]{1, 1}))
+                    .useAllAvailableWidth().setMarginBottom(10);
+            imageTable.addCell(getCenteredImageCell("집 그림", htpTest.getHouseDrawingUrl()));
+            imageTable.addCell(getCenteredImageCell("나무 그림", htpTest.getTreeDrawingUrl()));
+            imageTable.addCell(getCenteredImageCell("남자사람 그림", htpTest.getMaleDrawingUrl()));
+            imageTable.addCell(getCenteredImageCell("여자사람 그림", htpTest.getFemaleDrawingUrl()));
+            document.add(imageTable);
 
-            // ✅ 가족 배경과 개인력
-            document.add(getSectionTitle("가족배경과 개인력"));
-            document.add(new Paragraph("어릴 때 가족을 바쁘셔서 같이 활동한 일이 별로 없다고 하며, 활동적이고 외향적이다. 대학을 다니면서 자취생활을 하고 있다.")
-                    .setFontSize(12).setMarginBottom(10));
+            // ✅ 검사 결과 분석 (텍스트를 4등분하여 표로 정리)
+            String[] analysisParts = text.split("----");
+            if (analysisParts.length < 4) {
+                throw new IllegalArgumentException("텍스트는 4개 부분으로 나누어야 합니다.");
+            }
 
-            // ✅ 검사 시 행동관찰
-            document.add(getSectionTitle("검사의 행동관찰"));
-            document.add(new Paragraph("검사의 내용을 듣고 호기심 있는 태도로 응하며 신중하게 함, 인물화(여) 그림을 그릴 때 못 그렸다고 말을 자주함.")
-                    .setFontSize(12).setMarginBottom(10));
+            document.add(getSectionTitle("집 그림 검사 분석", LIGHT_YELLOW, BLACK));
+            document.add(getAnalysisTable(analysisParts[0]));
 
-            // ✅ 요약 및 검사자의 견해
-            document.add(getSectionTitle("요약 및 검사자의 견해"));
-            document.add(new Paragraph(text)
-                    .setFontSize(12).setMarginBottom(10));
+            document.add(getSectionTitle("나무 그림 검사 분석", LIGHT_YELLOW, BLACK));
+            document.add(getAnalysisTable(analysisParts[1]));
+
+            document.add(getSectionTitle("남자사람 그림 검사 분석", LIGHT_YELLOW, BLACK));
+            document.add(getAnalysisTable(analysisParts[2]));
+
+            document.add(getSectionTitle("여자사람 그림 검사 분석", LIGHT_YELLOW, BLACK));
+            document.add(getAnalysisTable(analysisParts[3]));
 
             document.close();
         } catch (Exception e) {
@@ -86,28 +103,56 @@ public class PdfService {
         return s3Service.uploadPdfFile(outputStream.toByteArray());
     }
 
-    // 📌 표의 셀을 생성하는 메서드
-    private static Cell getCell(String text, TextAlignment alignment) {
-        return new Cell().add(new Paragraph(text))
-                .setTextAlignment(alignment)
-                .setPadding(5)
-                .setBorder(null);
+    // 📌 둥근 테두리가 있는 표 생성
+    private static Table getRoundedTable(String[][] data) {
+        Table table = new Table(UnitValue.createPercentArray(data[0].length))
+                .useAllAvailableWidth().setMarginBottom(10);
+        for (String[] row : data) {
+            for (String cellData : row) {
+                table.addCell(new Cell().add(new Paragraph(cellData))
+                        .setPadding(8).setBorderRadius(new BorderRadius(10))
+                        .setBackgroundColor(LIGHT_GRAY));
+            }
+        }
+        return table;
     }
 
-    private static Cell getCell(String text, TextAlignment alignment, int colspan) {
-        return new Cell(1, colspan).add(new Paragraph(text))
-                .setTextAlignment(alignment)
-                .setPadding(5)
-                .setBorder(null);
+    // 📌 검사 결과 분석 표 생성
+    private static Table getAnalysisTable(String text) {
+        Table table = new Table(UnitValue.createPercentArray(1))
+                .useAllAvailableWidth().setMarginBottom(10);
+        table.addCell(new Cell().add(new Paragraph(text.replace("\n", "\n")))
+                .setPadding(10).setBorderRadius(new BorderRadius(10))
+                .setBackgroundColor(LIGHT_YELLOW));
+        return table;
     }
 
-    // 📌 섹션 제목을 생성하는 메서드
-    private static Paragraph getSectionTitle(String title) {
+    // 📌 섹션 제목 생성
+    private static Paragraph getSectionTitle(String title, DeviceRgb bgColor, DeviceRgb fontColor) {
         return new Paragraph(title)
-                .setBold()
-                .setFontSize(14)
-                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .setPadding(5)
-                .setMarginTop(10);
+                .setBold().setFontSize(16)
+                .setFontColor(fontColor)
+                .setBackgroundColor(bgColor)
+                .setPadding(8).setMarginTop(10);
+    }
+
+    // 📌 중앙 정렬된 이미지 셀 생성
+    private static Cell getCenteredImageCell(String title, String imageUrl) {
+        Cell cell = new Cell().setPadding(5).setBorder(null).setTextAlignment(TextAlignment.CENTER);
+        cell.add(new Paragraph(title).setBold().setFontSize(12).setMarginBottom(5));
+
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            try {
+                Image image = new Image(ImageDataFactory.create(imageUrl));
+                image.scaleToFit(200, 150);
+                cell.add(image.setTextAlignment(TextAlignment.CENTER));
+            } catch (Exception e) {
+                cell.add(new Paragraph("이미지를 불러올 수 없습니다.").setFontSize(10));
+            }
+        } else {
+            cell.add(new Paragraph("이미지 없음").setFontSize(10));
+        }
+
+        return cell;
     }
 }

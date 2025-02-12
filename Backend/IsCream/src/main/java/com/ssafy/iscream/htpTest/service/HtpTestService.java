@@ -1,6 +1,7 @@
 package com.ssafy.iscream.htpTest.service;
 
 import com.ssafy.iscream.calendar.dto.request.CalendarGetReq;
+import com.ssafy.iscream.children.repository.ChildRepository;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.UnauthorizedException;
 import com.ssafy.iscream.common.response.ResponseData;
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Transactional
 public class HtpTestService {
     private final HtpTestRepository htpTestRepository;
+    private final ChildRepository childRepository;
     private final S3Service s3Service;
     private final PdfService pdfService;
 
@@ -105,7 +107,7 @@ public class HtpTestService {
 
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
-            htpTest.setPdfUrl(pdfService.generatePdf(user, result));
+            htpTest.setPdfUrl(pdfService.generatePdf(user,childRepository.findByChildId(req.getChildId()) ,result, htpTest));
         }
 
         return result;
@@ -126,7 +128,7 @@ public class HtpTestService {
 
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
-            htpTest.setPdfUrl(pdfService.generatePdf(user, result));
+            htpTest.setPdfUrl(pdfService.generatePdf(user,childRepository.findByChildId(req.getChildId()) ,result, htpTest));
         }
 
         return result;
