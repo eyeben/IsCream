@@ -90,7 +90,7 @@ public class HtpTestService {
             ArrayList<HtpTestDiagnosisReq> files = imageMap.get(user.getUserId());
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
-            htpTest.setPdfUrl(pdfService.generatePdf(result));
+            htpTest.setPdfUrl(pdfService.generatePdf(user, result));
         }
         return result;
     }
@@ -105,7 +105,7 @@ public class HtpTestService {
             ArrayList<HtpTestDiagnosisReq> files = imageMap.get(user.getUserId());
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
-            htpTest.setPdfUrl(pdfService.generatePdf(result));
+            htpTest.setPdfUrl(pdfService.generatePdf(user, result));
         }
         return result;
     }
