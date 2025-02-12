@@ -52,16 +52,21 @@ public class HtpTestService {
     // house, tree, male, female
     public String htpTestCycle(User user, HtpTestReq req) {
         String result = "";
+
         if (req.getType().equals("house")) {
             checkTodayHtpTest(req.getChildId());
             init(user, req);
             testHouse(user, req);
+
         } else if (req.getType().equals("tree")) {
             testTree(user, req);
+
         } else if (req.getType().equals("male")) {
             result = testMale(user, req);
+
         } else if (req.getType().equals("female")) {
             result = testFemale(user, req);
+
         }
         return result;
     }
@@ -70,44 +75,60 @@ public class HtpTestService {
     private void testHouse(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
+
         htpTest.setHouseDrawingUrl(url);
+
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getHouseDrawingUrl()));
     }
 
     private void testTree(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
+
         htpTest.setTreeDrawingUrl(url);
+
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getTreeDrawingUrl()));
     }
 
     private String testMale(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
+
         htpTest.setMaleDrawingUrl(url);
+
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getMaleDrawingUrl()));
+
         String result = "";
+
         if (req.getIndex().equals(4)) {
             ArrayList<HtpTestDiagnosisReq> files = imageMap.get(user.getUserId());
+
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
             htpTest.setPdfUrl(pdfService.generatePdf(user, result));
         }
+
         return result;
     }
 
     private String testFemale(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
+
         htpTest.setFemaleDrawingUrl(url);
+
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getFemaleDrawingUrl()));
+        
         String result = "";
+
         if (req.getIndex().equals(4)) {
             ArrayList<HtpTestDiagnosisReq> files = imageMap.get(user.getUserId());
+
             result = imageServeService.sendImageData(user, files);
             htpTest.setAnalysisResult(result);
             htpTest.setPdfUrl(pdfService.generatePdf(user, result));
         }
+
         return result;
     }
 
@@ -115,7 +136,9 @@ public class HtpTestService {
     private void init(User user, HtpTestReq req) {
         HtpTest htpTest = new HtpTest();
         htpTest.setChildId(req.getChildId());
+
         htpTestRepository.save(htpTest);
+
         if (imageMap.containsKey(user.getUserId())) {
             imageMap.get(user.getUserId()).clear();
         } else {
@@ -125,6 +148,7 @@ public class HtpTestService {
 
     private void checkTodayHtpTest(Integer childId) {
         List<HtpTest> htpTest = getHtpTestByChildIdAndDate(childId);
+
         if (!htpTest.isEmpty()) {
             HtpTest todayHtpTest = htpTest.get(0);
             htpTestRepository.delete(todayHtpTest);
@@ -136,6 +160,7 @@ public class HtpTestService {
         LocalDate today = LocalDate.now();  // 오늘 날짜
         LocalDateTime startOfDay = today.atStartOfDay();  // 오늘 00:00:00
         LocalDateTime endOfDay = today.atTime(LocalTime.MAX); // 오늘 23:59:59.999999999
+
         return htpTestRepository.findByChildIdAndCreatedAtBetween(childId, startOfDay, endOfDay);
     }
 
@@ -152,6 +177,7 @@ public class HtpTestService {
     // Htp Test pdf url 전송
     public String getHtpTestPdfUrl(Integer htpTestId) {
         HtpTest htpTest = htpTestRepository.findByHtpTestId(htpTestId);
+
         return htpTest.getPdfUrl();
     }
 }
