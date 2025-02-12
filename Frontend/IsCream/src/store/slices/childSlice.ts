@@ -28,6 +28,7 @@ const childSlice = createSlice({
     },
     clearSelectedChild: (state) => {
       state.selectedChild = null;
+      localStorage.removeItem("selectedChild");
     }
   }
 });

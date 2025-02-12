@@ -10,7 +10,7 @@ interface HeaderProps {
 }
 
 const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
-  const [hasUnreadNotification, setHasUnreadNotification] = useState(false);
+  const [hasUnreadNotification /*setHasUnreadNotification*/] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -25,26 +25,26 @@ const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
     if (!isAuthenticated) return;
 
     // 알림 fetch 로직은 기존과 동일
-    const fetchNotifications = async () => {
-      try {
-        const response = await fetch("/api/notifications/unread", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        });
+    // const fetchNotifications = async () => {
+    //   try {
+    //     const response = await fetch("/api/notifications/unread", {
+    //       headers: {
+    //         Authorization: `Bearer ${localStorage.getItem("token")}`
+    //       }
+    //     });
 
-        if (!response.ok) {
-          throw new Error("알림 데이터를 불러오는 데 실패했습니다.");
-        }
+    //     if (!response.ok) {
+    //       throw new Error("알림 데이터를 불러오는 데 실패했습니다.");
+    //     }
 
-        const data = await response.json();
-        setHasUnreadNotification(data.hasUnread);
-      } catch (error) {
-        console.error("알림 조회 실패:", error);
-      }
-    };
+    //     const data = await response.json();
+    //     setHasUnreadNotification(data.hasUnread);
+    //   } catch (error) {
+    //     console.error("알림 조회 실패:", error);
+    //   }
+    // };
 
-    fetchNotifications();
+    // fetchNotifications();
   }, [isAuthenticated]);
 
   // 스크롤 이벤트 로직은 기존과 동일
@@ -117,7 +117,9 @@ const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
               </svg>
             </button>
           ) : (
-            <span className="text-[16px] font-medium text-gray-900">Aie's</span>
+            <span className="text-[16px] font-medium text-gray-900">
+              아이's그림
+            </span>
           )}
 
           {isAuthenticated && isOpen && (

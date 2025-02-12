@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { useCalendar } from "../../hooks/calendar/useCalendar";
 import CalendarHeader from "./CalendarHeader";
 import CalendarGrid from "./CalendarGrid";
 import DetailView from "./DetailView";
-import { CalendarProps, CalendarData, DetailResponse } from "./types";
+import { CalendarProps } from "./types";
+import { format } from "date-fns";
+import type { DayInfo } from "@/types/calendar";
 
 const Calendar: React.FC<CalendarProps> = ({ className }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const today = new Date();
+  const { selectedChild } = useSelector((state: RootState) => state.child);
 
   const initialSelectedDay =
     today.getMonth() === currentDate.getMonth() &&
@@ -17,79 +23,45 @@ const Calendar: React.FC<CalendarProps> = ({ className }) => {
   const [selectedDay, setSelectedDay] = useState<number | null>(
     initialSelectedDay
   );
-  const [calendarData, setCalendarData] = useState<{
-    [key: string]: CalendarData;
-  }>({});
-  const [selectedDetail, setSelectedDetail] = useState<
-    DetailResponse["data"] | null
-  >(null);
+  const [calendarData, setCalendarData] = useState<Record<number, DayInfo>>({});
 
-  // 더미 캘린더 데이터
-  const dummyCalendarData: { [key: string]: CalendarData } = {
-    "15": {
-      emoji: "😊",
-      isMemo: true,
-      isHtp: true
-    },
-    "16": {
-      emoji: "😄",
-      isMemo: true,
-      isHtp: false
-    },
-    "20": {
-      emoji: "😡",
-      isMemo: true,
-      isHtp: true
-    }
-  };
-
-  // 더미 상세 데이터
-  const dummyDetailData: { [key: string]: DetailResponse["data"] } = {
-    "15": {
-      isMemo: true,
-      isHtp: true,
-      houseUrl: "/sample-house.jpg",
-      treeUrl: "/sample-tree.jpg",
-      personUrl: "/sample-person.jpg",
-      report: "HTP 검사 결과입니다...",
-      memoId: "1",
-      memo: "오늘은 정말 좋은 하루였습니다."
-    },
-    "16": {
-      isMemo: true,
-      isHtp: false,
-      memo: "재미있는 일이 많았던 하루!"
-    },
-    "20": {
-      isMemo: true,
-      isHtp: true,
-      houseUrl: "/sample-house.jpg",
-      treeUrl: "/sample-tree.jpg",
-      personUrl: "/sample-person.jpg",
-      report: "다른 HTP 검사 결과...",
-      memoId: "3",
-      memo: "힘든 하루였습니다."
-    }
-  };
+  const { fetchCalendar, loading, error } = useCalendar(
+    Number(selectedChild?.childId) || 0
+  );
 
   useEffect(() => {
-    setCalendarData(dummyCalendarData);
-  }, [currentDate]);
+    if (!selectedChild) return;
+
+    const fetchMonthData = async () => {
+      const yearMonth = format(currentDate, "yyyy-MM");
+      try {
+        const response = await fetchCalendar(yearMonth);
+
+        if (response?.code === "S0000" && response.data) {
+          setCalendarData(response.data);
+        } else {
+          console.error("Calendar fetch response error:", response);
+        }
+      } catch (error) {
+        console.error("Calendar fetch error:", error);
+      }
+    };
+
+    fetchMonthData();
+  }, [currentDate, selectedChild, fetchCalendar]);
 
   const handleDayClick = (day: number | null) => {
     setSelectedDay(day);
-    if (!day) {
-      setSelectedDetail(null);
-      return;
-    }
-    setSelectedDetail(dummyDetailData[day.toString()] || null);
   };
 
   const handleDateChange = (date: Date) => {
     setCurrentDate(date);
     setSelectedDay(null);
-    setSelectedDetail(null);
   };
+
+  if (!selectedChild) {
+    return <div>선택된 자녀가 없습니다.</div>;
+  }
 
   return (
     <div className={`w-[95%] max-w-2xl mx-auto p-4 ${className}`}>
@@ -107,7 +79,7 @@ const Calendar: React.FC<CalendarProps> = ({ className }) => {
 
       <div className="mt-4 min-h-[200px] p-4 px-1">
         <DetailView
-          detail={selectedDetail}
+          childId={Number(selectedChild.childId)}
           selectedDate={{
             year: currentDate.getFullYear(),
             month: currentDate.getMonth() + 1,
@@ -115,6 +87,9 @@ const Calendar: React.FC<CalendarProps> = ({ className }) => {
           }}
         />
       </div>
+
+      {loading && <div>로딩 중...</div>}
+      {error && <div>에러: {error}</div>}
     </div>
   );
 };
