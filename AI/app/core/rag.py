@@ -17,16 +17,11 @@ llm = ChatOpenAI(model="gpt-4-turbo")
 
 # OpenAI 임베딩 모델 설정
 embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002")
-persist_directory="app/core/chroma_db"
-client = PersistentClient(path="app/core/chroma_db")
-collections = client.list_collections()
-collection_name=""
-if collections:
-    collection_name = collections[0].name  # 첫 번째 컬렉션의 이름을 가져옴
-    print(f"✅ 자동으로 '{collection_name}' 컬렉션을 선택합니다.")
+persist_directory="ai/app/core/chroma_db"
+
 
 # ChromaDB 벡터 저장소 로드
-vectorstore = Chroma(persist_directory=persist_directory,collection_name=collection_name, embedding_function=embedding_function)
+vectorstore = Chroma(persist_directory=persist_directory, embedding_function=embedding_function)
 
 # Retriever 생성
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
