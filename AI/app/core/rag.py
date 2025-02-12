@@ -17,19 +17,21 @@ llm = ChatOpenAI(model="gpt-4-turbo")
 
 # OpenAI 임베딩 모델 설정
 embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002")
-
+persist_directory="app/core/chroma_db"
+client = PersistentClient(path="app/core/chroma_db")
+collections = client.list_collections()
+collection_name=""
+if collections:
+    collection_name = collections[0].name  # 첫 번째 컬렉션의 이름을 가져옴
+    print(f"✅ 자동으로 '{collection_name}' 컬렉션을 선택합니다.")
+else:
+    raise ValueError("⚠️ 저장된 컬렉션이 없습니다. 데이터를 먼저 저장하세요.")
 # ChromaDB 벡터 저장소 로드
-vectorstore = Chroma(persist_directory="./chroma_db",collection_name="langchain", embedding_function=embedding_function)
+vectorstore = Chroma(persist_directory=persist_directory,collection_name=collection_name, embedding_function=embedding_function)
 
 # Retriever 생성
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
 
-print("📁 저장된 문서 개수:", vectorstore._collection.count())
-client = PersistentClient(path="AI/app/core/chroma_db")
-
-# 현재 존재하는 컬렉션 목록 조회
-collections = client.list_collections()
-print("📂 현재 저장된 컬렉션 목록:", [c.name for c in collections])
 
 prompt = PromptTemplate(
     template="""
