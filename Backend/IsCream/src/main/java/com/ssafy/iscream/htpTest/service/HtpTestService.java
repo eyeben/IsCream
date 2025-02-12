@@ -66,21 +66,22 @@ public class HtpTestService {
         return result;
     }
 
-    public void testHouse(User user, HtpTestReq req) {
+
+    private void testHouse(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setHouseDrawingUrl(url);
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getHouseDrawingUrl()));
     }
 
-    public void testTree(User user, HtpTestReq req) {
+    private void testTree(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setTreeDrawingUrl(url);
         imageMap.get(user.getUserId()).add(new HtpTestDiagnosisReq(req.getTime(), req.getType(), htpTest.getTreeDrawingUrl()));
     }
 
-    public String testMale(User user, HtpTestReq req) {
+    private String testMale(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setMaleDrawingUrl(url);
@@ -95,7 +96,7 @@ public class HtpTestService {
         return result;
     }
 
-    public String testFemale(User user, HtpTestReq req) {
+    private String testFemale(User user, HtpTestReq req) {
         HtpTest htpTest = getHtpTestByChildIdAndDate(req.getChildId()).get(0);
         String url = s3Service.uploadImage(req.getFile());
         htpTest.setFemaleDrawingUrl(url);
@@ -111,7 +112,7 @@ public class HtpTestService {
     }
 
 
-    public void init(User user, HtpTestReq req) {
+    private void init(User user, HtpTestReq req) {
         HtpTest htpTest = new HtpTest();
         htpTest.setChildId(req.getChildId());
         htpTestRepository.save(htpTest);
@@ -122,7 +123,7 @@ public class HtpTestService {
         }
     }
 
-    public void checkTodayHtpTest(Integer childId) {
+    private void checkTodayHtpTest(Integer childId) {
         List<HtpTest> htpTest = getHtpTestByChildIdAndDate(childId);
         if (!htpTest.isEmpty()) {
             HtpTest todayHtpTest = htpTest.get(0);
@@ -131,7 +132,7 @@ public class HtpTestService {
     }
 
 
-    public List<HtpTest> getHtpTestByChildIdAndDate(Integer childId) {
+    private List<HtpTest> getHtpTestByChildIdAndDate(Integer childId) {
         LocalDate today = LocalDate.now();  // 오늘 날짜
         LocalDateTime startOfDay = today.atStartOfDay();  // 오늘 00:00:00
         LocalDateTime endOfDay = today.atTime(LocalTime.MAX); // 오늘 23:59:59.999999999
@@ -145,5 +146,12 @@ public class HtpTestService {
 
     public HtpTest getLastHtpTest(Integer childId) {
         return htpTestRepository.findFirstByChildIdOrderByCreatedAtDesc(childId).orElse(null);
+    }
+
+
+    // Htp Test pdf url 전송
+    public String getHtpTestPdfUrl(Integer htpTestId) {
+        HtpTest htpTest = htpTestRepository.findByHtpTestId(htpTestId);
+        return htpTest.getPdfUrl();
     }
 }
