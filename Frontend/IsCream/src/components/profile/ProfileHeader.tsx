@@ -3,14 +3,32 @@ import { useNavigate } from 'react-router-dom';
 interface ProfileHeaderProps{
     profileImage?: string;
     profileNickname?: string;
+    phone?: string;
+    birthDate?: string;
+    relation?: string;
+    onNavigate?: () => void;
 }
 
-const ProfileHeader = ({ profileImage, profileNickname }: ProfileHeaderProps) => {
+const ProfileHeader = ({ 
+    profileImage, 
+    profileNickname,
+    phone,
+    birthDate,
+    relation,
+}: ProfileHeaderProps) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
         console.log('상세 프로필 설정 페이지 이동');
-        navigate('/mypage/changeInfo');
+        navigate('/mypage/changeInfo',{
+            state: {
+                profileImage,
+                profileNickname,
+                phone,
+                birthDate,
+                relation
+            }
+        });
     };
     
     return (

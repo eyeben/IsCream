@@ -6,11 +6,14 @@ import Pdf from "../components/profile/Pdf";
 import PAT from "../components/report/PAT";
 import Personality5 from "../components/report/Personality5";
 import React, { useEffect, useState } from 'react';
-import { getUserInfoAPI } from "../api/mypageAPI";
+import { getUserInfoAPI } from "../api/userAPI";
 
 interface MyPageProps {
   name: string;
   profileImage: string;
+  phone: string;
+  birthDate: string;
+  relation: string;
   children?: {
     childNickname: string;
     childSex: string;
@@ -35,6 +38,9 @@ const MyPage: React.FC = () => {
     const [userData, setUserData] = useState<MyPageProps>({
         name: "",
         profileImage: ".././assets/image/character.png",
+        phone: "",
+        birthDate: "",
+        relation: "",
         children: []
     });
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -8,6 +8,12 @@ import { useNavigate } from "react-router-dom";
 interface ProfileFormProps {
   birthDate: string;
   setBirthDate: (date: string) => void;
+  initialData?: {
+    nickname?: string;
+    phoneNumber?: string;
+    birthDate?: string;
+    relation?: string;
+  }
 }
 
 const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
