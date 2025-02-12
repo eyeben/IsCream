@@ -101,7 +101,7 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
                         .requestMatchers("/users/email/check", "/users/nickname/check").permitAll()
-                        .requestMatchers("/ws/**").permitAll()//
+                        .requestMatchers("/ws/**").permitAll()// 웹소켓은 이거 해야함
                         .anyRequest().authenticated());
 
         http
