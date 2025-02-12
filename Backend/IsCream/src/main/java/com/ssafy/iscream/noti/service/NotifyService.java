@@ -29,7 +29,7 @@ public class NotifyService {
 
     // 알림 목록 조회
     public List<NotifyInfo> getNotifyList(Integer userId) {
-        return notificationRepository.findAllByUser_UserId(userId).stream()
+        return notificationRepository.findAllByUserId(userId).stream()
                 .map(NotifyInfo::new)
                 .toList();
     }
