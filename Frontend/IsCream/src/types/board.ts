@@ -74,6 +74,8 @@ export interface BoardListRequest {
   lastLikeCount: number | null;
   size: number;
   sort: "create" | "like";
+  title?: string;
+  content?: string;
 }
 
 export interface BoardListResponse {
@@ -119,4 +121,37 @@ export interface CommentRequest {
 export interface CommentsListResponse {
   totalCount: number;
   comments: Comment[];
+}
+
+export interface CommentDropdownProps {
+  comment: Comment;
+  currentUserId?: string;
+  onEdit?: (commentId: number, content: string) => void;
+  onDelete?: (commentId: number) => void;
+  onChat?: (authorId: string) => void;
+  isOpen: boolean;
+  onToggle: () => void;
+}
+
+export interface CommentFormProps {
+  onSubmit: (content: string, parentId?: number | null) => void;
+  isVisible?: boolean;
+  parentId?: number | null;
+  onCancel?: () => void;
+  placeholder?: string;
+  imageUrl?: string;
+}
+
+export interface CommentItemProps {
+  comment: Comment;
+  currentUserId?: string;
+  onEdit?: (commentId: number, content: string) => void;
+  onDelete?: (commentId: number) => void;
+  onChat?: (authorId: string) => void;
+  onReply?: () => void;
+  onToggleReplies?: () => void;
+  repliesCount?: number;
+  isRepliesExpanded?: boolean;
+  children?: React.ReactNode;
+  isReply?: boolean;
 }

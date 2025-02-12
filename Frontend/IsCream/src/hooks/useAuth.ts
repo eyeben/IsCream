@@ -20,8 +20,12 @@ export const useAuth = (): AuthHook => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    checkAuth();
-  });
+    console.log(
+      "컴포넌트 마운트됨, accessToken 확인:",
+      localStorage.getItem("accessToken")
+    );
+    checkAuth(); // 🔥 강제로 인증 체크 실행
+  }, []);
 
   const checkAuth = async (): Promise<boolean> => {
     const token = localStorage.getItem("accessToken");

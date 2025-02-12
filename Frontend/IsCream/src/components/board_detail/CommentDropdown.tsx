@@ -1,6 +1,6 @@
 // CommentDropdown.tsx
 import { useRef, useEffect } from "react";
-import { CommentDropdownProps } from "./types";
+import { CommentDropdownProps } from "../../types/board";
 
 const CommentDropdown = ({
   comment,
@@ -57,7 +57,7 @@ const CommentDropdown = ({
             <>
               <button
                 onClick={() => {
-                  onEdit?.(comment.commentId);
+                  onEdit?.(comment.commentId, comment.content);
                   onToggle();
                 }}
                 className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-t-lg transition-colors duration-200"

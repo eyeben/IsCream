@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import PostEdit from "../../components/board_crate_eidt/PostEdit";
-import { Post } from "../../components/board_detail/types";
+import { Post } from "../../types/board";
 
 const BoardEditPage = () => {
   const navigate = useNavigate();

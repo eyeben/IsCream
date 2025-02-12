@@ -1,27 +1,54 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DetailContent from "../../components/board_detail/DetailContent";
 import DetailActions from "../../components/board_detail/DetailAction";
 import DetailComments from "../../components/board_detail/DetailComments";
-// import { boardData } from "../../mock/board"; // Mock 데이터
-import { useAuth } from "../../hooks/useAuth"; // 인증 훅
-import { PostDetail, Comment } from "../../types/board"; // 타입 import
+import { useAuth } from "../../hooks/useAuth";
+import { usePostDetail } from "../../hooks/board/usePostDetail";
+import { useComments } from "../../hooks/board/useComments";
+import { useDeletePost } from "../../hooks/board/useDeletePost";
+import { useLikePost } from "../../hooks/board/useLikePost";
+import { useCreateComment } from "../../hooks/board/useCreateComment";
+import { useDeleteComment } from "../../hooks/board/useDeleteComment";
+import { useUpdateComment } from "../../hooks/board/useUpdateComment";
+import type { PostDetail, CommentRequest } from "../../types/board";
+import Bear from "../../assets/image/챗봇_곰.png";
 
 const BoardDetailPage = () => {
   const { postId } = useParams<{ postId: string }>();
-  const [post, setPost] = useState<PostDetail | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
+  const { data: postData, isLoading } = usePostDetail(Number(postId));
+  const { data: commentsData } = useComments(Number(postId));
+  const deletePostMutation = useDeletePost();
+  const likePostMutation = useLikePost(Number(postId));
+  const createCommentMutation = useCreateComment();
+  const deleteCommentMutation = useDeleteComment();
+  const updateCommentMutation = useUpdateComment();
+
+  const [isCommentFormVisible, setIsCommentFormVisible] =
+    useState<boolean>(false);
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   // 실제 API 호출로 대체해야 합니다.
-  //   setPost(boardData.currentPost as PostDetail);
-  //   setComments(boardData.currentPost.comments as Comment[]);
-  // }, [postId]);
+  const handleDelete = () => {
+    if (!postId) return;
 
-  const isAuthor = user?.username === post?.author.nickname;
+    const confirmDelete = window.confirm(
+      "정말로 이 게시글을 삭제하시겠습니까?"
+    );
+    if (!confirmDelete) return;
+
+    // 백엔드로 삭제 요청 보내기
+    deletePostMutation.mutate(Number(postId), {
+      onSuccess: () => {
+        alert("게시글이 삭제되었습니다.");
+        navigate("/board");
+      },
+      onError: (error) => {
+        console.error("게시글 삭제 중 오류 발생:", error);
+        alert("게시글 삭제 중 오류가 발생했습니다.");
+      }
+    });
+  };
 
   const handleLike = () => {
     if (!isAuthenticated) {
@@ -29,54 +56,114 @@ const BoardDetailPage = () => {
       navigate("/login");
       return;
     }
-    if (post) {
-      setPost({
-        ...post,
-        userLiked: !post.userLiked,
-        likes: post.userLiked ? post.likes - 1 : post.likes + 1
-      });
-    }
+
+    const isCurrentlyLiked = postData?.data?.data?.userLiked;
+
+    likePostMutation.mutate(!!isCurrentlyLiked, {
+      onError: (error) => {
+        console.error("좋아요 처리 중 오류 발생:", error);
+        alert("좋아요 처리 중 오류가 발생했습니다.");
+      }
+    });
   };
 
-  const handleCommentSubmit = (content: string) => {
+  const handleCommentSubmit = (commentData: CommentRequest) => {
     if (!isAuthenticated) {
       alert("댓글을 작성하려면 로그인이 필요합니다.");
       navigate("/login");
       return;
     }
-    console.log("댓글 작성:", content);
-    // 여기에 실제 댓글 추가 로직을 구현해야 합니다.
+    if (!postId) return;
+
+    createCommentMutation.mutate({
+      postId: Number(postId),
+      content: commentData.content,
+      commentId: commentData.commentId || undefined
+    });
   };
 
-  const handleDelete = () => {
-    if (isAuthor) {
-      console.log("게시글 삭제");
-      navigate("/board");
+  const handleCommentEdit = (commentId: number, content: string) => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
     }
+
+    updateCommentMutation.mutate(
+      { commentId, content },
+      {
+        onError: (error) => {
+          console.error("댓글 수정 중 오류 발생:", error);
+          alert("댓글 수정에 실패했습니다.");
+        }
+      }
+    );
   };
 
-  if (!post) return <div>Loading...</div>;
+  const handleCommentDelete = (commentId: number) => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+
+    const confirmDelete = window.confirm("정말로 이 댓글을 삭제하시겠습니까?");
+    if (!confirmDelete) return;
+
+    deleteCommentMutation.mutate(commentId, {
+      onError: (error) => {
+        console.error("댓글 삭제 중 오류 발생:", error);
+        alert("댓글 삭제에 실패했습니다.");
+      }
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="max-w-[706px] mx-auto bg-white p-4">
+        <img src={Bear} alt="로딩 중" className="mx-auto" />
+      </div>
+    );
+  }
+
+  if (!postData?.data?.data) {
+    return (
+      <div className="max-w-[706px] mx-auto bg-white p-4">
+        <p className="text-center text-gray-500">게시글을 찾을 수 없습니다.</p>
+      </div>
+    );
+  }
+
+  const post: PostDetail = postData.data.data;
+  const comments = commentsData?.data?.data?.comments || [];
+  const commentCount = commentsData?.data?.data?.totalCount || 0;
 
   return (
-    <div className="flex flex-col bg-white">
-      <DetailContent
-        post={post}
-        currentUserId={user?.id}
-        onDelete={handleDelete}
-      />
-      <DetailActions
-        onLike={handleLike}
-        onCommentClick={() => setIsCommentFormVisible(!isCommentFormVisible)}
-        isLiked={post.userLiked}
-        likeCount={post.likes}
-        commentCount={comments.length}
-      />
-      <DetailComments
-        comments={comments}
-        onSubmit={handleCommentSubmit}
-        isCommentFormVisible={isCommentFormVisible}
-        isAuthenticated={isAuthenticated}
-      />
+    <div className="max-w-[706px] mx-auto">
+      <div className="flex flex-col bg-white">
+        <DetailContent
+          post={post}
+          onDelete={handleDelete} // 삭제 버튼 핸들러
+          onChat={(authorId) => console.log("Chat with:", authorId)}
+        />
+        <DetailActions
+          onLike={handleLike}
+          onCommentClick={() => setIsCommentFormVisible(!isCommentFormVisible)}
+          isLiked={post.userLiked}
+          likeCount={post.likes}
+          commentCount={commentCount}
+        />
+        <DetailComments
+          postId={Number(postId)}
+          comments={comments}
+          onSubmit={handleCommentSubmit}
+          onEdit={handleCommentEdit}
+          onDelete={handleCommentDelete}
+          isCommentFormVisible={isCommentFormVisible}
+          isAuthenticated={isAuthenticated}
+          currentUserId={user?.id}
+        />
+      </div>
     </div>
   );
 };
