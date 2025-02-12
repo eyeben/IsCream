@@ -1,21 +1,30 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface ImageUploadProps {
   maxImages?: number;
   onImagesChange?: (images: File[]) => void;
+  initialImages?: string[]; // 기존 이미지 URL 배열
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   maxImages = 10,
-  onImagesChange
+  onImagesChange,
+  initialImages = []
 }) => {
   const [images, setImages] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
+  const [previews, setPreviews] = useState<string[]>(initialImages);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 초기 이미지가 변경될 때 previews 업데이트
+  useEffect(() => {
+    setPreviews(initialImages);
+  }, [initialImages]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    if (files.length + images.length > maxImages) {
+    const currentImageCount = previews.length;
+
+    if (files.length + currentImageCount > maxImages) {
       alert(`최대 ${maxImages}장까지 업로드 가능합니다.`);
       return;
     }
@@ -31,11 +40,15 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   const handleDeleteImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
-    if (onImagesChange) {
-      onImagesChange(images.filter((_, i) => i !== index));
+    // initialImages 길이보다 큰 인덱스는 새로 추가된 이미지
+    if (index >= initialImages.length) {
+      const adjustedIndex = index - initialImages.length;
+      setImages((prev) => prev.filter((_, i) => i !== adjustedIndex));
+      if (onImagesChange) {
+        onImagesChange(images.filter((_, i) => i !== adjustedIndex));
+      }
     }
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleUploadClick = () => {
@@ -47,28 +60,34 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       <div className="relative">
         <div className="flex overflow-x-auto scrollbar-hide gap-2 pb-2">
           {/* 업로드 버튼 */}
-          <div className="flex-shrink-0">
-            <button
-              onClick={handleUploadClick}
-              className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
-            >
-              <div className="text-gray-400">
-                <svg
-                  className="w-8 h-8 mx-auto"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-              </div>
-            </button>
-          </div>
+          {previews.length < maxImages ? (
+            <div className="flex-shrink-0">
+              <button
+                onClick={handleUploadClick}
+                className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
+              >
+                <div className="text-gray-400">
+                  <svg
+                    className="w-8 h-8 mx-auto"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                </div>
+              </button>
+            </div>
+          ) : (
+            <div className="flex-shrink-0 w-24 h-24 border-2 border-gray-100 rounded-lg flex items-center justify-center bg-gray-50">
+              <span className="text-sm text-gray-400">최대 개수</span>
+            </div>
+          )}
 
           {/* 이미지 미리보기 */}
           {previews.map((preview, index) => (
@@ -103,7 +122,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
       {/* 이미지 개수 표시 */}
       <div className="mt-2 text-right text-sm text-gray-500">
-        {images.length} / {maxImages} 장
+        {previews.length} / {maxImages} 장
       </div>
 
       {/* 숨겨진 파일 입력 */}

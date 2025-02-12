@@ -1,62 +1,64 @@
-import React, { useState, FormEvent, useEffect } from "react";
-import { Post } from "../board_detail/types";
+import React, { useState, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { PostForm } from "./PostForm";
 import { TitleInput } from "./TitleInput";
 import { ContentTextarea } from "./ContentTextarea";
 import { ImageUpload } from "./ImageUpload";
 import LongButton from "../button/LongButton";
+import Alert from "./Alert";
+import type { PostDetail, UpdatePostRequest } from "../../types/board";
+import { useUpdatePost } from "../../hooks/board/useUpdatePost";
 
 interface PostEditProps {
-  post: Post;
-  onSubmit?: (formData: FormData) => Promise<void>;
-  onCancel?: () => void;
+  post: PostDetail;
 }
 
 const MAX_CONTENT_LENGTH = 1000;
 
-const PostEdit: React.FC<PostEditProps> = ({ post, onSubmit, onCancel }) => {
+const PostEdit: React.FC<PostEditProps> = ({ post }) => {
+  const navigate = useNavigate();
   const [title, setTitle] = useState<string>(post.title);
   const [content, setContent] = useState<string>(post.content);
-  const [newImages, setNewImages] = useState<File[]>([]);
-  const [existingImages, setExistingImages] = useState<string[]>(
-    post.images || []
-  );
-  const [isDirty, setIsDirty] = useState(false);
+  const [images, setImages] = useState<File[]>([]);
+  const [alert, setAlert] = useState<{
+    message: string;
+    type: "error" | "success";
+  } | null>(null);
 
-  // 변경사항 체크
-  useEffect(() => {
-    const isChanged =
-      title !== post.title ||
-      content !== post.content ||
-      newImages.length > 0 ||
-      existingImages.length !== (post.images || []).length;
+  const updatePost = useUpdatePost();
 
-    setIsDirty(isChanged);
-  }, [title, content, newImages, existingImages, post]);
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (onSubmit) {
-      const formData = new FormData();
 
-      // 기본 필드 추가
-      formData.append("title", title.trim());
-      formData.append("content", content.trim());
+    if (!title.trim()) {
+      setAlert({ message: "제목을 입력해 주세요.", type: "error" });
+      return;
+    }
 
-      // 새 이미지 파일 추가
-      newImages.forEach((file) => {
-        formData.append("images", file);
+    if (!content.trim()) {
+      setAlert({ message: "내용을 입력해 주세요.", type: "error" });
+      return;
+    }
+
+    const postData: UpdatePostRequest = {
+      post: {
+        title: title.trim(),
+        content: content.trim()
+      },
+      files: images.length > 0 ? images : undefined
+    };
+
+    try {
+      await updatePost.mutateAsync({ postId: post.postId, data: postData });
+      setAlert({ message: "게시글이 수정되었습니다.", type: "success" });
+      setTimeout(() => {
+        navigate(`/posts/${post.postId}`);
+      }, 1000);
+    } catch {
+      setAlert({
+        message: "게시글 수정 중 문제가 발생했습니다. 다시 시도해 주세요.",
+        type: "error"
       });
-
-      // 기존 이미지 URL 추가
-      formData.append("existingImages", JSON.stringify(existingImages));
-
-      // 삭제된 이미지 URL 계산
-      const deletedImages =
-        post.images?.filter((img) => !existingImages.includes(img)) || [];
-      formData.append("deletedImages", JSON.stringify(deletedImages));
-
-      onSubmit(formData);
     }
   };
 
@@ -64,22 +66,24 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSubmit, onCancel }) => {
     const newContent = e.target.value;
     if (newContent.length <= MAX_CONTENT_LENGTH) {
       setContent(newContent);
+    } else {
+      setAlert({
+        message: `최대 ${MAX_CONTENT_LENGTH}자까지 입력 가능합니다.`,
+        type: "error"
+      });
     }
   };
 
-  const handleImagesChange = (images: File[]) => {
-    setNewImages(images);
-  };
-
-  const handleExistingImageDelete = (indexToDelete: number) => {
-    setExistingImages(
-      existingImages.filter((_, index) => index !== indexToDelete)
-    );
-  };
-
   return (
-    <div className="flex flex-col bg-white min-h-screen">
-      <div className="px-4 md:px-6 lg:px-8 flex-1">
+    <div className="flex flex-col bg-white">
+      {alert && (
+        <Alert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert(null)}
+        />
+      )}
+      <div className="px-4 md:px-6 lg:px-8">
         <div className="w-full max-w-4xl mx-auto py-10">
           <PostForm onSubmit={handleSubmit}>
             <TitleInput
@@ -93,66 +97,32 @@ const PostEdit: React.FC<PostEditProps> = ({ post, onSubmit, onCancel }) => {
                 maxLength={MAX_CONTENT_LENGTH}
               />
             </div>
-
-            {existingImages.length > 0 && (
-              <div className="mb-4">
-                <div className="flex overflow-x-auto scrollbar-hide gap-2 pb-2">
-                  {existingImages.map((imageUrl, index) => (
-                    <div
-                      key={imageUrl}
-                      className="relative flex-shrink-0 w-30 h-30"
-                    >
-                      <img
-                        src={imageUrl}
-                        alt={`기존 이미지 ${index + 1}`}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleExistingImageDelete(index)}
-                        className="absolute top-1 right-1 bg-opacity-50 border border-[#333333] rounded-full"
-                      >
-                        <svg
-                          className="w-5 h-5 rounded-full text-[#33333] hover:bg-green-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <div className="mt-4">
-              <ImageUpload onImagesChange={handleImagesChange} />
+              <ImageUpload
+                onImagesChange={setImages}
+                initialImages={post.images || []}
+              />
             </div>
           </PostForm>
         </div>
       </div>
 
-      <div className="sticky bottom-0 w-full bg-white py-4 px-4 md:px-6 lg:px-8 border-t border-gray-200">
+      <div className="sticky bottom-0 w-full bg-white py-4 px-4 md:px-6 lg:px-8">
         <div className="w-full max-w-3xl mx-auto flex gap-4">
-          <button
-            onClick={onCancel}
-            className="flex-1 py-3 text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50"
-          >
-            취소
-          </button>
           <LongButton
             type="submit"
-            disabled={!isDirty}
-            className={isDirty ? "" : "opacity-50 cursor-not-allowed"}
+            onClick={() => navigate(`/board/detail/${post.postId}`)}
+            disabled={updatePost.isPending || !title.trim() || !content.trim()}
+            className="flex-1 bg-red-600"
           >
-            수정하기
+            {updatePost.isPending ? "취소 중..." : "취소"}
+          </LongButton>
+          <LongButton
+            type="submit"
+            disabled={updatePost.isPending || !title.trim() || !content.trim()}
+            className="flex-1"
+          >
+            {updatePost.isPending ? "수정 중..." : "수정하기"}
           </LongButton>
         </div>
       </div>
