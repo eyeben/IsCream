@@ -21,7 +21,6 @@ services:
       context: ./Backend/IsCream
       dockerfile: Dockerfile
     restart: always
-    container_name: backend-app
     deploy:
       replicas: 2 
       restart_policy:
@@ -38,7 +37,6 @@ services:
       context: ./AI
       dockerfile: Dockerfile
     restart: always
-    container_name: ai-server
     deploy:
       replicas: 2  
       restart_policy:
