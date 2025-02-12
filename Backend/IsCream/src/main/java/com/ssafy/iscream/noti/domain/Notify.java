@@ -1,7 +1,6 @@
 package com.ssafy.iscream.noti.domain;
 
 import com.ssafy.iscream.common.entity.BaseTimeEntity;
-import com.ssafy.iscream.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -19,9 +18,7 @@ public class Notify extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer notifyId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Integer userId;
 
     private String title;
 
@@ -32,4 +29,9 @@ public class Notify extends BaseTimeEntity {
     private NotifyType type;
 
     private boolean isRead;
+
+    private Integer postId;
+    
+    private Integer chatId; // 채팅방 아이디
+
 }

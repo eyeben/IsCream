@@ -21,9 +21,16 @@ public class NotifyController {
 
     @Operation(summary = "FCM 토큰 저장", tags = "notify")
     @PostMapping(value = "/token")
-    public ResponseEntity<?> createPost(@Login User user,
+    public ResponseEntity<?> addFcmToken(@Login User user,
                       @Schema(example = "{\"token\": \"string\"}") @RequestBody Map<String, String> map) {
         notifyService.addFcmToken(user.getUserId(), map.get("token"));
+        return ResponseUtil.success();
+    }
+
+    @Operation(summary = "FCM 토큰 삭제", tags = "notify")
+    @DeleteMapping(value = "/token")
+    public ResponseEntity<?> removeFcmToken(@Login User user) {
+        notifyService.removeFcmToken(user.getUserId());
         return ResponseUtil.success();
     }
 
@@ -37,7 +44,7 @@ public class NotifyController {
     @GetMapping("/{notifyId}")
     public ResponseEntity<?> updateNotifyStatus(@PathVariable Integer notifyId) {
         notifyService.updateNotifyStatus(notifyId);
-        return ResponseUtil.success(null);
+        return ResponseUtil.success();
     }
 
 }
