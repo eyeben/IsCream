@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface BigFiveScoreRepository extends JpaRepository<BigFiveScore, Integer> {
-    Optional<BigFiveScore> findByBigFiveType(String type);
+    BigFiveScore findByBigFiveType(String type);
 }

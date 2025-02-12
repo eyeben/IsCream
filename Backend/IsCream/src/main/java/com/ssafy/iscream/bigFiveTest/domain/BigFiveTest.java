@@ -15,13 +15,14 @@ public class BigFiveTest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer bigFiveTestId;
+    @Column(name = "big_five_test_id")
+    private Integer testId;
 
     @Column(nullable = false)
     private Integer userId;
 
-    @Column(nullable = false)
-    private String testDate;
+    @Column(name = "test_date",nullable = false)
+    private String date;
 
     @Column(nullable = false)
     private Double conscientiousness;
