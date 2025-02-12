@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY . .
 
 ENV PORT=8000
-ENV WORKERS=4  # 멀티 프로세스 실행
+ENV WORKERS=4 
 ENV LOG_LEVEL=info
 
 # 포트 개방 (FastAPI 기본 포트)
