@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ssafy.iscream.chat.listener.RedisSubscriber;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-
+@Slf4j
 @Configuration
 public class RedisConfig {
 
@@ -47,7 +48,12 @@ public class RedisConfig {
 
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(redisSubscriber, new ChannelTopic("chatroom-*"));
+
+        // ✅ 패턴 구독 설정 (chatroom-*)
+        PatternTopic topic = new PatternTopic("chatroom-*");
+        container.addMessageListener(redisSubscriber, topic);
+        log.info("🔴 Redis Pub/Sub 구독 시작: {}", topic.getTopic());
+
         return container;
     }
 

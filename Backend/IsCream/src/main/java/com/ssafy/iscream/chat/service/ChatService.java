@@ -5,6 +5,7 @@ import com.ssafy.iscream.chat.dto.ChatMessageDto;
 import com.ssafy.iscream.chat.dto.MessageAckDto;
 import com.ssafy.iscream.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisServerCommands;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
@@ -37,6 +39,8 @@ public class ChatService {
                 .isRead(false)
                 .build();
         chatMessageRepository.save(chatMessage);
+        log.info("📤 Redis Pub/Sub 발행: chatroom-{}", chatMessageDto.getRoomId()); // ✅ 추가
+
         redisTemplate.convertAndSend("chatroom-" + chatMessageDto.getRoomId(), chatMessageDto);
     }
 
