@@ -77,7 +77,7 @@ public class ChatService {
         log.info("✅ 메시지 읽음 처리 완료: {}", ackDto.getMessageId());
 
         // ✅ 보낸 사용자(A)에게 WebSocket을 통해 읽음 상태 전송
-        String destination = "/sub/chat/read/" + chatMessage.getRoomId();
+        String destination = "/sub/chat/room/" + chatMessage.getRoomId();
         ReadReceiptDto readReceipt = new ReadReceiptDto(ackDto.getMessageId(), chatMessage.getSender());
         messagingTemplate.convertAndSend(destination, readReceipt);
 
