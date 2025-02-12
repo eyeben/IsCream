@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(servers = {
         @Server(url = "http://localhost:8080/api", description = "local server"),
-        @Server(url = "http://i12a407.p.ssafy.io:8082/api", description = "deploy server")
+        @Server(url = "https://i12a407.p.ssafy.io/api", description = "deploy server")
 })
 public class SwaggerConfig {
 
@@ -45,7 +45,8 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("all") // 그룹 이름 지정
                 .pathsToMatch( "/users/**", "/htp-tests/**", "/board/**", "/comments/**",
-                        "/calendars/**", "/children/**", "/educations/**")
+                        "/calendars/**", "/children/**", "/educations/**", "/pat-tests/**",
+                        "/big-five-tests/**")
                 .build();
     }
 
@@ -81,6 +82,22 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("children")
                 .pathsToMatch("/children/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi patApi() {
+        return GroupedOpenApi.builder()
+                .group("pat")
+                .pathsToMatch("/pat-tests/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi bigFiveApi() {
+        return GroupedOpenApi.builder()
+                .group("big-five")
+                .pathsToMatch("/big-five-tests/**")
                 .build();
     }
 

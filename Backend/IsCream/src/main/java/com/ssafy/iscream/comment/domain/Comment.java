@@ -1,8 +1,6 @@
 package com.ssafy.iscream.comment.domain;
 
-import com.ssafy.iscream.board.domain.Post;
 import com.ssafy.iscream.common.entity.BaseTimeEntity;
-import com.ssafy.iscream.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -19,17 +17,11 @@ public class Comment extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer commentId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    private Integer postId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Integer userId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "parent_comment_id")
-    private Comment parentComment;
+    private Integer parentCommentId;
 
     @Column(length = 1024)
     private String content;
