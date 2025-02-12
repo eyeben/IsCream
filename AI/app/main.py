@@ -5,22 +5,17 @@ from .routers import yolo_service
 import os
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
-print(f"Loaded OpenAI API Key: {openai_api_key}")
-load_dotenv("/home/ubuntu/models/.env")
 # FastAPI 애플리케이션 생성
 app = FastAPI(root_path="/ai")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://i12a407.p.ssafy.io",  # 기존 허용 도메인
-        "http://127.0.0.1",  # 로컬에서 접근 허용
-        "http://localhost"  # 로컬에서 접근 허용 (필요시)
-    ],
-    allow_credentials=True,  # 인증 정보를 포함한 요청 허용
-    allow_methods=["*"],  # 모든 HTTP 메서드 허용
-    allow_headers=["*"],  # 모든 HTTP 헤더 허용
+    allow_origins=["*"],  # 모든 도메인 허용 (보안상 필요하면 특정 도메인만 허용)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
 
 # 라우터 등록
 app.include_router(yolo_service.router, prefix="/ai", tags=["AI Service"])
