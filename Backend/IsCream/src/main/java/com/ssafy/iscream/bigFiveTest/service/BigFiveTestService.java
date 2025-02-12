@@ -53,7 +53,7 @@ public class BigFiveTestService {
         System.out.printf("%s %s %s %s %s\n", consAvg, agreeAvg, emoAvg, extraAvg, openAvg);
 
         BigFiveTest bigFiveTest = BigFiveTest.builder()
-                .user(user)
+                .userId(user.getUserId())
                 .testDate(LocalDate.now().toString())
                 .conscientiousness(bigFiveTestCreateReq.getConscientiousness()-consAvg)
                 .agreeableness(bigFiveTestCreateReq.getAgreeableness()-agreeAvg)
@@ -77,7 +77,7 @@ public class BigFiveTestService {
 
     // 성격 5요인 테스트 최근 결과 조회
     public Object getBigFiveTestResult(User user) {
-        BigFiveTest bigFiveTest = bigFiveTestRepository.findFirstByUserIdOrderByTestDateDesc(user)
+        BigFiveTest bigFiveTest = bigFiveTestRepository.findFirstByUserIdOrderByTestDateDesc(user.getUserId())
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
         return new BigFiveTestRes(
@@ -93,7 +93,7 @@ public class BigFiveTestService {
 
     // 성격 5요인 테스트 결과 목록 조회
     public List<BigFiveTestRes> getBigFiveTestListResult(User user) {
-        List<BigFiveTest> bigFiveTestList = bigFiveTestRepository.findByUser(user);
+        List<BigFiveTest> bigFiveTestList = bigFiveTestRepository.findByUserId(user.getUserId());
         if (bigFiveTestList.size() == 0) {
             throw new DataException(ErrorCode.DATA_NOT_FOUND);
         }

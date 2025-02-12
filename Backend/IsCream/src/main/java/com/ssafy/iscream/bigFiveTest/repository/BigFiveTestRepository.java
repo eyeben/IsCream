@@ -14,8 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface BigFiveTestRepository extends JpaRepository<BigFiveTest, Double> {
-    @Query("SELECT b FROM BigFiveTest b WHERE b.user = :user ORDER BY b.testDate DESC LIMIT 1")
-    Optional<BigFiveTest> findFirstByUserIdOrderByTestDateDesc(@Param("user") User user);
+    @Query("SELECT b FROM BigFiveTest b WHERE b.userId = :userId ORDER BY b.testDate DESC LIMIT 1")
+    Optional<BigFiveTest> findFirstByUserIdOrderByTestDateDesc(Integer userId);
 
-    List<BigFiveTest> findByUser(User user);
+    List<BigFiveTest> findByUserId(Integer userId);
 }
