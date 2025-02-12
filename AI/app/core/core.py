@@ -1,44 +1,55 @@
+import concurrent.futures
 from app.core.rag import process_predictions
 
 def diagnose(predictions):
-    """모든 분석 결과를 하나의 문자열로 합쳐서 반환"""
-    results = []
+    """모든 분석 결과를 멀티스레딩을 활용하여 병렬 처리 (순서 보장)"""
+    type_to_function = {
+        "house": house,
+        "tree": tree,
+        "male": male,
+        "female": female,
+    }
 
-    for prediction in predictions:
-        if prediction["type"] == "house":
-            results.append(house(prediction))
-        elif prediction["type"] == "tree":
-            results.append(tree(prediction))
-        elif prediction["type"] == "male":
-            results.append(male(prediction))
-        elif prediction["type"] == "female":
-            results.append(female(prediction))
+    def process_prediction(i, prediction):
+        """개별 예측을 처리하는 함수"""
+        header = f"검사 순서: {i+1}\n검사 시간: {prediction['time']}\n검사 유형: {prediction['type'].capitalize()}"
+        if prediction["type"] in type_to_function:
+            analysis_result = type_to_function[prediction["type"]](prediction)
+            return f"{header}\n{process_predictions(analysis_result)}"
+        return None
 
-    return process_predictions("\n".join(results))
+    # 멀티스레딩 적용 (순서 보장)
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_to_index = {executor.submit(process_prediction, i, pred): i for i, pred in enumerate(predictions)}
+        ordered_results = [None] * len(predictions)
 
+        for future in concurrent.futures.as_completed(future_to_index):
+            index = future_to_index[future]  # 원래 인덱스 가져오기
+            result = future.result()
+            if result:
+                ordered_results[index] = result  # 순서 유지
+
+    return "\n----\n".join(filter(None, ordered_results))  # None 제거 후 반환
 
 def classify_position(cx_norm, cy_norm):
-    """객체의 위치를 왼쪽/가운데/오른쪽, 상/중/하로 구분"""
+    """객체의 위치를 왼쪽/가운데/오른쪽, 상/중/하로 분류"""
     x_position = "왼쪽" if cx_norm <= 0.33 else "가운데" if cx_norm <= 0.66 else "오른쪽"
     y_position = "상단" if cy_norm <= 0.33 else "중간" if cy_norm <= 0.66 else "하단"
     return x_position, y_position
 
-
 def classify_size(obj_width, obj_height, image_width, image_height):
-    """객체의 크기를 작은/중간/큰 크기로 구분"""
+    """객체의 크기를 작은/중간/큰 크기로 분류"""
     size_ratio = ((obj_width / image_width) + (obj_height / image_height)) / 2
     return "작음" if size_ratio <= 0.33 else "중간" if size_ratio <= 0.66 else "큼"
 
-
 def analyze_object(obj, category, image_width, image_height):
-    """개별 객체(요소)의 위치와 크기 및 심리적 해석"""
+    """개별 객체의 위치, 크기 및 심리적 해석"""
     x_pos, y_pos = classify_position(obj["cx_norm"], obj["cy_norm"])
     size = classify_size(
         obj["xmax"] - obj["xmin"], obj["ymax"] - obj["ymin"],
         image_width, image_height
     )
 
-    # 심리적 의미 추가
     interpretations = {
         "왼쪽": "과거 지향적 경향",
         "가운데": "현재의 안정과 집중",
@@ -51,70 +62,43 @@ def analyze_object(obj, category, image_width, image_height):
         "큼": "자신감 넘치는 표현"
     }
 
-    result = [f"- {obj['name']} ({category}) 있음"]
-    result.append(f"  위치: {x_pos} / {y_pos} → {interpretations[x_pos]}과 {interpretations[y_pos]}의 심리적 의미")
-    result.append(f"  크기: {size} → {interpretations[size]}")
-    return "\n".join(result)
-
+    return (
+        f"- {obj['name']} ({category}) 존재\n"
+        f"  위치: {x_pos} / {y_pos} → {interpretations[x_pos]}과 {interpretations[y_pos]} 의미\n"
+        f"  크기: {size} → {interpretations[size]} 의미"
+    )
 
 def analyze_missing_objects(prediction, category, expected_objects):
-    """없는 객체를 확인하여 결과에 추가"""
+    """존재하지 않는 객체를 분석하여 추가 정보 제공"""
     existing_objects = {obj["name"] for obj in prediction["predictions"]}
-    missing_objects = set(expected_objects) - existing_objects
-    return [f"- {obj} ({category}) 없음 → 심리적으로 관련된 요소가 생략되었을 가능성" for obj in missing_objects]
-
+    return [
+        f"- {obj} ({category}) 없음 → 관련 요소가 생략되었을 가능성"
+        for obj in expected_objects if obj not in existing_objects
+    ]
 
 def house(prediction):
-    """집(House) 그림 해석"""
-    result = ["🔹 집 검사 해석"]
-    image_width = prediction.get("image_width", 1)  # 기본값 지정
-    image_height = prediction.get("image_height", 1)
-    expected_objects = ["집전체", "지붕", "집벽", "문", "창문", "굴뚝", "연기", "울타리", "길", "연못", "산", "나무", "꽃", "잔디", "태양"]
-
-    for obj in prediction["predictions"]:
-        result.append(analyze_object(obj, "집", image_width, image_height))
-    result.extend(analyze_missing_objects(prediction, "집", expected_objects))
-
-    return "\n".join(result)
-
+    """집(House) 그림 분석"""
+    return analyze_generic(prediction, "집", ["집전체", "지붕", "문", "창문", "굴뚝", "울타리", "길", "연못", "산", "나무", "꽃", "잔디", "태양"])
 
 def tree(prediction):
-    """나무(Tree) 그림 해석"""
-    result = ["🔹 나무 검사 해석"]
-    image_width = prediction.get("image_width", 1)
-    image_height = prediction.get("image_height", 1)
-    expected_objects = ["나무전체", "기둥", "수관", "가지", "뿌리", "나뭇잎", "꽃", "열매", "그네", "새", "다람쥐", "구름", "달", "별"]
-
-    for obj in prediction["predictions"]:
-        result.append(analyze_object(obj, "나무", image_width, image_height))
-    result.extend(analyze_missing_objects(prediction, "나무", expected_objects))
-
-    return "\n".join(result)
-
+    """나무(Tree) 그림 분석"""
+    return analyze_generic(prediction, "나무", ["나무전체", "기둥", "수관", "가지", "뿌리", "나뿌리", "나뭇잎", "꽃", "열매", "새", "구름", "별"])
 
 def male(prediction):
-    """남성(Male) 그림 해석"""
-    result = ["🔹 남성 검사 해석"]
-    image_width = prediction.get("image_width", 1)
-    image_height = prediction.get("image_height", 1)
-    expected_objects = ["사람전체", "머리", "얼굴", "눈", "코", "입", "귀", "머리카락", "목", "상체", "팔", "손", "다리", "발", "단추", "주머니", "운동화", "남자구두"]
-
-    for obj in prediction["predictions"]:
-        result.append(analyze_object(obj, "남자 사람", image_width, image_height))
-    result.extend(analyze_missing_objects(prediction, "남자 사람", expected_objects))
-
-    return "\n".join(result)
-
+    """남성(Male) 그림 분석"""
+    return analyze_generic(prediction, "남자 사람", ["사람전체", "머리", "얼굴", "눈", "코", "입", "귀", "머리카락", "목", "상체", "팔", "손", "다리", "발"])
 
 def female(prediction):
-    """여성(Female) 그림 해석"""
-    result = ["🔹 여성 검사 해석"]
+    """여성(Female) 그림 분석"""
+    return analyze_generic(prediction, "여자 사람", ["사람전체", "머리", "얼굴", "눈", "코", "입", "귀", "머리카락", "목", "상체", "팔", "손", "다리", "발"])
+
+def analyze_generic(prediction, category, expected_objects):
+    """공통 분석 함수"""
+    result = [f"🔹 {category} 그림 분석"]
     image_width = prediction.get("image_width", 1)
     image_height = prediction.get("image_height", 1)
-    expected_objects = ["사람전체", "머리", "얼굴", "눈", "코", "입", "귀", "머리카락", "목", "상체", "팔", "손", "다리", "발", "단추", "주머니", "운동화", "여자구두"]
 
     for obj in prediction["predictions"]:
-        result.append(analyze_object(obj, "여자 사람", image_width, image_height))
-    result.extend(analyze_missing_objects(prediction, "여자 사람", expected_objects))
-
+        result.append(analyze_object(obj, category, image_width, image_height))
+    result.extend(analyze_missing_objects(prediction, category, expected_objects))
     return "\n".join(result)
