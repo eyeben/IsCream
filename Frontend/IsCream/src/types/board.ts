@@ -22,6 +22,7 @@ export interface Post {
   viewCount: number;
   createdAt: string;
   authorName: string; // author 객체 대신 authorName 문자열
+  author: Author;
 }
 
 export interface PostItemProps {

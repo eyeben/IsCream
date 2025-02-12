@@ -2,8 +2,15 @@
 import { api } from "../utils/common/axiosInstance";
 import type { LoginRequest, LoginResponse } from "../types/auth";
 
+interface User {
+  // 사용자 정보 타입 (필요에 따라 추가)
+  id?: string;
+  name?: string;
+}
+
 interface AuthHook {
   isAuthenticated: boolean;
+  user?: User;
   login: (loginData: LoginRequest) => Promise<LoginResponse>;
   logout: () => void;
 }

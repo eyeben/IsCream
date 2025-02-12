@@ -13,7 +13,11 @@ const FindPasswordPage = () => {
    * 본인 확인이 성공하면 이메일 인증 단계로 이동
    * 실패하면 오류 메시지를 표시함
    */
-  const handleFindPassword = async (formData: { email: string; name: string; phone: string }) => {
+  const handleFindPassword = async (formData: {
+    email: string;
+    name: string;
+    phone: string;
+  }): Promise<boolean> => {
     try {
       const response = await axios.post("/users/find-password", formData);
 
@@ -26,13 +30,19 @@ const FindPasswordPage = () => {
     } catch (error: unknown) {
       // API 요청 중 발생한 오류 처리
       if (axios.isAxiosError(error)) {
-        setErrorMessage(error.response?.data?.message || "비밀번호 찾기 요청 중 오류가 발생했습니다.");
+        setErrorMessage(
+          error.response?.data?.message ||
+            "비밀번호 찾기 요청 중 오류가 발생했습니다."
+        );
       } else if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage("비밀번호 찾기 요청 중 알 수 없는 오류가 발생했습니다.");
+        setErrorMessage(
+          "비밀번호 찾기 요청 중 알 수 없는 오류가 발생했습니다."
+        );
       }
     }
+    return true;
   };
 
   return (
@@ -41,7 +51,9 @@ const FindPasswordPage = () => {
       <FindPasswordForm onSubmit={handleFindPassword} />
 
       {/* 오류 발생 시 메시지 표시 */}
-      {errorMessage && <p className="mt-4 text-sm text-red-500">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="mt-4 text-sm text-red-500">{errorMessage}</p>
+      )}
     </div>
   );
 };

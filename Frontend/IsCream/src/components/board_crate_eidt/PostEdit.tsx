@@ -11,6 +11,8 @@ import { useUpdatePost } from "../../hooks/board/useUpdatePost";
 
 interface PostEditProps {
   post: PostDetail;
+  onSubmit: (formData: FormData) => Promise<void>;
+  onCancel: () => void;
 }
 
 const MAX_CONTENT_LENGTH = 1000;

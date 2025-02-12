@@ -8,7 +8,11 @@ import GoogleLogo from "../../assets/icons/google_logo.png";
 import LongButton from "../../components/button/LongButton";
 import { ERROR_CODES } from "../../types/auth";
 
-const LoginForm = () => {
+interface LoginFormProps {
+  onLoginSuccess?: () => void;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -32,7 +36,10 @@ const LoginForm = () => {
       const response = await login({ email, password });
 
       if (response.code === ERROR_CODES.SUCCESS) {
-        navigate("/");
+        if (onLoginSuccess) {
+          onLoginSuccess();
+          navigate("/");
+        }
       } else {
         switch (response.code) {
           case ERROR_CODES.INVALID_EMAIL:
