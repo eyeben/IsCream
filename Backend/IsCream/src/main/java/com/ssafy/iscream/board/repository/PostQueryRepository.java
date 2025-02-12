@@ -28,11 +28,13 @@ public class PostQueryRepository {
         Integer lastLikeCount = req.getLastLikeCount();
         Integer lastId = req.getLastId();
 
-        if (title != null) {
+        if (title != null && content != null) {
+            predicate.and(
+                    post.title.contains(title).or(post.content.contains(content))
+            );
+        } else if (title != null) {
             predicate.and(post.title.contains(title));
-        }
-
-        if (content != null) {
+        } else if (content != null) {
             predicate.and(post.content.contains(content));
         }
 
@@ -42,9 +44,9 @@ public class PostQueryRepository {
 
         JPAQuery<Post> query = queryFactory
                 .selectFrom(post)
-                .leftJoin(postLike).on(postLike.post.eq(post))
+                .leftJoin(postLike).on(postLike.postId.eq(post.postId))
                 .where(predicate)
-                .groupBy(post);
+                .groupBy(post.postId);
 
         if ("like".equals(sort)) {
             if (lastLikeCount != null) {
@@ -70,8 +72,8 @@ public class PostQueryRepository {
         return queryFactory
                 .select(post)
                 .from(post)
-                .leftJoin(post.postLikes, postLike)
-                .groupBy(post)
+                .leftJoin(postLike).on(postLike.postId.eq(post.postId))
+                .groupBy(post.postId)
                 .orderBy(postLike.count().desc(), post.createdAt.desc())
                 .limit(5)
                 .fetch();

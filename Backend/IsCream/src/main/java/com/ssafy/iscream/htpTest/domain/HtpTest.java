@@ -1,30 +1,53 @@
 package com.ssafy.iscream.htpTest.domain;
 
 import com.ssafy.iscream.common.entity.BaseTimeEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
+@Setter
 @Builder
-@RequiredArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@DynamicInsert
+@DynamicUpdate
 public class HtpTest extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer htpTestId;
+    @Column(name = "htp_test_id")
+    private Integer htpTestId;
 
-    @NotNull
-    Integer childId;
+    @Column(name = "child_id", nullable = false)
+    private Integer childId;
 
-    String houseDrawingUrl;
-    String treeDrawingUrl;
-    String personDrawingUrl;
-    String analysisResult;
-    String pdf_url;
-    Emoji emoji;
+    @Column(name = "test_date")
+    private LocalDate testDate;
+
+    @Column(name = "house_drawing_url", length = 255)
+    private String houseDrawingUrl;
+
+    @Column(name = "tree_drawing_url", length = 255)
+    private String treeDrawingUrl;
+
+    @Column(name = "male_drawing_url", length = 255)
+    private String maleDrawingUrl;
+
+    @Column(name = "female_drawing_url", length = 255)
+    private String femaleDrawingUrl;
+
+    @Lob
+    @Column(name = "analysis_result", columnDefinition = "TEXT")
+    private String analysisResult;
+
+    @Column(name = "pdf_url", length = 255)
+    private String pdfUrl;
+
+    @Column(name = "emoji")
+    private Emoji emoji;
 }
