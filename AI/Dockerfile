@@ -30,5 +30,6 @@ ENV LOG_LEVEL=info
 EXPOSE $PORT
 
 # Gunicorn + Uvicorn으로 FastAPI 실행 (멀티 프로세스 지원)
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-w", "2", "--worker-tmp-dir", "/dev/shm", "-b", "0.0.0.0:8000", "app.main:app"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--loop", "uvloop", "--http", "httptools", "--timeout-keep-alive", "30"]
+
 
