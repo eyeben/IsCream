@@ -9,15 +9,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ChatMessageDto {
     private String roomId;
     private String sender;
-    private String message;
-    private LocalDateTime timestamp;
-
-    public ChatMessage toEntity() {
-        return new ChatMessage(roomId, sender, message, timestamp != null ? timestamp : LocalDateTime.now());
-    }
+    private String receiver;
+    private String content;
 }
