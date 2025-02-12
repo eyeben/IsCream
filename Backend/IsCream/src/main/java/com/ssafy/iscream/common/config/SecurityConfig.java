@@ -68,7 +68,7 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOriginPatterns(Arrays.asList("https://i12a407.p.ssafy.io"));
+                        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173", "https://i12a407.p.ssafy.io"));
                         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
