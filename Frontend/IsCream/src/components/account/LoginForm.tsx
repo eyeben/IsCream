@@ -8,7 +8,7 @@ import GoogleLogo from "../../assets/icons/google_logo.png";
 import LongButton from "../../components/button/LongButton";
 import { ERROR_CODES } from "../../types/auth";
 
-const LoginForm = () => {
+const LoginForm: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
