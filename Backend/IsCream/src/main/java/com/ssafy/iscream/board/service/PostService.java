@@ -4,8 +4,6 @@ import com.ssafy.iscream.board.domain.*;
 import com.ssafy.iscream.board.dto.request.PostCreateReq;
 import com.ssafy.iscream.board.dto.request.PostReq;
 import com.ssafy.iscream.board.dto.request.PostUpdateReq;
-import com.ssafy.iscream.board.dto.response.PostDetail;
-import com.ssafy.iscream.board.dto.response.PostList;
 import com.ssafy.iscream.board.repository.PostImageRepository;
 import com.ssafy.iscream.board.repository.PostLikeRepository;
 import com.ssafy.iscream.board.repository.PostQueryRepository;
@@ -26,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,7 +47,7 @@ public class PostService {
         Post post = Post.builder()
                 .title(postReq.getTitle())
                 .content(postReq.getContent())
-                .user(user)
+                .userId(user.getUserId())
                 .build();
 
         Post savePost = postRepository.save(post);
@@ -67,7 +63,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
-        if (!userId.equals(post.getUser().getUserId())) {
+        if (!userId.equals(post.getUserId())) {
             throw new DataException(ErrorCode.DATA_FORBIDDEN_UPDATE);
         }
 
@@ -89,60 +85,151 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
-        if (!userId.equals(post.getUser().getUserId())) {
+        if (!userId.equals(post.getUserId())) {
             throw new DataException(ErrorCode.DATA_FORBIDDEN_UPDATE);
         }
 
         // s3에서 이미지 삭제
-        s3Service.deleteFile(post.getPostImages().stream()
-                        .map(PostImage::getImageUrl)
-                        .collect(Collectors.toList()));
+        List<PostImage> images = postImageRepository.findAllByPostId(postId);
+        s3Service.deleteFile(images.stream().map(PostImage::getImageUrl).collect(Collectors.toList()));
 
         postRepository.deleteById(postId);
     }
 
     // 게시글 상세 조회
-    public PostDetail getPostDetail(Integer postId, User user, HttpServletRequest request) {
+    public Post getPost(Integer postId, User user, HttpServletRequest request) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
 
-        increaseViewPost(post, user, request);
+        checkPostView(post, user, request);
 
-        return new PostDetail(post, user, isUserLiked(post, user), getViews(postId));
+        return post;
     }
 
-    @Transactional
-    public void increaseViewPost(Post post, User user, HttpServletRequest request) {
-        String key = "post:viewed:" + post.getPostId() + ":" + getUserId(user, request);
+    // 사용자 조회수 중복 확인
+    public void checkPostView(Post post, User user, HttpServletRequest request) {
+        String key = "post:viewed:" + post.getPostId() + ":" + getViewUserId(user, request);
 
         Boolean isNotViewed = redisTemplate.opsForValue().setIfAbsent(key, "Viewed", Duration.ofHours(24));
 
         // 24시간 내에 조회한 적이 없을 경우 조회수 증가
         if (Boolean.TRUE.equals(isNotViewed)) {
-            incrementViews(post.getPostId());
+            incrementViewCount(post.getPostId());
+        }
+    }
+
+    // 게시글 이미지 목록 조회
+    public List<String> getPostImages(Integer postId) {
+        List<PostImage> images = postImageRepository.findAllByPostId(postId);
+        return images.stream().map(PostImage::getImageUrl).collect(Collectors.toList());
+    }
+
+    // 게시글 썸네일 조회
+    public String getPostThumbnail(Integer postId) {
+        PostImage image = postImageRepository.findFirstByPostId(postId);
+        return image != null ? image.getImageUrl() : null;
+    }
+
+    // 게시글 목록 조회
+    public Page<Post> getPostPage(PostReq req) {
+        Pageable pageable = PageRequest.of(0, req.getSize());
+        return postQueryRepository.searchPosts(req, pageable);
+    }
+
+    // 인기글
+    public List<Post> getHotPost() {
+        return postQueryRepository.findTop5LikePost();
+    }
+
+    // 최신글
+    public List<Post> getLatestPost() {
+        return postRepository.findTop5ByOrderByCreatedAtDesc();
+    }
+
+    // 게시글 좋아요 개수
+    public Integer getPostLikes(Integer postId) {
+        return postLikeRepository.countByPostId(postId);
+    }
+
+    // 게시글 좋아요
+    public void addPostLike(Integer postId, User user) {
+        // Redis에 좋아요 상태 저장
+        String key = "post:" + postId + ":likes";
+        redisTemplate.opsForSet().add(key, user.getUserId().toString());
+
+        // Redis에서 좋아요 개수 증가
+        getLikeCount(postId);
+        redisTemplate.opsForValue().increment(key + ":count", 1);
+
+        postLikeRepository.save(PostLike.builder().userId(user.getUserId()).postId(postId).build());
+    }
+
+    // 게시글 좋아요 취소
+    @Transactional
+    public void deletePostLike(Integer postId, Integer userId) {
+        postLikeRepository.deleteByPostIdAndUserId(postId, userId);
+    }
+
+    // 사용자 좋아요 여부 확인
+    public boolean isUserLiked(Post post, User user) {
+        if (user == null) {
+            return false;
+        }
+
+        return postLikeRepository.existsByPostIdAndUserId(post.getPostId(), user.getUserId());
+    }
+
+    // 게시글 이미지 저장
+    private void saveImage(Post post, List<MultipartFile> files) {
+        if (files != null && !files.isEmpty()) {
+            List<String> imageUrls = s3Service.uploadImage(files);
+
+            List<PostImage> postImages = imageUrls.stream()
+                    .map(url -> PostImage.builder().imageUrl(url).postId(post.getPostId()).build())
+                    .collect(Collectors.toList());
+
+            postImageRepository.saveAll(postImages);
         }
     }
 
     // 조회수 증가
-    public void incrementViews(Integer postId) {
+    public void incrementViewCount(Integer postId) {
         String key = "post:views:" + postId;
-        redisTemplate.opsForValue().increment(key);
+        getViewCount(postId); // Redis에 조회수 저장되어 있는지 확인
+
+        redisTemplate.opsForValue().increment(key); // 조회수 증가
     }
 
-
     // Redis에 저장된 게시글 조회수 가져오기
-    public int getViews(Integer postId) {
+    public Integer getViewCount(Integer postId) {
         String key = "post:views:" + postId;
-        Object currentViews = redisTemplate.opsForValue().get(key);
+        Integer viewCount = (Integer) redisTemplate.opsForValue().get(key);
 
-        if (currentViews == null) {
-            int initialView = 0;
-            redisTemplate.opsForValue().set(key, initialView);
+        if (viewCount == null) {
+            viewCount = postRepository.findById(postId)
+                    .map(Post::getViewCount)
+                    .orElse(0);
 
-            return initialView;
+            redisTemplate.opsForValue().set(key, viewCount);
         }
 
-        return (int) currentViews;
+        return viewCount;
+    }
+
+    // 좋아요 개수 가져오기
+    public int getLikeCount(Integer postId) {
+        String key = "post:" + postId + ":likes";
+        Integer likeCount = (Integer) redisTemplate.opsForValue().get(key + ":count");
+
+        if (likeCount == null) {
+            likeCount = postRepository.findById(postId)
+                    .map(Post::getLikeCount)
+                    .orElse(0);
+
+            redisTemplate.opsForValue().set(key + ":count", likeCount);
+        }
+
+        return likeCount;
     }
 
     // 일정 시간마다 DB에 조회수 저장
@@ -153,19 +240,25 @@ public class PostService {
 
         for (String key : keys) {
             Integer postId = Integer.parseInt(key.split(":")[2]);
-            Integer views = (Integer) redisTemplate.opsForValue().get(key);
+            Integer viewCount = (Integer) redisTemplate.opsForValue().get(key);
 
-            if (views != null) {
+            if (viewCount != null) {
                 Post post = postRepository.findById(postId).orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
-                post.updateViews(views);
+
+                Integer dbViewCount = post.getViewCount();
+
+                // Redis 조회수와 DB와 일치하지 않을 경우에만 업데이트
+                if (!viewCount.equals(dbViewCount)) {
+                    post.updateViewCount(viewCount);
+                }
             }
         }
 
         redisTemplate.delete(keys);
     }
 
-    // Redis에 저장될 사용자 아이디 만들기
-    private String getUserId(User user, HttpServletRequest request) {
+    // 조회수 증가 시 Redis에 저장될 사용자 아이디 만들기
+    private String getViewUserId(User user, HttpServletRequest request) {
         String userIdentifier;
 
         // 로그인한 경우 userId 사용, 비회원은 IP 주소와 User-Agent를 사용
@@ -192,79 +285,9 @@ public class PostService {
         return userIdentifier;
     }
 
-    // 게시글 목록 조회 (검색 포함)
-    public PostList getPostList(User user, PostReq req) {
-        Pageable pageable = PageRequest.of(0, req.getSize());
+    // TODO: Redis 게시글 좋아요 개수 감소, 좋아요 취소 시에 어떻게 삭제할지 생각해야함
 
-        Page<Post> posts = postQueryRepository
-                .searchPosts(req, pageable);
+    // TODO: 일정 시간마다 좋아요 수, 좋아요 상태 DB에 저장
 
-        boolean hasNext = posts.hasNext();
-
-        List<PostList.PostInfo> postList = posts.stream()
-                .map(post -> new PostList.PostInfo(post,isUserLiked(post, user)))
-                .toList();
-
-        PostList.PostInfo lastPost = !postList.isEmpty() ? postList.get(postList.size() - 1) : null;
-
-        Integer newLastId = lastPost != null ? lastPost.postId() : null;
-        Integer newLikeCount = lastPost != null ? lastPost.likes() : null;
-
-        return PostList.of(newLastId, newLikeCount, postList.size(), hasNext, postList);
-    }
-
-    // 메인 페이지 게시글 조회
-    public Map<String, List<PostList.PostInfo>> getMainPost(User user) {
-        Map<String, List<PostList.PostInfo>> result = new HashMap<>();
-
-        List<PostList.PostInfo> hotPosts = postQueryRepository.findTop5LikePost().stream()
-                .map(post -> new PostList.PostInfo(post, isUserLiked(post, user)))
-                .toList();
-
-        List<PostList.PostInfo> latestPosts = postRepository.findTop5ByOrderByCreatedAtDesc().stream()
-                .map(post -> new PostList.PostInfo(post, isUserLiked(post, user)))
-                .toList();
-
-        result.put("hot", hotPosts);
-        result.put("latest", latestPosts);
-
-        return result;
-    }
-
-    // 게시글 좋아요
-    public void addPostLike(Integer postId, User user) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new DataException(ErrorCode.DATA_NOT_FOUND));
-
-        postLikeRepository.save(PostLike.builder().user(user).post(post).build());
-    }
-
-    // 게시글 좋아요 취소
-    @Transactional
-    public void deletePostLike(Integer postId, Integer userId) {
-        postLikeRepository.deleteByPost_PostIdAndUser_UserId(postId, userId);
-    }
-
-    // 사용자 좋아요 여부 확인
-    private boolean isUserLiked(Post post, User user) {
-        if (user == null) {
-            return false;
-        }
-
-        return postLikeRepository.existsByPost_PostIdAndUser_UserId(post.getPostId(), user.getUserId());
-    }
-
-    // 게시글 이미지 저장
-    private void saveImage(Post post, List<MultipartFile> files) {
-        if (files != null && !files.isEmpty()) {
-            List<String> imageUrls = s3Service.uploadImage(files);
-
-            List<PostImage> postImages = imageUrls.stream()
-                    .map(url -> PostImage.builder().imageUrl(url).post(post).build())
-                    .collect(Collectors.toList());
-
-            postImageRepository.saveAll(postImages);
-        }
-    }
 
 }
