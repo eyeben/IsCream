@@ -18,7 +18,7 @@ llm = ChatOpenAI(model="gpt-4-turbo")
 embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002")
 
 # ChromaDB 벡터 저장소 로드
-vectorstore = Chroma(persist_directory="app/core/chroma_db", embedding_function=embedding_function)
+vectorstore = Chroma(persist_directory="app/core/chroma_db",collection_name="langchain", embedding_function=embedding_function)
 
 # Retriever 생성
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
