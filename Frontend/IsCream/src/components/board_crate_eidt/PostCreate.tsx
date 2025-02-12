@@ -46,14 +46,10 @@ const PostCreate: React.FC = () => {
 
     try {
       const response = await createPost.mutateAsync(postData);
-      if (response.data && response.data.data) {
+      if (response.data?.data) {
+        // postId 체크 부분 수정
         setAlert({ message: "게시글이 작성되었습니다.", type: "success" });
-        setTimeout(() => {
-          const postId = response.data?.data?.postId;
-          if (postId) {
-            navigate(`/posts/${postId}`);
-          }
-        }, 1000);
+        navigate(`/board/detail/${response.data.data}`); // 직접 data 값 사용
       }
     } catch {
       setAlert({

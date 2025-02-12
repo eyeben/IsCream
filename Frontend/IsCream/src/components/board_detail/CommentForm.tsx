@@ -1,4 +1,3 @@
-// CommentForm.tsx
 import { useState } from "react";
 import { CommentFormProps } from "../../types/board";
 import defaultImage from "../../assets/image/챗봇_곰.png";
@@ -9,7 +8,8 @@ const CommentForm = ({
   parentId,
   onCancel,
   placeholder = "댓글을 입력하세요",
-  imageUrl = defaultImage // 기본 이미지
+  imageUrl = defaultImage,
+  userImageUrl
 }: CommentFormProps) => {
   const [content, setContent] = useState("");
 
@@ -34,7 +34,7 @@ const CommentForm = ({
         <div className="flex items-center space-x-2 max-w-4xl mx-auto px-2 mt-1">
           <div className="w-10 h-10 rounded-full overflow-hidden">
             <img
-              src={imageUrl}
+              src={userImageUrl || imageUrl}
               alt="profile"
               className="w-[95%] h-full object-cover mx-auto"
             />
