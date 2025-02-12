@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MessageAckDto {
+public class ReadReceiptDto {
     private String messageId; // 읽은 메시지의 ID
-    private String reader;    // 읽은 사람 (B)
+    private String sender;    // 원래 보낸 사람 (A)
 }

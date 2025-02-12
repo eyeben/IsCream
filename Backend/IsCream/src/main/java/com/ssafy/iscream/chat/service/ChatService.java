@@ -3,6 +3,7 @@ package com.ssafy.iscream.chat.service;
 import com.ssafy.iscream.chat.domain.ChatMessage;
 import com.ssafy.iscream.chat.dto.ChatMessageDto;
 import com.ssafy.iscream.chat.dto.MessageAckDto;
+import com.ssafy.iscream.chat.dto.ReadReceiptDto;
 import com.ssafy.iscream.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,13 +39,48 @@ public class ChatService {
                 .timestamp(LocalDateTime.now())
                 .isRead(false)
                 .build();
-        chatMessageRepository.save(chatMessage);
-        log.info("📤 Redis Pub/Sub 발행: chatroom-{}", chatMessageDto.getRoomId()); // ✅ 추가
+
+        // ✅ MongoDB에 메시지 저장 후, messageId 가져오기
+        chatMessage = chatMessageRepository.save(chatMessage);
+
+        // ✅ 클라이언트에게 messageId 포함해서 전송
+        chatMessageDto.setMessageId(chatMessage.getId());
+
+        log.info("📤 Redis Pub/Sub 발행 (messageId 포함): {}", chatMessageDto);
 
         redisTemplate.convertAndSend("chatroom-" + chatMessageDto.getRoomId(), chatMessageDto);
     }
 
     public void handleAck(MessageAckDto ackDto) {
-        messagingTemplate.convertAndSend("/sub/chat/read-receipt/" + ackDto.getRoomId(), ackDto);
+        //messagingTemplate.convertAndSend("/sub/chat/read-receipt/" + ackDto.getRoomId(), ackDto);
+        log.info("🔍 ACK 처리 중: {}", ackDto);
+
+        // ✅ 해당 메시지를 DB에서 찾아 읽음 처리
+        ChatMessage chatMessage = chatMessageRepository.findById(ackDto.getMessageId())
+                .orElse(null);
+
+        if (chatMessage == null) {
+            log.warn("❌ 메시지를 찾을 수 없음: {}", ackDto.getMessageId());
+            return;
+        }
+
+        // ✅ 이미 읽음 상태면 처리하지 않음
+        if (chatMessage.isRead()) {
+            log.info("✅ 이미 읽음 처리된 메시지: {}", ackDto.getMessageId());
+            return;
+        }
+
+        // ✅ 읽음 상태로 업데이트
+        chatMessage.readMessage();
+        chatMessageRepository.save(chatMessage);
+
+        log.info("✅ 메시지 읽음 처리 완료: {}", ackDto.getMessageId());
+
+        // ✅ 보낸 사용자(A)에게 WebSocket을 통해 읽음 상태 전송
+        String destination = "/sub/chat/read/" + chatMessage.getRoomId();
+        ReadReceiptDto readReceipt = new ReadReceiptDto(ackDto.getMessageId(), chatMessage.getSender());
+        messagingTemplate.convertAndSend(destination, readReceipt);
+
+        log.info("📩 읽음 상태 전송: {}", destination);
     }
 }

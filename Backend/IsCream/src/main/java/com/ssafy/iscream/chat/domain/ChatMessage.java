@@ -20,4 +20,8 @@ public class ChatMessage {
     private String content;
     private LocalDateTime timestamp;
     private boolean isRead;
+
+    public void readMessage(){
+        isRead = true;
+    }
 }
