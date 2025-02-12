@@ -1,19 +1,11 @@
+import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { PostItemProps } from "@/types/board";
+import DefaultThumbnail from "../../assets/icons/login_logo.png";
 
-interface Post {
-  postId: number;
-  title: string;
-  content: string;
-  thumbnail: string;
-  createdAt: string;
-  authorName: string;
-  likes: number;
-  userLiked: boolean;
-  hits: number;
-}
-
-const PostItem = ({ post }: { post: Post }) => {
+const PostItem = ({ post }: PostItemProps) => {
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const {
     postId,
@@ -26,48 +18,79 @@ const PostItem = ({ post }: { post: Post }) => {
     userLiked
   } = post;
 
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
   const handleClick = () => {
     navigate(`/board/detail/${postId}`);
   };
 
   return (
     <div
-      className="py-3 px-1 cursor-pointer transition-colors duration-200 hover:bg-gray-50 active:bg-gray-100"
+      className="py-3 px-1 cursor-pointer transition-colors duration-200 border-t border-[#BEBEBE] hover:bg-gray-50 active:bg-gray-100"
       onClick={handleClick}
     >
-      <div className="flex gap-4">
-        <div>
-          <img
-            src={thumbnail}
-            alt="thumbnail"
-            className="w-30 h-20 object-cover rounded-lg"
-          />
-        </div>
+      <div className="flex gap-4 items-center flex-1">
         <div className="flex flex-col gap-3 flex-1">
-          <h3 className="text-base font-medium text-gray-900 truncate hover:text-blue-600">
+          <h3
+            className={`font-medium text-gray-900 truncate ${isMobile ? "text-xl" : "text-2xl"}`}
+          >
             {title}
           </h3>
           <div className="min-w-0">
-            <p className="text-sm text-gray-600 truncate">{content}</p>
+            <p
+              className={`text-gray-600 overflow-hidden text-ellipsis ${isMobile ? "text-base" : "text-lg"}`}
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical"
+              }}
+            >
+              {content}
+            </p>
           </div>
-          <div className="flex items-center text-xs text-gray-400">
-            <div className="w-30">
-              <span>{createdAt}</span>
-              <span className="mx-1"> | </span>
-              <span>{authorName}</span>
-            </div>
-            <div className="flex-1"></div>
-            <div className="flex items-center gap-1 text-sm text-gray-500 w-16">
+          <div
+            className={`flex items-center ${isMobile ? "text-xs" : "text-sm"} text-gray-400`}
+          >
+            <div className="flex items-center gap-1 text-gray-500">
               <Heart
-                size={16}
+                size={isMobile ? 12 : 15}
                 className={
                   userLiked ? "fill-red-500 text-red-500" : "text-gray-400"
                 }
               />
               <span>{likes}</span>
             </div>
+            <div className="w-45">
+              <span className="mx-3"> | </span>
+              <span>{createdAt}</span>
+              <span className="mx-3"> | </span>
+              <span>{authorName}</span>
+            </div>
           </div>
         </div>
+        {thumbnail && (
+          <div
+            className={`flex items-center justify-center ${isMobile ? "w-24 h-24" : "w-30 h-30"}`}
+          >
+            <img
+              src={thumbnail}
+              alt="게시글 썸네일"
+              className="w-full h-full object-cover rounded-[15px]"
+              onError={(e) => {
+                e.currentTarget.src = DefaultThumbnail;
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

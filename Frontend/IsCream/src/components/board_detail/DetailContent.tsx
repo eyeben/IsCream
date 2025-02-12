@@ -1,46 +1,42 @@
-import { useState, useEffect, useRef } from "react";
+// components/board_detail/DetailContent.tsx
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DetailContentProps } from "./types";
 
-const DetailContent = ({
+interface DetailContentProps {
+  post: {
+    postId: number; // string에서 number로 변경
+    title: string;
+    content: string;
+    author: {
+      id: string;
+      nickname: string;
+      imageUrl: string;
+    };
+    createdAt: string; // createAt에서 createdAt으로 변경
+    images?: string[];
+  };
+  currentUserId: string | undefined;
+  onDelete: () => void;
+  onChat?: (authorId: string) => void; // optional로 변경
+}
+
+const DetailContent: React.FC<DetailContentProps> = ({
   post,
   currentUserId,
-  // onEdit,
   onDelete,
   onChat
-}: DetailContentProps) => {
+}) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   const isAuthor = currentUserId === post.author.id;
 
   const handleEditClick = () => {
-    navigate(`/board/edit/${post.postId}`, {
-      state: { post }
-    });
+    navigate(`/board/edit/${post.postId}`, { state: { post } });
     setShowDropdown(false);
   };
 
   return (
     <div className="px-4 py-6">
-      {/* 작성자 정보 */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
@@ -52,12 +48,11 @@ const DetailContent = ({
           </div>
           <div>
             <div className="font-medium">{post.author.nickname}</div>
-            <div className="text-sm text-gray-500">{post.createAt}</div>
+            <div className="text-sm text-gray-500">{post.createdAt}</div>
           </div>
         </div>
 
-        {/* 더보기 메뉴 */}
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
             className="p-2 hover:bg-gray-100 rounded-full"
@@ -83,7 +78,7 @@ const DetailContent = ({
                   </button>
                   <button
                     onClick={() => {
-                      onDelete?.();
+                      onDelete();
                       setShowDropdown(false);
                     }}
                     className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 rounded-b-lg"
@@ -91,27 +86,25 @@ const DetailContent = ({
                     삭제하기
                   </button>
                 </>
-              ) : (
+              ) : onChat ? (
                 <button
                   onClick={() => {
-                    onChat?.(post.author.id);
+                    onChat(post.author.id);
                     setShowDropdown(false);
                   }}
                   className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-lg"
                 >
                   채팅하기
                 </button>
-              )}
+              ) : null}
             </div>
           )}
         </div>
       </div>
 
-      {/* 게시글 내용 */}
       <h2 className="text-xl font-bold mb-4">{post.title}</h2>
       <p className="text-gray-800 whitespace-pre-line mb-15">{post.content}</p>
 
-      {/* 이미지 */}
       {post.images && post.images.length > 0 && (
         <div className="overflow-x-auto">
           <div className="grid grid-flow-col auto-cols-max gap-2">

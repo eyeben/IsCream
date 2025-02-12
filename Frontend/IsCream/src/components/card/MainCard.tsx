@@ -9,7 +9,7 @@ interface MainCardProps {
 const MainCard = ({ image, title, to }: MainCardProps) => {
   return (
     <Link to={to} className="w-[95%] h-full no-underline mt-2">
-      <div className="w-full h-full border border-[#009E28] rounded-[15px] bg-white p-1 flex flex-col items-center justify-between hover:shadow-lg transition-shadow duration-200">
+      <div className="w-full h-full border border-[#009E28] rounded-[15px] bg-white hover:bg-gray-50 p-1 flex flex-col items-center justify-between hover:shadow-lg transition-shadow duration-200">
         {/* 이미지 영역 */}
         <div className="w-full flex-1 flex items-center justify-center p-1">
           <img
