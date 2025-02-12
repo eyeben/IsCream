@@ -21,7 +21,7 @@ persist_directory="/app/app/core/chroma_db"
 
 
 # ChromaDB 벡터 저장소 로드
-vectorstore = Chroma(persist_directory=persist_directory, embedding_function=embedding_function)
+vectorstore = Chroma(persist_directory=persist_directory,  collection_name="langchain",embedding_function=embedding_function)
 
 # Retriever 생성
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
