@@ -9,12 +9,14 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro  # nginx.conf 파일 마운트
       - ./Frontend/IsCream/dist:/usr/share/nginx/html  # React 빌드 결과물
       - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
-      - backend
-      - ai-server
+      backend:
+        condition: service_healthy
+      ai-server:
+        condition: service_healthy
     networks:
       - mynetwork
 
@@ -23,28 +25,41 @@ services:
       context: ./Backend/IsCream
       dockerfile: Dockerfile
     container_name: backend-app
-    ports:
-      - "8082:8080"  # 🔹 8082로 변경
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
+    restart: always
+    deploy:
+      replicas: 2  # 🔹 여러 개의 백엔드 인스턴스 실행
+      restart_policy:
+        condition: on-failure
     networks:
       - mynetwork
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   ai-server:
     build:
       context: ./AI
       dockerfile: Dockerfile
     container_name: ai-server
-    ports:
-      - "8000:8000"
+    restart: always
+    deploy:
+      replicas: 2  # 🔹 여러 개의 AI 서버 실행
+      restart_policy:
+        condition: on-failure
     volumes:
       - /home/ubuntu/models:/home/ubuntu/models
     networks:
       - mynetwork
     environment:
       - OPENAI_API_KEY=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
-      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 networks:
   mynetwork:
     driver: bridge
-    external: true 

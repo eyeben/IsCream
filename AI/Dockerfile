@@ -22,8 +22,12 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # 애플리케이션 코드 복사
 COPY . .
 
-# 포트 개방 (FastAPI 기본 포트)
-EXPOSE 8000
+ENV PORT=8000
+ENV WORKERS=4  # 멀티 프로세스 실행
+ENV LOG_LEVEL=info
 
-# FastAPI 실행 (uvicorn)
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# 포트 개방 (FastAPI 기본 포트)
+EXPOSE $PORT
+
+# Gunicorn + Uvicorn으로 FastAPI 실행 (멀티 프로세스 지원)
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-w", "4", "-b", "0.0.0.0:8000", "app.main:app"]
