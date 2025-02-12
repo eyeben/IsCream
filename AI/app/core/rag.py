@@ -57,10 +57,6 @@ qa_chain = RetrievalQA.from_chain_type(
 def process_predictions(query):
     # 문서 검색 수행
     docs = retriever.get_relevant_documents(query)
-    print(query)
-    if not docs:
-        print("❌ 검색된 문서가 없습니다. 벡터 DB를 다시 저장하세요.")
-        return "검색된 문서가 없습니다."
 
     # 모델 응답 반환
     response = qa_chain.invoke(query)
