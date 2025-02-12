@@ -4,6 +4,7 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
+from chromadb import PersistentClient
 
 # 경고 무시
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -24,6 +25,11 @@ vectorstore = Chroma(persist_directory="app/core/chroma_db",collection_name="lan
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
 
 print("📁 저장된 문서 개수:", vectorstore._collection.count())
+client = PersistentClient(path="./chroma_db")
+
+# 현재 존재하는 컬렉션 목록 조회
+collections = client.list_collections()
+print("📂 현재 저장된 컬렉션 목록:", [c.name for c in collections])
 
 prompt = PromptTemplate(
     template="""
