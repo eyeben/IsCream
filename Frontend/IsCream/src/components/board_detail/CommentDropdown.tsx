@@ -1,4 +1,3 @@
-// CommentDropdown.tsx
 import { useRef, useEffect } from "react";
 import { CommentDropdownProps } from "../../types/board";
 
@@ -12,7 +11,10 @@ const CommentDropdown = ({
   onToggle
 }: CommentDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const isAuthor = currentUserId === comment.author.id;
+
+  // 안전한 방식으로 author 체크
+  const isAuthor =
+    comment?.author?.id && currentUserId === comment.author.id.toString();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -31,6 +33,9 @@ const CommentDropdown = ({
     };
   }, [isOpen, onToggle]);
 
+  // 댓글이나 작성자 정보가 없으면 null 반환
+  if (!comment || !comment.author) return null;
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -48,48 +53,49 @@ const CommentDropdown = ({
         </svg>
       </button>
 
-      {isOpen && (
-        <div
-          className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-10"
-          role="menu"
-        >
-          {isAuthor ? (
-            <>
-              <button
-                onClick={() => {
-                  onEdit?.(comment.commentId, comment.content);
-                  onToggle();
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-t-lg transition-colors duration-200"
-                role="menuitem"
-              >
-                수정하기
-              </button>
-              <button
-                onClick={() => {
-                  onDelete?.(comment.commentId);
-                  onToggle();
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 rounded-b-lg transition-colors duration-200"
-                role="menuitem"
-              >
-                삭제하기
-              </button>
-            </>
-          ) : (
+      {/* 조건 없이 항상 렌더링 */}
+      <div
+        className={`absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-10 ${
+          isOpen ? "block" : "hidden"
+        }`}
+        role="menu"
+      >
+        {!isAuthor ? (
+          <>
             <button
               onClick={() => {
-                onChat?.(comment.author.id);
+                onEdit?.(comment.commentId, comment.content);
                 onToggle();
               }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-lg transition-colors duration-200"
+              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-t-lg transition-colors duration-200"
               role="menuitem"
             >
-              채팅하기
+              수정하기
             </button>
-          )}
-        </div>
-      )}
+            <button
+              onClick={() => {
+                onDelete?.(comment.commentId);
+                onToggle();
+              }}
+              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 rounded-b-lg transition-colors duration-200"
+              role="menuitem"
+            >
+              삭제하기
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => {
+              onChat?.(comment.author.id);
+              onToggle();
+            }}
+            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 rounded-lg transition-colors duration-200"
+            role="menuitem"
+          >
+            채팅하기
+          </button>
+        )}
+      </div>
     </div>
   );
 };

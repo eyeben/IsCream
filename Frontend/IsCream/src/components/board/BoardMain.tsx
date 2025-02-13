@@ -21,7 +21,7 @@ const BoardMain = () => {
       lastLikeCount: null,
       size: 10,
       sort,
-      ...(searchQuery ? { title: searchQuery } : {})
+      keyword: searchQuery || ""
     });
 
   useEffect(() => {

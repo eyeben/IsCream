@@ -1,9 +1,8 @@
-// types/calendar.ts
-
 // 달력 조회 요청 타입
 export interface CalendarRequest {
   childId: number;
-  yearMonth: string; // 예: "2024-05"
+  year: number;
+  month: number;
 }
 
 // 달력 데이터 타입
@@ -39,7 +38,7 @@ export interface CalendarDetailResponse {
     personUrl?: string;
     report?: string;
     memoId?: string;
-    memo?: string;
+    memoContent?: string;
   };
 }
 

@@ -13,6 +13,7 @@ import { useDeleteComment } from "../../hooks/board/useDeleteComment";
 import { useUpdateComment } from "../../hooks/board/useUpdateComment";
 import type { PostDetail, CommentRequest } from "../../types/board";
 import Bear from "../../assets/image/챗봇_곰.png";
+// import { AxiosError } from "axios";
 
 const BoardDetailPage = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -73,12 +74,15 @@ const BoardDetailPage = () => {
       navigate("/login");
       return;
     }
-    if (!postId) return;
+    console.log(commentData);
 
-    createCommentMutation.mutate({
-      postId: Number(postId),
-      content: commentData.content,
-      commentId: commentData.commentId || undefined
+    // commentData를 그대로 사용 (추가 변환 없이)
+    createCommentMutation.mutate(commentData, {
+      onError: () => {
+        // console.log(error.respones);
+        const errorMessage = "댓글 작성에 실패했습니다.";
+        alert(errorMessage);
+      }
     });
   };
 
@@ -162,6 +166,7 @@ const BoardDetailPage = () => {
           isCommentFormVisible={isCommentFormVisible}
           isAuthenticated={isAuthenticated}
           currentUserId={user?.id}
+          userImageUrl={post.userImageUrl} // 추가
         />
       </div>
     </div>

@@ -1,3 +1,5 @@
+// types/board.ts
+
 export type ApiResponseCode = "S0000" | "E4001" | "E4002" | "E4003" | "E4006";
 
 export interface ApiResponse<T = void> {
@@ -21,7 +23,7 @@ export interface Post {
   userLiked: boolean;
   viewCount: number;
   createdAt: string;
-  authorName: string; // author 객체 대신 authorName 문자열
+  authorName: string;
   author: Author;
 }
 
@@ -49,7 +51,7 @@ export interface PostDetail {
   images?: string[];
   createdAt: string;
   author: Author;
-  userImageUrl?: string; // 로그인 유저의 프로필 이미지
+  userImageUrl?: string;
 }
 
 export interface Comment {
@@ -75,8 +77,7 @@ export interface BoardListRequest {
   lastLikeCount: number | null;
   size: number;
   sort: "create" | "like";
-  title?: string;
-  content?: string;
+  keyword: string;
 }
 
 export interface BoardListResponse {
@@ -103,7 +104,7 @@ export interface UpdatePostRequest {
   post: {
     title: string;
     content: string;
-    deleteFiles?: string[];
+    deleteFiles: string[];
   };
   files?: File[];
 }
@@ -114,9 +115,14 @@ export interface LikePostResponse {
 }
 
 export interface CommentRequest {
-  postId?: number | null;
-  commentId?: number | null;
+  postId: number;
+  commentId: number | null; // 댓글 작성 시 null, 대댓글 작성 시 부모 댓글 ID
   content: string;
+}
+
+export interface CreateCommentResponse {
+  code: ApiResponseCode;
+  message: string;
 }
 
 export interface CommentsListResponse {
@@ -136,11 +142,15 @@ export interface CommentDropdownProps {
 
 export interface CommentFormProps {
   onSubmit: (content: string, parentId?: number | null) => void;
+  onEdit?: (content: string) => void;
+  isEditing?: boolean;
+  initialContent?: string;
   isVisible?: boolean;
   parentId?: number | null;
   onCancel?: () => void;
   placeholder?: string;
   imageUrl?: string;
+  userImageUrl?: string;
 }
 
 export interface CommentItemProps {
@@ -155,4 +165,6 @@ export interface CommentItemProps {
   isRepliesExpanded?: boolean;
   children?: React.ReactNode;
   isReply?: boolean;
+  isEditing?: boolean;
+  userImageUrl?: string;
 }

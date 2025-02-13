@@ -16,14 +16,10 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
-    console.log("Making request to:", config.url);
-    console.log("Current token:", token);
 
     if (token) {
       // Authorization 대신 access 헤더로 변경
       config.headers["access"] = token;
-      // 설정된 헤더 확인
-      console.log("Final request headers:", config.headers);
     } else {
       console.log("No token found in localStorage");
     }
@@ -40,7 +36,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      console.log("401 error - clearing auth state");
       localStorage.removeItem("accessToken");
       queryClient.setQueryData(["auth"], { isAuthenticated: false });
 

@@ -6,39 +6,41 @@ import CommentForm from "./CommentForm";
 interface DetailCommentsProps {
   postId: number;
   comments: Comment[];
+  onSubmit: (commentData: CommentRequest) => void;
+  onEdit: (commentId: number, content: string) => void;
+  onDelete: (commentId: number) => void;
   isCommentFormVisible: boolean;
   isAuthenticated: boolean;
   currentUserId?: string;
-  onSubmit: (commentData: CommentRequest) => void;
-  onDelete?: (commentId: number) => void;
-  onEdit?: (commentId: number, content: string) => void;
-  onChat?: (authorId: string) => void;
+  userImageUrl?: string;
 }
 
 const DetailComments = ({
   postId,
   comments,
+  onSubmit,
+  onEdit,
+  onDelete,
   isCommentFormVisible,
   isAuthenticated,
   currentUserId,
-  onSubmit,
-  onDelete,
-  onEdit,
-  onChat
+  userImageUrl
 }: DetailCommentsProps) => {
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [expandedComments, setExpandedComments] = useState<number[]>([]);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
 
   const handleSubmit = (content: string, parentId?: number | null) => {
     if (!isAuthenticated || !content.trim()) return;
 
     const commentData: CommentRequest = {
       postId,
-      content: content.trim(),
-      commentId: parentId || null
+      commentId: parentId || null,
+      content: content.trim()
     };
 
     onSubmit(commentData);
+    setReplyingTo(null);
   };
 
   const getChildComments = (parentCommentId: number) =>
@@ -63,45 +65,66 @@ const DetailComments = ({
 
           return (
             <div key={comment.commentId}>
-              <CommentItem
-                comment={comment}
-                currentUserId={currentUserId}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                onChat={onChat}
-                onReply={() => setReplyingTo(comment.commentId)}
-                onToggleReplies={
-                  replies.length > 0
-                    ? () => handleToggleReplies(comment.commentId)
-                    : undefined
-                }
-                repliesCount={replies.length}
-                isRepliesExpanded={isExpanded}
-              >
-                {isExpanded && replies.length > 0 && (
-                  <div className="space-y-4">
-                    {replies.map((reply) => (
+              {editingCommentId === comment.commentId ? (
+                <CommentForm
+                  onSubmit={(content) => onEdit(comment.commentId, content)}
+                  onCancel={() => setEditingCommentId(null)}
+                  initialContent={comment.content}
+                  isEditing={true}
+                  placeholder="댓글을 수정하세요"
+                  userImageUrl={userImageUrl}
+                />
+              ) : (
+                <CommentItem
+                  comment={comment}
+                  currentUserId={currentUserId}
+                  onEdit={() => setEditingCommentId(comment.commentId)}
+                  onDelete={onDelete}
+                  onReply={() => setReplyingTo(comment.commentId)}
+                  onToggleReplies={
+                    replies.length > 0
+                      ? () => handleToggleReplies(comment.commentId)
+                      : undefined
+                  }
+                  repliesCount={replies.length}
+                  isRepliesExpanded={isExpanded}
+                />
+              )}
+
+              {isExpanded && replies.length > 0 && (
+                <div className="space-y-4">
+                  {replies.map((reply) =>
+                    editingCommentId === reply.commentId ? (
+                      <CommentForm
+                        key={reply.commentId}
+                        onSubmit={(content) => onEdit(reply.commentId, content)}
+                        onCancel={() => setEditingCommentId(null)}
+                        initialContent={reply.content}
+                        isEditing={true}
+                        placeholder="답글을 수정하세요"
+                        userImageUrl={userImageUrl}
+                      />
+                    ) : (
                       <CommentItem
                         key={reply.commentId}
                         comment={reply}
                         currentUserId={currentUserId}
-                        onEdit={onEdit}
+                        onEdit={() => setEditingCommentId(reply.commentId)}
                         onDelete={onDelete}
-                        onChat={onChat}
                         isReply
                       />
-                    ))}
-                  </div>
-                )}
-              </CommentItem>
+                    )
+                  )}
+                </div>
+              )}
 
-              {/* 답글 작성 폼 */}
               {replyingTo === comment.commentId && (
                 <CommentForm
                   onSubmit={handleSubmit}
                   parentId={comment.commentId}
                   placeholder="답글을 입력하세요"
                   onCancel={() => setReplyingTo(null)}
+                  userImageUrl={userImageUrl}
                 />
               )}
             </div>
@@ -109,12 +132,13 @@ const DetailComments = ({
         })}
       </div>
 
-      {/* 메인 댓글 입력 폼 */}
-      <CommentForm
-        onSubmit={handleSubmit}
-        isVisible={isCommentFormVisible}
-        placeholder="댓글을 입력하세요"
-      />
+      {isCommentFormVisible && (
+        <CommentForm
+          onSubmit={handleSubmit}
+          placeholder="댓글을 입력하세요"
+          userImageUrl={userImageUrl}
+        />
+      )}
     </div>
   );
 };

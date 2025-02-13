@@ -6,13 +6,13 @@ import { ContentTextarea } from "./ContentTextarea";
 import { ImageUpload } from "./ImageUpload";
 import LongButton from "../button/LongButton";
 import Alert from "./Alert";
-import type { PostDetail, UpdatePostRequest } from "../../types/board";
+import type { PostDetail } from "../../types/board";
 import { useUpdatePost } from "../../hooks/board/useUpdatePost";
 
 interface PostEditProps {
   post: PostDetail;
-  onSubmit: (formData: FormData) => Promise<void>;
-  onCancel: () => void;
+  onSubmit?: (formData: FormData) => Promise<void>;
+  onCancel?: () => void;
 }
 
 const MAX_CONTENT_LENGTH = 1000;
@@ -22,6 +22,7 @@ const PostEdit: React.FC<PostEditProps> = ({ post }) => {
   const [title, setTitle] = useState<string>(post.title);
   const [content, setContent] = useState<string>(post.content);
   const [images, setImages] = useState<File[]>([]);
+  const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const [alert, setAlert] = useState<{
     message: string;
     type: "error" | "success";
@@ -42,21 +43,37 @@ const PostEdit: React.FC<PostEditProps> = ({ post }) => {
       return;
     }
 
-    const postData: UpdatePostRequest = {
-      post: {
-        title: title.trim(),
-        content: content.trim()
-      },
-      files: images.length > 0 ? images : undefined
-    };
+    console.log("삭제할 이미지들:", deletedImages);
+    console.log("새로 추가할 이미지들:", images);
+
+    // 디버깅용 URL 파싱 로직 추가
+    deletedImages.forEach((imageUrl) => {
+      console.log("삭제 요청된 이미지 URL 전체:", imageUrl);
+      console.log("URL 파싱 테스트:", {
+        bucket: "a407-20250124",
+        region: "ap-northeast-2",
+        key: imageUrl.split("/images/")[1]
+      });
+    });
 
     try {
-      await updatePost.mutateAsync({ postId: post.postId, data: postData });
-      setAlert({ message: "게시글이 수정되었습니다.", type: "success" });
-      setTimeout(() => {
-        navigate(`/posts/${post.postId}`);
-      }, 1000);
-    } catch {
+      const result = await updatePost.mutateAsync({
+        postId: post.postId,
+        data: {
+          post: {
+            title: title.trim(),
+            content: content.trim(),
+            deleteFiles: deletedImages
+          },
+          files: images.length > 0 ? images : undefined
+        }
+      });
+
+      console.log("API 응답:", result);
+
+      navigate(`/board/detail/${post.postId}`);
+    } catch (error) {
+      console.error("상세 에러:", error);
       setAlert({
         message: "게시글 수정 중 문제가 발생했습니다. 다시 시도해 주세요.",
         type: "error"
@@ -74,6 +91,24 @@ const PostEdit: React.FC<PostEditProps> = ({ post }) => {
         type: "error"
       });
     }
+  };
+
+  const handleExistingImageDelete = (imageUrl: string) => {
+    console.log("이미지 삭제됨:", imageUrl);
+
+    // 디버깅용 URL 파싱 로직 추가
+    console.log("삭제 요청된 이미지 URL 전체:", imageUrl);
+    console.log("URL 파싱 테스트:", {
+      bucket: "a407-20250124",
+      region: "ap-northeast-2",
+      key: imageUrl.split("/images/")[1]
+    });
+
+    setDeletedImages((prev) => {
+      const updated = [...prev, imageUrl];
+      console.log("현재 삭제된 이미지 목록:", updated);
+      return updated;
+    });
   };
 
   return (
@@ -103,29 +138,30 @@ const PostEdit: React.FC<PostEditProps> = ({ post }) => {
               <ImageUpload
                 onImagesChange={setImages}
                 initialImages={post.images || []}
+                onExistingImageDelete={handleExistingImageDelete}
               />
             </div>
+            <div className="sticky bottom-0 w-full bg-white py-4 px-4 md:px-6 lg:px-8">
+              <div className="w-full max-w-3xl mx-auto flex gap-4">
+                <LongButton
+                  type="button"
+                  onClick={() => navigate(`/board/detail/${post.postId}`)}
+                  className="flex-1 bg-red-600"
+                >
+                  취소
+                </LongButton>
+                <LongButton
+                  type="submit"
+                  disabled={
+                    updatePost.isPending || !title.trim() || !content.trim()
+                  }
+                  className="flex-1"
+                >
+                  {updatePost.isPending ? "수정 중..." : "수정하기"}
+                </LongButton>
+              </div>
+            </div>
           </PostForm>
-        </div>
-      </div>
-
-      <div className="sticky bottom-0 w-full bg-white py-4 px-4 md:px-6 lg:px-8">
-        <div className="w-full max-w-3xl mx-auto flex gap-4">
-          <LongButton
-            type="submit"
-            onClick={() => navigate(`/board/detail/${post.postId}`)}
-            disabled={updatePost.isPending || !title.trim() || !content.trim()}
-            className="flex-1 bg-red-600"
-          >
-            {updatePost.isPending ? "취소 중..." : "취소"}
-          </LongButton>
-          <LongButton
-            type="submit"
-            disabled={updatePost.isPending || !title.trim() || !content.trim()}
-            className="flex-1"
-          >
-            {updatePost.isPending ? "수정 중..." : "수정하기"}
-          </LongButton>
         </div>
       </div>
     </div>

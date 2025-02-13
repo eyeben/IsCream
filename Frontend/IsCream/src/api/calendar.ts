@@ -22,16 +22,20 @@ export const calendarKeys = {
 // API 함수들
 export const calendarApi = {
   // 월별 달력 조회
-  getCalendar: async (params: CalendarRequest): Promise<CalendarResponse> => {
-    const response = await api.get("/calendars", { params });
+  PostCalendar: async (params: CalendarRequest): Promise<CalendarResponse> => {
+    const response = await api.post(`/calendars`, {
+      childId: params.childId,
+      year: params.year,
+      month: params.month
+    });
     return response.data;
   },
 
   // 날짜별 상세 정보 조회
   getCalendarDetail: async (
-    params: CalendarDetailRequest
+    data: CalendarDetailRequest
   ): Promise<CalendarDetailResponse> => {
-    const response = await api.post("/calendars/detail", params);
+    const response = await api.post("/calendars/detail", data);
     return response.data;
   },
 
