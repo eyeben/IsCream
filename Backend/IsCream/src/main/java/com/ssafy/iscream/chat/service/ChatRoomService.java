@@ -1,8 +1,12 @@
 package com.ssafy.iscream.chat.service;
 
 import com.ssafy.iscream.chat.domain.ChatRoom;
+import com.ssafy.iscream.chat.repository.ChatMessageRepository;
 import com.ssafy.iscream.chat.repository.ChatRoomRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
@@ -15,12 +19,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
-
+    private final ChatMessageRepository chatMessageRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * ✅ 사용자가 속한 채팅방 목록 조회
@@ -49,4 +55,36 @@ public class ChatRoomService {
         return chatRoomRepository.save(newRoom);
     }
 
+    /**
+     * ✅ 사용자가 채팅방을 나갈 때 처리
+     */
+    @Transactional
+    public void leaveChatRoom(String roomId, String userId) {
+        log.info("🚪 채팅방 나가기 요청: roomId={}, userId={}", roomId, userId);
+
+        // 1️⃣ 채팅방 조회
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("❌ 채팅방이 존재하지 않습니다: " + roomId));
+
+        // 2️⃣ 사용자를 채팅방에서 제거
+        chatRoom.getParticipantIds().remove(userId);
+        log.info("🚪 사용자 제거됨: roomId={}, 남은 인원={}", roomId, chatRoom.getParticipantIds());
+
+        // 3️⃣ Redis에서 해당 사용자 구독 정보 삭제
+        redisTemplate.opsForSet().remove("chatroom-" + roomId, userId);
+        log.info("❌ Redis 구독 정보 삭제됨: chatroom-{}", roomId);
+
+        // 4️⃣ 채팅방에 아무도 없으면 전체 삭제
+        if (chatRoom.getParticipantIds().isEmpty()) {
+            log.info("🗑 채팅방 삭제됨: {}", roomId);
+
+            // 🔥  MongoDB에서 채팅방과 메시지 삭제
+            chatRoomRepository.delete(chatRoom);
+            chatMessageRepository.deleteByRoomId(roomId);
+            log.info("🗑 모든 메시지도 삭제됨: roomId={}", roomId);
+        } else {
+            // 5️⃣ 남아 있는 사람이 있다면 변경된 참여자 목록 저장
+            chatRoomRepository.save(chatRoom);
+        }
+    }
 }
