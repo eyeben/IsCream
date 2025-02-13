@@ -40,13 +40,7 @@ public class HtpTestService {
         LocalDateTime startDate = LocalDateTime.of(calendarGetReq.getYear(), calendarGetReq.getMonth(), 1, 0, 0);
         LocalDateTime endDate = startDate.plusMonths(1); // 다음 달 1일 (해당 월의 끝까지 포함)
 
-        // 권한 없는 경우
-        List<HtpTest> htpTests = htpTestRepository.findByChildIdAndCreatedAtBetween( calendarGetReq.getChildId(), startDate, endDate);
-        if (!htpTests.isEmpty() && !userId.equals(htpTests.get(0).getChildId())) {
-            throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
-        }
-
-        return htpTests;
+        return htpTestRepository.findByChildIdAndCreatedAtBetween( calendarGetReq.getChildId(), startDate, endDate);
     }
 
     // house, tree, male, female
