@@ -36,7 +36,7 @@ const COLOR_PROPS = {
   pointHoverBorderColor: "#89D785"
 };
 
-const DEFAULT_LABELS = ["감정표현", "사회성", "자아존중감", "불안", "공격성"];
+const DEFAULT_LABELS = ["우호성", "정서적 안정성", "외향성", "성실성", "개방성"];
 const DEFAULT_DATA = [4.5, 3.2, 4.0, 2.8, 3.5];
 
 const RadarChart: React.FC<RadarChartProps> = ({
@@ -45,12 +45,15 @@ const RadarChart: React.FC<RadarChartProps> = ({
   title = "심리 분석 결과",
   className = ""
 }) => {
+
+  const formattedData = data.map(value => Number(value.toFixed(2)));
+
   const chartData = {
     labels: labels,
     datasets: [
       {
         label: title,
-        data: data,
+        data: formattedData,
         backgroundColor: COLOR_PROPS.backgroundColor,
         borderColor: COLOR_PROPS.borderColor,
         borderWidth: 2,
@@ -70,10 +73,13 @@ const RadarChart: React.FC<RadarChartProps> = ({
         angleLines: {
           display: true
         },
-        suggestedMin: 1,
+        suggestedMin: -5,
         suggestedMax: 5,
         ticks: {
           stepSize: 1
+        },
+        grid:{
+          
         }
       }
     },
@@ -86,7 +92,13 @@ const RadarChart: React.FC<RadarChartProps> = ({
         display: false
       },
       tooltip: {
-        backgroundColor: "rgba(0, 0, 0, 0.8)"
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        callbacks: {
+          label: (context: any) => {
+            return `${context.raw}`; // 값만 표시
+          },
+          title: () => '' // title(날짜) 제거
+        }
       }
     }
   };
