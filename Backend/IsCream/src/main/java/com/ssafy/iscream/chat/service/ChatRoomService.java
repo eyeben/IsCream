@@ -21,6 +21,7 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
 
+
     /**
      * ✅ 사용자가 속한 채팅방 목록 조회
      */

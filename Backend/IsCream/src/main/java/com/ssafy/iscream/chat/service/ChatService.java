@@ -1,25 +1,20 @@
 package com.ssafy.iscream.chat.service;
 
 import com.ssafy.iscream.chat.domain.ChatMessage;
+import com.ssafy.iscream.chat.domain.ChatRoom;
 import com.ssafy.iscream.chat.dto.ChatMessageDto;
 import com.ssafy.iscream.chat.dto.MessageAckDto;
 import com.ssafy.iscream.chat.dto.ReadReceiptDto;
 import com.ssafy.iscream.chat.repository.ChatMessageRepository;
+import com.ssafy.iscream.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.RedisServerCommands;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -29,8 +24,26 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ChatRoomRepository chatRoomRepository;
 
     public void sendMessage(ChatMessageDto chatMessageDto) {
+
+        // ✅ 채팅방이 존재하는지 확인
+        Optional<ChatRoom> chatRoomOptional = chatRoomRepository.findByParticipants(chatMessageDto.getSender(), chatMessageDto.getReceiver());
+
+        ChatRoom chatRoom;
+        if (chatRoomOptional.isPresent()) {
+            // ✅ 기존 채팅방이 있으면 사용
+            chatRoom = chatRoomOptional.get();
+        } else {
+            // ✅ 채팅방이 없으면 새로 생성
+            chatRoom = ChatRoom.builder()
+                    .participantIds(Arrays.asList(chatMessageDto.getSender(), chatMessageDto.getReceiver()))
+                    .lastMessageTimestamp(LocalDateTime.now()) // 첫 메시지를 보낼 때 현재 시간 설정
+                    .build();
+            chatRoom = chatRoomRepository.save(chatRoom);
+        }
+
         ChatMessage chatMessage = ChatMessage.builder()
                 .roomId(chatMessageDto.getRoomId())
                 .sender(chatMessageDto.getSender())
@@ -42,6 +55,10 @@ public class ChatService {
 
         // ✅ MongoDB에 메시지 저장 후, messageId 가져오기
         chatMessage = chatMessageRepository.save(chatMessage);
+
+        // ✅ 채팅방의 마지막 메시지 시간 업데이트
+        chatRoom.updateLastMessageTimestamp(chatMessage.getTimestamp());
+        chatRoomRepository.save(chatRoom);
 
         // ✅ 클라이언트에게 messageId 포함해서 전송
         chatMessageDto.setMessageId(chatMessage.getId());

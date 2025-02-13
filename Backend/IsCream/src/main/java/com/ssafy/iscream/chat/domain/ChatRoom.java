@@ -25,4 +25,6 @@ public class ChatRoom {
     public void updateLastMessageTimestamp(LocalDateTime timestamp) {
         this.lastMessageTimestamp = timestamp;
     }
+
+
 }
