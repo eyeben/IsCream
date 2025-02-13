@@ -9,6 +9,7 @@ import com.ssafy.iscream.calendar.dto.response.CalendarGetDetailRes;
 import com.ssafy.iscream.calendar.dto.response.CalendarGetRes;
 import com.ssafy.iscream.calendar.repository.MemoRepository;
 import com.ssafy.iscream.children.domain.Child;
+import com.ssafy.iscream.common.exception.BadRequestException;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.NotFoundException;
 import com.ssafy.iscream.common.exception.UnauthorizedException;
@@ -27,6 +28,8 @@ public class CalendarService {
     private final MemoRepository memoRepository;
 
     public void createMemo(Integer userId, MemoCreateReq memoCreateReq) {
+        if (memoRepository.existsByChildIdAndSelectedDate(memoCreateReq.getChildId(), memoCreateReq.getSelectedDate()))
+            throw new BadRequestException(new ResponseData<>(ErrorCode.DATA_SAVE_FAILED.getCode(), ErrorCode.DATA_SAVE_FAILED.getMessage(),null));
 
         Memo memo = Memo.builder()
                 .userId(userId)
