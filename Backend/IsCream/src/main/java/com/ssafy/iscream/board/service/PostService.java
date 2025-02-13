@@ -57,7 +57,7 @@ public class PostService {
         }
 
         post.updatePost(req.getTitle(), req.getContent());
-        postImageService.updateImages(post, req.getDeleteUrls(), files);
+        postImageService.updateImages(post, req.getDeleteFiles(), files);
     }
 
     // 게시글 삭제

@@ -88,7 +88,7 @@ public class PostLikeService {
             }
 
             // 중복 방지
-            userIds.forEach(userId -> postLikeRepository.insertIgnore(postId, (Integer) userId));
+            userIds.forEach(userId -> postLikeRepository.insertIgnore(postId, Integer.parseInt(userId.toString())));
 
             redisTemplate.delete(key); // 동기화 후 삭제
         }
