@@ -4,31 +4,55 @@ import ProfileFormLabel from "./ProfileFormLabel";
 import RelationButtons from "../../components/profile/RelationButtons";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { updateUserInfoAPI } from "../../api/userAPI"
 
 interface ProfileFormProps {
   birthDate: string;
   setBirthDate: (date: string) => void;
+  initialData?: {
+    nickname?: string;
+    phone?: string;
+    birthDate?: string;
+    relation?: string;
+  }
+  onSubmit: (formData: {
+    nickname: string;
+    phone: string;
+    birthDate: string;
+    relation: string;
+  }) => void;
 }
 
-const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
-  const [nickname, setNickname] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [selectedRelation, setSelectedRelation] = useState<string>(''); 
-  
-  const navigate = useNavigate();
+  const ProfileForm: React.FC<ProfileFormProps> = ({ birthDate, setBirthDate, initialData, onSubmit }: ProfileFormProps) => {
 
-  const handleSubmit = () => {
+    console.log('전달받은 initialData:', initialData);
+    console.log('nickname:', initialData?.nickname);        // "test수정"
+    console.log('phone:', initialData?.phone);  // undefined
+    console.log('birthDate:', initialData?.birthDate);      // undefined
+    console.log('relation:', initialData?.relation);
 
-    const formData = {
-      nickname,
-      phoneNumber,
-      birthDate,
-      relation: selectedRelation
+    const [nickname, setNickname] = useState(initialData?.nickname || "");
+    const [phone, setPhone] = useState(initialData?.phone || "");
+    const [selectedRelation, setSelectedRelation] = useState<string>(initialData?.relation || ''); 
+
+    const navigate = useNavigate();
+
+    const handleSubmit = () => {
+
+      if (!nickname || !phone || !birthDate || !selectedRelation) {
+        alert('모든 필수 항목을 입력해주세요.');
+        return;
+      }
+      
+      onSubmit({
+        nickname,
+        phone,
+        birthDate,
+        relation: selectedRelation
+      });
     };
+  
 
-    console.log("입력된 폼데이터 제출:", formData);
-
-  }
   return (
     <div className="w-full max-w-[706px]">
     <div className="space-y-4 w-full">
@@ -58,8 +82,8 @@ const ProfileForm = ({ birthDate, setBirthDate }: ProfileFormProps) => {
           placeholder="010-1234-5678"
           type="tel"
           required={true}
-          value={phoneNumber}
-          onChange={(value) => setPhoneNumber(value)}
+          value={phone}
+          onChange={(value) => setPhone(value)}
         />
       </ProfileFormLabel>
 

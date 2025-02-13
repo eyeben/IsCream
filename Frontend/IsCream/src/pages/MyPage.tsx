@@ -5,12 +5,15 @@ import ChildModal from "../components/modal/ChildModal";
 import Pdf from "../components/profile/Pdf";
 import PAT from "../components/report/PAT";
 import Personality5 from "../components/report/Personality5";
-import React, { useState } from "react";
-// import { getUserInfoAPI } from "@/api/mypageAPI";
+import React, { useEffect, useState } from 'react';
+import { getUserInfoAPI } from "../api/userAPI";
 
 interface MyPageProps {
-  name: string;
+  nickname: string;
   profileImage: string;
+  phone: string;
+  birthDate: string;
+  relation: string;
   children?: {
     childNickname: string;
     childSex: string;
@@ -29,12 +32,18 @@ interface MyPageProps {
   };
 }
 const MyPage: React.FC = () => {
-  const [userData, setUserData] = useState<MyPageProps>({
-    name: "사용자",
-    profileImage: "default-profile.jpg",
-    children: []
-  });
-
+    
+    console.log('MyPage 컴포넌트 렌더링 시작');
+    
+    const [userData, setUserData] = useState<MyPageProps>({
+        nickname: "",
+        profileImage: "",
+        phone: "",
+        birthDate: "",
+        relation: "",
+        children: []
+    });
+    
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingChildIndex, setEditingChildIndex] = useState<number | null>(
     null
@@ -46,6 +55,34 @@ const MyPage: React.FC = () => {
       setIsModalOpen(true);
     }
   };
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try{
+                console.log('유저 정보 요청 시작');
+                const response = await getUserInfoAPI();
+                console.log('API 응답:', response);
+
+                if(response.code == 'S0000'){
+                    setUserData({
+                        nickname: response.data.nickname,
+                        profileImage: response.data.imageUrl,
+                        phone: response.data.phone,      // 추가
+                        birthDate: response.data.birthDate,    // 추가
+                        relation: response.data.relation,      // 추가
+                        children: []
+                    });
+                    console.log(userData.profileImage);
+                  }else{
+                    console.error("사용자 정보 로딩 실패: ", response.message);
+                  }
+                }catch (error) {
+                  console.error("사용자 정보 로딩 에러: ", error);
+                }
+        };
+
+        fetchUserData();
+    }, []);
 
   const handleEditChild = (index: number) => {
     setEditingChildIndex(index); // 수정할 자녀의 인덱스 저장
@@ -91,7 +128,10 @@ const MyPage: React.FC = () => {
         {/* 프로필 이미지 영역 */}
         <ProfileHeader
           profileImage={userData.profileImage}
-          profileNickname={userData.name}
+          nickname={userData.nickname}
+          phone={userData.phone}
+          birthDate={userData.birthDate}
+          relation={userData.relation}
         />
 
         {/* 자녀 정보 영역 */}
