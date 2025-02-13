@@ -2,13 +2,9 @@ import ChildInfo from "../child/ChildInfo";
 import { childApi } from "../../api/child";
 import { Child } from "../../types/child";
 import { useState, useEffect, useCallback } from "react";
+import ChildeModal from "../modal/ChildModal";
 
 interface ChildrenSectionProps{
-    // children: {
-    //     childNickname: string;
-    //     childGender: string;
-    //     childBirth: string;
-    // }[];
     onAddChild: () => void;
     onUpdateChild: (index: number) => void;
     onDeleteChild: (index: number) => void;
@@ -21,6 +17,8 @@ const ChildrenSection: React.FC<ChildrenSectionProps> = ({
 }) => {
 
     const [children, setChildren] = useState<Child[]>([]);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    
     const fetchChildren = useCallback(async () => {
         try {
             const children = await childApi.getChildren();
@@ -29,6 +27,35 @@ const ChildrenSection: React.FC<ChildrenSectionProps> = ({
             console.error('자녀 정보 조회 실패:', error);
         }
     }, []);
+
+    useEffect(() => {
+        fetchChildren();
+    }, [fetchChildren]);
+
+    const handleOpenAddChildModal = () => {
+        setIsAddModalOpen(true);
+    };
+
+    const handleAddChild = async (childData: {
+        childNickname: string,
+        childGender: string,
+        childBirth: string
+    }) => {
+        try{
+            await childApi.addChild({
+                nickname: childData.childNickname,
+                gender: childData.childGender === '남자아이' ? 'M' : 'F',
+                birthDate: childData.childBirth
+            });
+
+            setIsAddModalOpen(false);
+
+            fetchChildren();
+        } catch (error) {
+            console.error('자녀 추가 실패: ', error);
+            alert('자녀 추가에 실패했습니다.');
+        }
+    }
 
     useEffect(() => {
         fetchChildren();
@@ -44,7 +71,7 @@ const ChildrenSection: React.FC<ChildrenSectionProps> = ({
                     <div className="m-3 text-xl">
                         {children.length < 2 && (
                             <button 
-                                onClick={onAddChild}
+                                onClick={handleOpenAddChildModal}
                             >
                                 +
                             </button>
@@ -66,6 +93,19 @@ const ChildrenSection: React.FC<ChildrenSectionProps> = ({
                         </div>
                     ))}
                 </div>
+                {/* 자녀 추가 모달 */}
+                {isAddModalOpen && (
+                    <ChildeModal 
+                        isOpen={isAddModalOpen}
+                        onClose={() => setIsAddModalOpen(false)}
+                        onSubmit={handleAddChild}
+                        initialData={{
+                            childNickname: '',
+                            childGender: '',
+                            childBirth: ''
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

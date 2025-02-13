@@ -1,6 +1,6 @@
 import ProfileImage from "../../components/profile/ProfileImage";
 import ProfileForm from "../../components/profile/ProfileForm";
-import React, {useState, useRef} from 'react';
+import {useState, useRef} from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateUserInfoAPI } from "../../api/userAPI";
 

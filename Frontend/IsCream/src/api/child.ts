@@ -1,5 +1,5 @@
 import { api } from "../utils/common/axiosInstance";
-import { Child } from "../types/child";
+import { Child, ApiResponse } from "../types/child";
 
 export const childApi = {
   // 자녀 목록 조회
@@ -42,12 +42,12 @@ export const childApi = {
           childId,
           nickname,
           gender,
-          birthdate: birthDate
+          birthDate
         }
     });
 
-      const response = await api.put('/children', {childId, nickname, gender, birthdate: birthDate});
-
+      const response = await api.put('/children', {childId, nickname, gender, birthDate});
+      
       if (response.data.code === "S0000") {
         return response.data.data;
       }
@@ -62,9 +62,10 @@ export const childApi = {
 
   async deleteChild(childId: number): Promise<void> {
     try {
-      const response = await api.delete("/children", { data: { childId }});
+      const response = await api.delete(`/children/${childId}`);
 
       if (response.data.code !== "S0000") {
+        // return response.data;
         throw new Error(response.data.message || "자녀 삭제에 실패했습니다.");
       }
 

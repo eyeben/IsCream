@@ -26,11 +26,12 @@ interface UpdateUserResponse{
     message: string;
 }
 
+
 // 사용자 정보 확인(이메일, 이름, 전화번호 확인)
 export const getUserInfoAPI = async () : Promise<GetUserInfoResponse> => {
 
-    // const token = localStorage.getItem('accessToken');
-    // console.log('현재 토큰:', token);
+    const token = localStorage.getItem('accessToken');
+    console.log('현재 토큰:', token);
 
     const response = await api.get('/users/info');
     console.log('API 응답:', response);

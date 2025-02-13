@@ -5,8 +5,7 @@ export interface Child {
   gender: "M" | "F";
 }
 
-export interface ApiResponse<T> {
+export interface ApiResponse {
   code: string;
   message?: string;
-  data?: T;
 }

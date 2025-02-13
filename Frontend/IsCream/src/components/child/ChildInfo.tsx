@@ -3,9 +3,8 @@ import boyImg from "../../assets/image/little_boy.png";
 import editIcon from "../../assets/icons/edit-pen.png";
 import cancelIcon from "../../assets/icons/cancle-default.png";
 import { childApi } from "../../api/child";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ChildeModal from "../../components/modal/ChildModal";
-import axios from "axios";
 
 interface ChildInfoProps{
     childId: number;
@@ -28,7 +27,7 @@ const ChildInfo: React.FC<ChildInfoProps> = ({
     const [nickname, setNickname] = useState(childNickName);
     const [gender, setGender] = useState(childGender);
     const [birth, setBirth] = useState(childBirth);
-
+    
     const handleUpdate = async () => {
         setIsModalOpen(true);
     };
@@ -39,6 +38,8 @@ const ChildInfo: React.FC<ChildInfoProps> = ({
         childBirth: string;
     }) => {
         try {
+            console.log('수정 시도 데이터:', childData);
+
             const response = await childApi.updateChild(
                 childId,
                 childData.childNickname,
@@ -46,15 +47,19 @@ const ChildInfo: React.FC<ChildInfoProps> = ({
                 childData.childBirth
             );
     
+            console.log('수정 API 응답:', response);
+
             if (response) {
-                const updatedChildren = await childApi.getChildren();
-                const updatedChild = updatedChildren.find(child => child.childId === childId);
-                if (updatedChild) {
-                    setNickname(updatedChild.nickname);
-                    setGender(updatedChild.gender === 'M' ? '남자아이' : '여자아이');
-                    setBirth(updatedChild.birthDate);
-                }
+                // 로컬 상태 업데이트
+                setNickname(childData.childNickname);
+                setGender(childData.childGender);
+                setBirth(childData.childBirth);
+
+                // 부모 컴포넌트의 목록 새로고침
+                console.log('onUpdateSuccess 호출 직전');
                 onUpdateSuccess?.();
+                console.log('onUpdateSuccess 호출 완료');
+
                 setIsModalOpen(false);
                 console.log('수정 성공!');
             }
@@ -73,7 +78,11 @@ const ChildInfo: React.FC<ChildInfoProps> = ({
             const isConfirmed = window.confirm('정말로 자녀를 삭제하시겠습니까?');
             if (!isConfirmed) return;
     
+            console.log('자녀 삭제 시도');
+            
             await childApi.deleteChild(childId);
+
+            // console.log("응답: ", response);
             onDeleteSuccess?.();
             console.log('자녀 삭제 성공!');
         } catch (error: any) {
