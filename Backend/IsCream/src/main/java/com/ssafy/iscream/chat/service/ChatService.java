@@ -32,19 +32,15 @@ public class ChatService {
 
     public void sendMessage(ChatMessageDto chatMessageDto) {
 
-        // 1️⃣ 채팅방 조회 (A와 B가 참여하는 채팅방이 있는지 확인)
-        List<String> participants = Arrays.asList(chatMessageDto.getSender(), chatMessageDto.getReceiver());
-        ChatRoom chatRoom = chatRoomRepository.findByParticipantIdsContaining(participants)
-                .orElseGet(() -> {
-                    // 2️⃣ 채팅방이 없으면 새로 생성 후 저장
-                    ChatRoom newRoom = ChatRoom.builder()
-                            .participantIds(participants)
-                            .lastMessageTimestamp(LocalDateTime.now())
-                            .build();
-                    chatRoomRepository.save(newRoom);
-                    log.info("🆕 새로운 채팅방 생성: {}", newRoom);
-                    return newRoom;
-                });
+        // ✅ roomId가 있으면 해당 ID로 채팅방 조회
+        ChatRoom chatRoom = chatRoomRepository.findById(chatMessageDto.getRoomId())
+                .orElseThrow(() -> new IllegalArgumentException("🚨 존재하지 않는 채팅방: " + chatMessageDto.getRoomId()));
+
+        // ✅ participants 검증 (roomId가 있지만, 실제 참여자가 일치하지 않는다면 예외 발생)
+        List<String> participants = chatRoom.getParticipantIds();
+        if (!participants.contains(chatMessageDto.getSender()) || !participants.contains(chatMessageDto.getReceiver())) {
+            throw new IllegalArgumentException("🚨 유효하지 않은 채팅방 ID 또는 참가자 불일치");
+        }
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .roomId(chatMessageDto.getRoomId())

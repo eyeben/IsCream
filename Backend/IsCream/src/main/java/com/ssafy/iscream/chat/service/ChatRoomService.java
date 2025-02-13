@@ -47,12 +47,15 @@ public class ChatRoomService {
         }
 
         // 새로운 채팅방 생성
-        ChatRoom newRoom = ChatRoom.builder()
+        ChatRoom newChatRoom = ChatRoom.builder()
                 .participantIds(List.of(user1, user2))
                 .lastMessageTimestamp(LocalDateTime.now()) // 생성 시 현재 시간으로 설정
                 .build();
 
-        return chatRoomRepository.save(newRoom);
+        chatRoomRepository.save(newChatRoom);
+        log.info("🆕 새로운 채팅방 생성: {}", newChatRoom.getChatRoomId());
+
+        return newChatRoom;
     }
 
     /**

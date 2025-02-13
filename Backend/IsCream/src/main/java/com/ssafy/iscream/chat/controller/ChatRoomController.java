@@ -2,6 +2,7 @@ package com.ssafy.iscream.chat.controller;
 
 import com.ssafy.iscream.auth.user.Login;
 import com.ssafy.iscream.chat.domain.ChatRoom;
+import com.ssafy.iscream.chat.dto.req.ChatRoomCreateReq;
 import com.ssafy.iscream.chat.service.ChatRoomService;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
@@ -25,6 +26,15 @@ public class ChatRoomController {
     @GetMapping()
     public List<ChatRoom> getUserChatRooms(@Login User user) {
         return chatRoomService.getUserChatRooms(user.getUserId());
+    }
+
+    /**
+     * ✅ 채팅방 생성 (이미 존재하면 기존 채팅방 반환)
+     */
+    @PostMapping("/create")
+    public ResponseEntity<ChatRoom> createChatRoom(@RequestBody ChatRoomCreateReq chatRoomCreateReq) {
+        ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(chatRoomCreateReq.getSenderId(), chatRoomCreateReq.getReceiverId());
+        return ResponseEntity.ok(chatRoom);
     }
 
     /**
