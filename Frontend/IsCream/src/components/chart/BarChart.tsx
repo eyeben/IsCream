@@ -26,8 +26,8 @@ const COLOR_PROPS = {
 const LABELS = ["A형", "B형", "C형"];
 
 const BarChart: React.FC<BarChartProps> = ({
-  data = [12, 3, 20],
-  title = "2024.01.31",
+  data = [0, 0, 0],
+  title = "0000.00.00",
   className = ""
 }) => {
   const maxValue = Math.max(...data);

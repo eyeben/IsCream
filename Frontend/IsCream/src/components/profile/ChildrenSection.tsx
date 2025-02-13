@@ -21,7 +21,11 @@ const ChildrenSection: React.FC<ChildrenSectionProps> = ({
     
     const fetchChildren = useCallback(async () => {
         try {
+            console.log();
+            console.log("try문에 들어가기는 해")
             const children = await childApi.getChildren();
+            console.log("ChildrenSection 조회 잘돼!!", children);
+            
             setChildren(children);
         } catch (error) {
             console.error('자녀 정보 조회 실패:', error);
