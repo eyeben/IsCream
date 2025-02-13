@@ -26,6 +26,11 @@ interface UpdateUserResponse{
     message: string;
 }
 
+interface NicknameCheckResponse {
+    code: 'S0000' | 'E5002';
+    message: string;
+}
+
 
 // 사용자 정보 확인(이메일, 이름, 전화번호 확인)
 export const getUserInfoAPI = async () : Promise<GetUserInfoResponse> => {
@@ -61,4 +66,21 @@ export const updateUserInfoAPI = async (
         }
     });
     return response.data;
+}
+
+export const postNicknameCheck = async (nickname: string): Promise<NicknameCheckResponse> => {
+    try {
+        const response = await api.post('/users/nickname/check', {
+            nickname: nickname
+        });
+        
+        if (response.data.code === 'S0000') {
+            return response.data;
+        }
+        throw new Error(response.data.message || "닉네임 중복 검사 실패");
+        
+    } catch (error) {
+        console.error("닉네임 중복 검사 실패", error);
+        throw error;
+    }
 }
