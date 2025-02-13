@@ -97,7 +97,7 @@ public class PostViewService {
 
             if (viewCount != null) {
                 Optional<Post> post = postRepository.findById(postId);
-                
+
                 if (post.isPresent()) {
                     Integer dbViewCount = post.get().getViewCount();
 
