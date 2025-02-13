@@ -13,9 +13,45 @@ const CommentItem = ({
   repliesCount = 0,
   isRepliesExpanded,
   children,
-  isReply = false
+  isReply = false,
+  isEditing = false
+  // userImageUrl
 }: CommentItemProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [editContent, setEditContent] = useState(comment.content);
+
+  const handleEditSubmit = () => {
+    if (onEdit && editContent.trim()) {
+      onEdit(comment.commentId, editContent.trim());
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <div className="bg-gray-50 p-3 rounded-md">
+        <textarea
+          value={editContent}
+          onChange={(e) => setEditContent(e.target.value)}
+          className="w-full p-2 border rounded-md mb-2"
+          rows={3}
+        />
+        <div className="flex justify-end space-x-2">
+          <button
+            onClick={() => onEdit?.(comment.commentId, comment.content)}
+            className="text-gray-500 hover:bg-gray-100 px-2 py-1 rounded"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleEditSubmit}
+            className="bg-green-600 text-white px-2 py-1 rounded"
+          >
+            저장
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`${isReply ? "pl-4" : ""}`}>
@@ -33,10 +69,12 @@ const CommentItem = ({
               <span className="text-sm font-medium">
                 {comment.author.nickname}
               </span>
+              <span className="text-xs text-gray-500">
+                {new Date(comment.createdAt).toLocaleString()}
+              </span>
             </div>
             <p className="text-gray-800 mt-1 break-words">{comment.content}</p>
             <div className="flex items-center space-x-4 mt-2">
-              {/* 답글달기 버튼 - 대댓글이 아닐 때만 표시 */}
               {!isReply && onReply && (
                 <button
                   type="button"
@@ -46,7 +84,6 @@ const CommentItem = ({
                   답글달기
                 </button>
               )}
-              {/* 답글 토글 버튼 - 대댓글이 있을 때만 표시 */}
               {!isReply && repliesCount > 0 && onToggleReplies && (
                 <button
                   type="button"
@@ -60,21 +97,19 @@ const CommentItem = ({
           </div>
         </div>
 
-        {/* 드롭다운 메뉴 - hover시에만 표시 */}
         <div className="opacity-0 group-hover:opacity-100 transition-opacity">
           <CommentDropdown
             comment={comment}
             currentUserId={currentUserId}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onChat={onChat}
+            onEdit={() => onEdit?.(comment.commentId, comment.content)}
+            onDelete={() => onDelete?.(comment.commentId)}
+            onChat={() => onChat?.(comment.author.id)}
             isOpen={isDropdownOpen}
             onToggle={() => setIsDropdownOpen(!isDropdownOpen)}
           />
         </div>
       </div>
 
-      {/* 대댓글 영역 */}
       {!isReply && children && (
         <div className="ml-8 mt-2 space-y-4 border-l-2 border-[#BEBEBE]">
           {children}

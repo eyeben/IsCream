@@ -98,12 +98,11 @@ export interface CreatePostRequest {
 export interface CreatePostResponse {
   postId: number;
 }
-
 export interface UpdatePostRequest {
   post: {
     title: string;
     content: string;
-    deleteFiles?: string[];
+    deleteFiles: string[];
   };
   files?: File[];
 }
@@ -114,8 +113,8 @@ export interface LikePostResponse {
 }
 
 export interface CommentRequest {
-  postId?: number | null;
-  commentId?: number | null;
+  postId?: number;
+  commentId?: number | null; // 대댓글인 경우 부모 댓글 ID
   content: string;
 }
 
@@ -141,6 +140,7 @@ export interface CommentFormProps {
   onCancel?: () => void;
   placeholder?: string;
   imageUrl?: string;
+  userImageUrl?: string; // 추가
 }
 
 export interface CommentItemProps {
@@ -155,4 +155,6 @@ export interface CommentItemProps {
   isRepliesExpanded?: boolean;
   children?: React.ReactNode;
   isReply?: boolean;
+  isEditing?: boolean; // 기존에 없던 프로퍼티 추가
+  userImageUrl?: string; // 추가
 }
