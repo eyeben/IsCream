@@ -17,7 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ChatRoom {
     @Id
-    private String chatRoomId;
+    private String id;
+
     private List<String> participantIds;
     private LocalDateTime lastMessageTimestamp; // 🔹 마지막 메시지 전송 시간 추가
 

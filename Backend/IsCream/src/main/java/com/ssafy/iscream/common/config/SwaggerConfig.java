@@ -81,6 +81,13 @@ public class SwaggerConfig {
                 .pathsToMatch("/educations/**")
                 .build();
     }
+    @Bean
+    GroupedOpenApi chatApi() {
+        return GroupedOpenApi.builder()
+                .group("chatrooms")
+                .pathsToMatch("/chatrooms/**")
+                .build();
+    }
 
     private Components securityComponents() {
         return new Components()

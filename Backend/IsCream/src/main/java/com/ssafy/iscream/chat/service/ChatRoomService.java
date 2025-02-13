@@ -7,17 +7,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -46,15 +40,16 @@ public class ChatRoomService {
             return existingRoom.get(); // 기존 채팅방 반환
         }
 
-        // 새로운 채팅방 생성
+// 새로운 채팅방 생성
         ChatRoom newChatRoom = ChatRoom.builder()
                 .participantIds(List.of(user1, user2))
                 .lastMessageTimestamp(LocalDateTime.now()) // 생성 시 현재 시간으로 설정
                 .build();
 
-        chatRoomRepository.save(newChatRoom);
-        log.info("🆕 새로운 채팅방 생성: {}", newChatRoom.getChatRoomId());
+// ✅ 저장 후, 반환된 객체에서 chatRoomId 확인
+        newChatRoom = chatRoomRepository.save(newChatRoom);
 
+        log.info("🆕 새로운 채팅방 생성: {}", newChatRoom.getId()); // ✅ 여기서 null이면 문제 있음
         return newChatRoom;
     }
 
