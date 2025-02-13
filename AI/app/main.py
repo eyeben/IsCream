@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from .routers import yolo_service
+from .routers import yolo_service, chatbot_service
 import os
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -18,10 +18,10 @@ app.add_middleware(
 
 
 # 라우터 등록
-app.include_router(yolo_service.router, prefix="/ai", tags=["AI Service"])
-
+app.include_router(yolo_service.router, prefix="/htp", tags=["AI Service"])
+app.include_router(chatbot_service.router, prefix="/chatbot", tags=["AI Service"])
 
 # 기본 GET API
 @app.get("/")
 async def read_root():
-    return {"message": "Hello, FastAPI with CORS!"}
+    return {"message": "A407 services!"}
