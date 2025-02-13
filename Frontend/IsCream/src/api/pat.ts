@@ -76,7 +76,7 @@ export const patApi = {
     // PAT 검사 결과 조회 (1개)
     async getRecentResult() : Promise<GetRecentTestResponse> {
         try{
-            const response = await api.get("pat-tests/recent")
+            const response = await api.get("/pat-tests/recent")
 
             if(response.data.code === "S0000"){
                 console.log(response.data.data);
@@ -93,7 +93,7 @@ export const patApi = {
     // PAT 검사 결과 목록 조회
     async getResultList() : Promise<GetTestListResponse> {
         try{
-            const response = await api.get("pat-tests")
+            const response = await api.get("/pat-tests")
 
             if(response.data.code === "S0000"){
                 return response.data;

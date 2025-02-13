@@ -6,7 +6,7 @@ const Personality5 = () => (
         <div className='w-full max-w-[706px] p-3 my-2 bg-white border border-gray-300 rounded items-center'>
             <div>
                 <div className="m-3 text-xl">
-                    부모 양육 태도 검사(PAT)
+                    성격 5요인 검사(BiG Five)
                 </div>
                 <div>
                     <RadarChart />

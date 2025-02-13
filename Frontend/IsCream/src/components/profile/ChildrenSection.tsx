@@ -84,7 +84,7 @@ const ChildrenSection: React.FC<ChildrenSectionProps> = ({
                 </div>
                 <div className="flex">
                     {children.map((child, index) => (
-                        <div key={index} className="m-3">
+                        <div key={index} className="m-2">
                             <ChildInfo
                                 key={index}
                                 childId={child.childId}
