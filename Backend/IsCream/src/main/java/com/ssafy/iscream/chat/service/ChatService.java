@@ -28,22 +28,26 @@ public class ChatService {
 
     public void sendMessage(ChatMessageDto chatMessageDto) {
 
-        // ✅ 채팅방이 존재하는지 확인
-        Optional<ChatRoom> chatRoomOptional = chatRoomRepository.findByParticipants(chatMessageDto.getSender(), chatMessageDto.getReceiver());
-
-        ChatRoom chatRoom;
-        if (chatRoomOptional.isPresent()) {
-            // ✅ 기존 채팅방이 있으면 사용
-            chatRoom = chatRoomOptional.get();
-        } else {
-            // ✅ 채팅방이 없으면 새로 생성
-            chatRoom = ChatRoom.builder()
-                    .participantIds(Arrays.asList(chatMessageDto.getSender(), chatMessageDto.getReceiver()))
-                    .lastMessageTimestamp(LocalDateTime.now()) // 첫 메시지를 보낼 때 현재 시간 설정
-                    .build();
-            chatRoom = chatRoomRepository.save(chatRoom);
+        // ✅ roomId가 없는 경우, 채팅방 생성 또는 조회
+        if (chatMessageDto.getRoomId() == null) {
+            log.info("🔍 roomId 없음 → 기존 채팅방 조회 또는 생성");
+            String roomId = findOrCreateChatRoom(chatMessageDto.getSender(), chatMessageDto.getReceiver());
+            chatMessageDto.setRoomId(roomId);
         }
 
+        // ✅ roomId가 있는 경우 participants 검증
+        if (chatMessageDto.getRoomId() != null) {
+            chatRoomRepository.findById(chatMessageDto.getRoomId()).ifPresentOrElse(chatRoom -> {
+                List<String> participants = chatRoom.getParticipantIds();
+                if (!participants.contains(chatMessageDto.getSender()) || !participants.contains(chatMessageDto.getReceiver())) {
+                    throw new IllegalStateException("🚨 채팅방의 참가자와 일치하지 않음: " + chatMessageDto);
+                }
+            }, () -> {
+                throw new IllegalStateException("🚨 존재하지 않는 채팅방: " + chatMessageDto.getRoomId());
+            });
+        }
+
+        // ✅ 메시지 저장
         ChatMessage chatMessage = ChatMessage.builder()
                 .roomId(chatMessageDto.getRoomId())
                 .sender(chatMessageDto.getSender())
@@ -57,8 +61,7 @@ public class ChatService {
         chatMessage = chatMessageRepository.save(chatMessage);
 
         // ✅ 채팅방의 마지막 메시지 시간 업데이트
-        chatRoom.updateLastMessageTimestamp(chatMessage.getTimestamp());
-        chatRoomRepository.save(chatRoom);
+        updateLastMessageTimestamp(chatMessageDto.getRoomId(), chatMessage.getTimestamp());
 
         // ✅ 클라이언트에게 messageId 포함해서 전송
         chatMessageDto.setMessageId(chatMessage.getId());
@@ -66,7 +69,41 @@ public class ChatService {
         log.info("📤 Redis Pub/Sub 발행 (messageId 포함): {}", chatMessageDto);
 
         redisTemplate.convertAndSend("chatroom-" + chatMessageDto.getRoomId(), chatMessageDto);
+
     }
+    /**
+     * ✅ 채팅방이 존재하는지 확인하고 없으면 생성
+     */
+    private String findOrCreateChatRoom(String user1, String user2) {
+        return chatRoomRepository.findByParticipants(user1, user2)
+                .map(ChatRoom::getChatRoomId)
+                .orElseGet(() -> {
+                    log.info("🚀 채팅방 없음 → 새로 생성");
+
+                    ChatRoom newChatRoom = ChatRoom.builder()
+                            .participantIds(Arrays.asList(user1, user2))
+                            .lastMessageTimestamp(LocalDateTime.now())
+                            .build();
+
+                    chatRoomRepository.save(newChatRoom);
+                    return newChatRoom.getChatRoomId();
+                });
+    }
+
+
+    /**
+     * ✅ 채팅방의 마지막 메시지 시간 업데이트
+     */
+    private void updateLastMessageTimestamp(String roomId, LocalDateTime timestamp) {
+        chatRoomRepository.findById(roomId).ifPresent(chatRoom -> {
+            chatRoom.updateLastMessageTimestamp(timestamp);
+            chatRoomRepository.save(chatRoom);
+        });
+    }
+
+
+
+
 
     public void handleAck(MessageAckDto ackDto) {
         //messagingTemplate.convertAndSend("/sub/chat/read-receipt/" + ackDto.getRoomId(), ackDto);
