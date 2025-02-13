@@ -42,4 +42,10 @@ public class BigFiveTestController {
     public ResponseEntity<?> getBigFiveListResult(@Login User user){
         return ResponseUtil.success(bigFiveTestService.getBigFiveTestListResult(user));
     }
+
+    @Operation(summary = "성격 5요인 검사 결과 PDF 조회", tags = "big-five")
+    @GetMapping()
+    public ResponseEntity<?> getBigFivePDF(@Login User user, Integer bigFiveTestId){
+        return ResponseUtil.success(bigFiveTestService.getBigFivePdfUrl(user, bigFiveTestId));
+    }
 }

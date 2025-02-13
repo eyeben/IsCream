@@ -10,8 +10,12 @@ import com.ssafy.iscream.bigFiveTest.dto.response.BigFiveTestRes;
 import com.ssafy.iscream.bigFiveTest.repository.BigFiveQuestionRepository;
 import com.ssafy.iscream.bigFiveTest.repository.BigFiveScoreRepository;
 import com.ssafy.iscream.bigFiveTest.repository.BigFiveTestRepository;
+import com.ssafy.iscream.children.domain.Child;
+import com.ssafy.iscream.children.service.ChildrenService;
 import com.ssafy.iscream.common.exception.ErrorCode;
 import com.ssafy.iscream.common.exception.MinorException.*;
+import com.ssafy.iscream.htpTest.domain.HtpTest;
+import com.ssafy.iscream.pdf.service.BigFiveTestPdfService;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +33,8 @@ public class BigFiveTestService {
     private final BigFiveQuestionRepository bigFiveQuestionRepository;
     private final BigFiveTestRepository bigFiveTestRepository;
     private final BigFiveScoreRepository bigFiveScoreRepository;
+    private final BigFiveTestPdfService bigFiveTestPdfService;
+    private final ChildrenService childrenService;
 
     // 성격 5요인 질문 목록 조회
     public List<BigFiveTestQuestionRes> getBigFiveTestList(User user) {
@@ -55,11 +61,11 @@ public class BigFiveTestService {
         BigFiveTest bigFiveTest = BigFiveTest.builder()
                 .userId(user.getUserId())
                 .date(LocalDate.now().toString())
-                .conscientiousness(bigFiveTestCreateReq.getConscientiousness()-consAvg)
-                .agreeableness(bigFiveTestCreateReq.getAgreeableness()-agreeAvg)
-                .emotionalStability(bigFiveTestCreateReq.getEmotionalStability()-emoAvg)
-                .extraversion(bigFiveTestCreateReq.getExtraversion()-extraAvg)
-                .openness(bigFiveTestCreateReq.getOpenness()-openAvg)
+                .conscientiousness(bigFiveTestCreateReq.getConscientiousness() - consAvg)
+                .agreeableness(bigFiveTestCreateReq.getAgreeableness() - agreeAvg)
+                .emotionalStability(bigFiveTestCreateReq.getEmotionalStability() - emoAvg)
+                .extraversion(bigFiveTestCreateReq.getExtraversion() - extraAvg)
+                .openness(bigFiveTestCreateReq.getOpenness() - openAvg)
                 .build();
 
         bigFiveTestRepository.save(bigFiveTest);
@@ -110,16 +116,25 @@ public class BigFiveTestService {
         return bigFiveTestListRes;
     }
 
+    @Transactional
+    public String getBigFivePdfUrl(User user, Integer bigFiveTestId) {
+        BigFiveTest bigFiveTest = bigFiveTestRepository.findByTestId(bigFiveTestId);
+        Child child = childrenService.getById(bigFiveTest.getChildId());
+        bigFiveTest.setPdfUrl(bigFiveTestPdfService.generatePdf(user, child, bigFiveTest));
+        return bigFiveTest.getPdfUrl();
+    }
+
+
     private double updateBigFiveScore(String type, double score) {
         BigFiveScore bigFiveScore = bigFiveScoreRepository.findByBigFiveType(type);
 
-        if(bigFiveScore == null){
+        if (bigFiveScore == null) {
             bigFiveScore = BigFiveScore.builder()
-                .bigFiveType(type)
-                .totalUsers(0)
-                .totalScore(0.0)
-                .averageScore(0.0)
-                .build();
+                    .bigFiveType(type)
+                    .totalUsers(0)
+                    .totalScore(0.0)
+                    .averageScore(0.0)
+                    .build();
         }
 
         bigFiveScore.setTotalUsers(bigFiveScore.getTotalUsers() + 1);

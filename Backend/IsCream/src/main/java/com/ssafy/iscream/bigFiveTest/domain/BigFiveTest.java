@@ -19,7 +19,7 @@ public class BigFiveTest {
     private Integer testId;
 
     @Column(nullable = false)
-    private Integer userId;
+    private Integer childId;
 
     @Column(name = "test_date",nullable = false)
     private String date;

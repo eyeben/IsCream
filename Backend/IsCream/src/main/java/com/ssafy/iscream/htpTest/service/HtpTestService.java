@@ -7,7 +7,7 @@ import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestDiagnosisReq;
 import com.ssafy.iscream.htpTest.dto.request.HtpTestReq;
 import com.ssafy.iscream.htpTest.repository.HtpTestRepository;
-import com.ssafy.iscream.pdf.service.PdfService;
+import com.ssafy.iscream.pdf.service.HtpTestPdfService;
 import com.ssafy.iscream.s3.service.S3Service;
 import com.ssafy.iscream.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HtpTestService {
     private final HtpTestRepository htpTestRepository;
     private final S3Service s3Service;
-    private final PdfService pdfService;
+    private final HtpTestPdfService pdfService;
     private final ChildrenService childrenService;
 
     private Map<Integer, ArrayList<HtpTestDiagnosisReq>> imageMap = new ConcurrentHashMap<>();

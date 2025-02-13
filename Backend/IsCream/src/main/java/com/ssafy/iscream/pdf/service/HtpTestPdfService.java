@@ -5,12 +5,18 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.ssafy.iscream.children.domain.Child;
 import com.ssafy.iscream.htpTest.domain.HtpTest;
 import com.ssafy.iscream.s3.service.S3Service;
@@ -22,7 +28,7 @@ import java.io.ByteArrayOutputStream;
 
 @Service
 @RequiredArgsConstructor
-public class PdfService {
+public class HtpTestPdfService {
 
     private final S3Service s3Service;
 
@@ -41,6 +47,7 @@ public class PdfService {
 
             PdfFont font = PdfFontFactory.createFont("static/NanumGothic.ttf", PdfEncodings.IDENTITY_H);
             document.setFont(font);
+            pdfDocument.addNewPage();
 
             document.add(getTitle("HTP 검사 보고서"));
 
@@ -87,6 +94,26 @@ public class PdfService {
 
         return s3Service.uploadPdfFile(outputStream.toByteArray());
     }
+    private void addBackgroundImage(PdfDocument pdfDocument, String imagePath) {
+        try {
+            for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
+                PdfPage page = pdfDocument.getPage(i);
+                PdfCanvas canvas = new PdfCanvas(page);
+                PdfExtGState gState = new PdfExtGState().setFillOpacity(0.2f); // 투명도 설정
+
+                PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(imagePath));
+                Rectangle pageSize = page.getPageSize();
+
+                canvas.saveState()
+                        .setExtGState(gState) // 투명도 적용
+                        .addXObject(imageXObject, 0, 0) // 전체 페이지 크기에 맞춰 배경 적용
+                        .restoreState();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private static Paragraph getTitle(String title) {
         return new Paragraph(title)
@@ -105,41 +132,69 @@ public class PdfService {
                 .setPadding(8).setMarginTop(10);
     }
 
+
     private static Table getStyledTable(String[][] data) {
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         for (String[] row : data) {
             for (String cellData : row) {
-                table.addCell(new Cell().add(new Paragraph(cellData).setFontSize(12).setFontColor(TEXT_COLOR))
-                        .setBackgroundColor(TABLE_BG_COLOR).setBorder(new SolidBorder(BORDER_COLOR, 1)));
+                table.addCell(new Cell()
+                        .add(new Paragraph(cellData)
+                                .setFontSize(12)
+                                .setFontColor(TEXT_COLOR)
+                                .setTextAlignment(TextAlignment.CENTER)
+                                .setVerticalAlignment(VerticalAlignment.MIDDLE))
+                        .setPadding(3)
+                        .setBackgroundColor(TABLE_BG_COLOR)
+                        .setBorder(new SolidBorder(BORDER_COLOR, 3)));
             }
         }
         return table;
     }
     private static Table getImageGrid(HtpTest htpTest) {
-        Table imageTable = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
-        imageTable.addCell(getImageCell("집 그림", htpTest.getHouseDrawingUrl()));
-        imageTable.addCell(getImageCell("나무 그림", htpTest.getTreeDrawingUrl()));
-        imageTable.addCell(getImageCell("남자사람 그림", htpTest.getMaleDrawingUrl()));
-        imageTable.addCell(getImageCell("여자사람 그림", htpTest.getFemaleDrawingUrl()));
+        Table imageTable = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth().setTextAlignment(TextAlignment.CENTER);
+        imageTable.addCell(getCenteredImageCell("집 그림", htpTest.getHouseDrawingUrl()));
+        imageTable.addCell(getCenteredImageCell("나무 그림", htpTest.getTreeDrawingUrl()));
+        imageTable.addCell(getCenteredImageCell("남자사람 그림", htpTest.getMaleDrawingUrl()));
+        imageTable.addCell(getCenteredImageCell("여자사람 그림", htpTest.getFemaleDrawingUrl()));
         return imageTable;
     }
-    private static Cell getImageCell(String title, String imageUrl) {
-        Cell cell = new Cell().setPadding(5).setBorder(new SolidBorder(BORDER_COLOR, 1)).setTextAlignment(TextAlignment.CENTER);
-        cell.add(new Paragraph(title).setBold().setFontSize(12).setMarginBottom(5));
+
+    private static Cell getCenteredImageCell(String title, String imageUrl) {
+        Cell cell = new Cell().setPadding(15).setBorder(new SolidBorder(BORDER_COLOR, 1))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE);
+
+        Paragraph titleParagraph = new Paragraph(title)
+                .setBold()
+                .setFontSize(12)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setMarginBottom(10);
+
+        cell.add(titleParagraph);
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
             try {
                 Image image = new Image(ImageDataFactory.create(imageUrl));
-                image.scaleToFit(180, 150);
-                cell.add(image.setTextAlignment(TextAlignment.CENTER));
+                image.scaleToFit(150, 150);
+                image.setHorizontalAlignment(HorizontalAlignment.CENTER);
+                cell.add(image);
             } catch (Exception e) {
-                cell.add(new Paragraph("이미지를 불러올 수 없습니다.").setFontSize(10));
+                cell.add(new Paragraph("이미지를 불러올 수 없습니다.")
+                        .setFontSize(10)
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setVerticalAlignment(VerticalAlignment.MIDDLE));
             }
         } else {
-            cell.add(new Paragraph("이미지 없음").setFontSize(10));
+            cell.add(new Paragraph("이미지 없음")
+                    .setFontSize(10)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setVerticalAlignment(VerticalAlignment.MIDDLE));
         }
         return cell;
     }
+
+
     private static Table getAnalysisTable(String text) {
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addCell(new Cell().add(new Paragraph(text.replace("\\n", "\n")))
