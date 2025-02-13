@@ -4,7 +4,7 @@ import ProfileFormLabel from "./ProfileFormLabel";
 import RelationButtons from "../../components/profile/RelationButtons";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { updateUserInfoAPI } from "../../api/userAPI"
+import { postNicknameCheck } from "../../api/user"
 
 interface ProfileFormProps {
   birthDate: string;
@@ -23,34 +23,58 @@ interface ProfileFormProps {
   }) => void;
 }
 
-  const ProfileForm: React.FC<ProfileFormProps> = ({ birthDate, setBirthDate, initialData, onSubmit }: ProfileFormProps) => {
+const ProfileForm: React.FC<ProfileFormProps> = ({ birthDate, setBirthDate, initialData, onSubmit }: ProfileFormProps) => {
+  const [nickname, setNickname] = useState(initialData?.nickname || "");
+  const [phone, setPhone] = useState(initialData?.phone || "");
+  const [selectedRelation, setSelectedRelation] = useState<string>(initialData?.relation || '');
+  // 닉네임 중복 체크 상태 추가
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  
+  const navigate = useNavigate();
 
-    console.log('전달받은 initialData:', initialData);
-    console.log('nickname:', initialData?.nickname);        // "test수정"
-    console.log('phone:', initialData?.phone);  // undefined
-    console.log('birthDate:', initialData?.birthDate);      // undefined
-    console.log('relation:', initialData?.relation);
+  // 닉네임 중복 체크 함수
+  const handleNicknameCheck = async () => {
+      if (!nickname) {
+          alert('닉네임을 입력해주세요.');
+          return;
+      }
 
-    const [nickname, setNickname] = useState(initialData?.nickname || "");
-    const [phone, setPhone] = useState(initialData?.phone || "");
-    const [selectedRelation, setSelectedRelation] = useState<string>(initialData?.relation || ''); 
+      try {
+          const response = await postNicknameCheck(nickname);
+          if (response.code === 'S0000') {
+              alert('사용 가능한 닉네임입니다.');
+              setIsNicknameChecked(true);
+          }
+      } catch (error) {
+          alert('이미 사용 중인 닉네임입니다.');
+          setIsNicknameChecked(false);
+      }
+  };
 
-    const navigate = useNavigate();
+  // 닉네임 변경 시 중복 체크 상태 초기화
+  const handleNicknameChange = (value: string) => {
+      setNickname(value);
+      setIsNicknameChecked(false);
+  };
 
-    const handleSubmit = () => {
-
+  const handleSubmit = () => {
       if (!nickname || !phone || !birthDate || !selectedRelation) {
-        alert('모든 필수 항목을 입력해주세요.');
-        return;
+          alert('모든 필수 항목을 입력해주세요.');
+          return;
+      }
+
+      if (!isNicknameChecked) {
+          alert('닉네임 중복 확인이 필요합니다.');
+          return;
       }
       
       onSubmit({
-        nickname,
-        phone,
-        birthDate,
-        relation: selectedRelation
+          nickname,
+          phone,
+          birthDate,
+          relation: selectedRelation
       });
-    };
+  };
   
 
   return (
@@ -68,8 +92,8 @@ interface ProfileFormProps {
             required={true}
             withButton={true}
             value={nickname}
-            onChange={(value) => setNickname(value)}
-            onButtonClick={() => console.log('중복확인 클릭')}
+            onChange={handleNicknameChange}
+            onButtonClick={handleNicknameCheck}
           />
         </ProfileFormLabel>
       </div>

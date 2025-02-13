@@ -6,7 +6,8 @@ export const childApi = {
   async getChildren(): Promise<Child[]> {
     try {
       const response = await api.get("/children");
-
+      console.log("자녀목록조회완전잘돼: ",response);
+      
       if (response.data.code === "S0000") {
         return response.data.data;
       }

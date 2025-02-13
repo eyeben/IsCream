@@ -106,7 +106,7 @@ const ChildInfo: React.FC<ChildInfoProps> = ({
 
     return(
         <>
-            <div className="p-4 border border-gray-300 rounded-lg w-[200px]">
+            <div className="p-4 border border-gray-300 rounded-lg w-[160px]">
                 <div className="flex justify-between mb-2">
                     <div>
                         {childGender === '여자아이' ? (
