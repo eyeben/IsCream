@@ -7,8 +7,16 @@ import com.ssafy.iscream.chat.dto.MessageAckDto;
 import com.ssafy.iscream.chat.dto.ReadReceiptDto;
 import com.ssafy.iscream.chat.repository.ChatMessageRepository;
 import com.ssafy.iscream.chat.repository.ChatRoomRepository;
+import com.ssafy.iscream.common.exception.ErrorCode;
+import com.ssafy.iscream.common.exception.NotFoundException;
+import com.ssafy.iscream.common.exception.UnauthorizedException;
+import com.ssafy.iscream.common.response.ResponseData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisServerCommands;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -93,5 +101,33 @@ public class ChatService {
         messagingTemplate.convertAndSend(destination, readReceipt);
 
         log.info("📩 읽음 상태 전송: {}", destination);
+    }
+
+    public List<ChatMessage> getChatMessages(String userId, String roomId, int page) {
+
+        // ✅ 채팅방 존재 여부 확인
+        Optional<ChatRoom> chatRoomOptional = chatRoomRepository.findById(roomId);
+
+        if (chatRoomOptional.isEmpty()) {
+            log.warn("❌ 채팅방을 찾을 수 없음: {}", roomId);
+            throw new NotFoundException(new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null));
+        }
+
+        ChatRoom chatRoom = chatRoomOptional.get();
+
+        // ✅ 사용자가 채팅방 참가자인지 확인
+        if (!chatRoom.getParticipantIds().contains(userId)) {
+            log.warn("🚫 접근 권한 없음 - userId: {}, roomId: {}", userId, roomId);
+            throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
+        }
+
+        // ✅ 최신 메시지 50개씩 페이징 조회
+        Pageable pageable = PageRequest.of(page, 50, Sort.by(Sort.Direction.DESC, "timestamp"));
+        Page<ChatMessage> messagePage = chatMessageRepository.findByRoomId(roomId, pageable);
+
+        log.info("📩 채팅 내역 조회 (userId={}, roomId={}, page={}): {}개",
+                userId, roomId, page, messagePage.getNumberOfElements());
+
+        return messagePage.getContent();
     }
 }
