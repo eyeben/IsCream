@@ -35,6 +35,7 @@ public class CalendarService {
                 .userId(userId)
                 .childId(memoCreateReq.getChildId())
                 .content(memoCreateReq.getMemo())
+                .selectedDate(memoCreateReq.getSelectedDate())
                 .build();
         memoRepository.save(memo);
     }
