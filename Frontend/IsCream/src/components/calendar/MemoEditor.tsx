@@ -4,14 +4,14 @@ import { RootState } from "../../store";
 import { useCalendar } from "../../hooks/calendar/useCalendar";
 
 interface MemoEditorProps {
-  initialMemo?: string;
+  initialMemo: string;
   memoId?: string;
   selectedDate: {
     year: number;
     month: number;
     day: number;
   };
-  onSave: (memo: string, memoId?: string) => void;
+  onSave: (memo: string, memoId?: string) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -62,7 +62,7 @@ const MemoEditor: React.FC<MemoEditorProps> = ({
       }
 
       if (response?.code === "S0000") {
-        onSave(trimmedMemo, response.data?.memoId);
+        await onSave(trimmedMemo, response.data?.memoId || memoId);
       } else {
         console.error("메모 저장 실패:", response);
       }
@@ -72,7 +72,7 @@ const MemoEditor: React.FC<MemoEditorProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-[#FFFFD8] p-4 rounded-lg shadow-inner">
+    <div className="w-full h-full bg-[#ffffff] p-4 rounded-lg drop-shadow-sm">
       <textarea
         ref={textareaRef}
         value={memoText}

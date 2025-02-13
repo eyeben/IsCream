@@ -15,7 +15,6 @@ const CommentItem = ({
   children,
   isReply = false,
   isEditing = false
-  // userImageUrl
 }: CommentItemProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [editContent, setEditContent] = useState(comment.content);
@@ -28,36 +27,60 @@ const CommentItem = ({
 
   if (isEditing) {
     return (
-      <div className="bg-gray-50 p-3 rounded-md">
-        <textarea
-          value={editContent}
-          onChange={(e) => setEditContent(e.target.value)}
-          className="w-full p-2 border rounded-md mb-2"
-          rows={3}
-        />
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={() => onEdit?.(comment.commentId, comment.content)}
-            className="text-gray-500 hover:bg-gray-100 px-2 py-1 rounded"
-          >
-            취소
-          </button>
-          <button
-            onClick={handleEditSubmit}
-            className="bg-green-600 text-white px-2 py-1 rounded"
-          >
-            저장
-          </button>
-        </div>
+      <div className={`${isReply ? "ml-8" : ""}`}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleEditSubmit();
+          }}
+        >
+          <div className="flex items-center space-x-2 max-w-4xl mx-auto px-2 mt-1">
+            <div className="w-10 h-10 rounded-full overflow-hidden">
+              <img
+                src={comment.author.imageUrl}
+                alt="profile"
+                className="w-[95%] h-full object-cover mx-auto"
+              />
+            </div>
+            <input
+              type="text"
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              placeholder="댓글 수정"
+              className="flex-1 px-4 py-2 border border-[#BEBEBE] rounded-full focus:outline-none focus:ring-1 focus:ring-green-600"
+              autoFocus
+            />
+            <button
+              type="submit"
+              disabled={
+                !editContent.trim() || editContent.trim() === comment.content
+              }
+              className={`px-4 py-2 rounded-[15px] ${
+                editContent.trim()
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+            >
+              저장
+            </button>
+            <button
+              type="button"
+              onClick={() => onEdit?.(comment.commentId, comment.content)}
+              className="text-gray-500 hover:text-gray-700 py-2 px-2"
+            >
+              취소
+            </button>
+          </div>
+        </form>
       </div>
     );
   }
 
   return (
-    <div className={`${isReply ? "pl-4" : ""}`}>
-      <div className="flex items-start justify-between group">
-        <div className="flex items-start flex-1">
-          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+    <div className={`${isReply ? "pl-4 mt-4" : ""}`}>
+      <div className="flex items-center justify-between group">
+        <div className="flex items-center flex-1 ">
+          <div className="w-10 h-10 rounded-full mr-2 overflow-hidden flex-shrink-0">
             <img
               src={comment.author.imageUrl}
               alt={comment.author.nickname}
@@ -97,7 +120,7 @@ const CommentItem = ({
           </div>
         </div>
 
-        <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+        <div>
           <CommentDropdown
             comment={comment}
             currentUserId={currentUserId}
@@ -111,7 +134,7 @@ const CommentItem = ({
       </div>
 
       {!isReply && children && (
-        <div className="ml-8 mt-2 space-y-4 border-l-2 border-[#BEBEBE]">
+        <div className="ml-8 mt-4 space-y-4 border-l-2 border-[#BEBEBE]">
           {children}
         </div>
       )}

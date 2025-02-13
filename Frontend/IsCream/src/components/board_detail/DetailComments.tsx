@@ -16,7 +16,7 @@ interface DetailCommentsProps {
 }
 
 const DetailComments = ({
-  // postId,
+  postId,
   comments,
   onSubmit,
   onEdit,
@@ -30,21 +30,17 @@ const DetailComments = ({
   const [expandedComments, setExpandedComments] = useState<number[]>([]);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
 
-  const handleSubmit = (content: string, commentId?: number | null) => {
+  const handleSubmit = (content: string, parentId?: number | null) => {
     if (!isAuthenticated || !content.trim()) return;
 
     const commentData: CommentRequest = {
-      content: content.trim(),
-      commentId: commentId || undefined // null 대신 undefined로 변경
+      postId,
+      commentId: parentId || null,
+      content: content.trim()
     };
 
     onSubmit(commentData);
     setReplyingTo(null);
-  };
-
-  const handleEdit = (commentId: number, content: string) => {
-    onEdit(commentId, content);
-    setEditingCommentId(null);
   };
 
   const getChildComments = (parentCommentId: number) =>
@@ -69,38 +65,58 @@ const DetailComments = ({
 
           return (
             <div key={comment.commentId}>
-              <CommentItem
-                comment={comment}
-                currentUserId={currentUserId}
-                onEdit={(commentId) => {
-                  setEditingCommentId(commentId);
-                }}
-                onDelete={onDelete}
-                onReply={() => setReplyingTo(comment.commentId)}
-                onToggleReplies={
-                  replies.length > 0
-                    ? () => handleToggleReplies(comment.commentId)
-                    : undefined
-                }
-                repliesCount={replies.length}
-                isRepliesExpanded={isExpanded}
-                isEditing={editingCommentId === comment.commentId}
-              >
-                {isExpanded && replies.length > 0 && (
-                  <div className="space-y-4">
-                    {replies.map((reply) => (
+              {editingCommentId === comment.commentId ? (
+                <CommentForm
+                  onSubmit={(content) => onEdit(comment.commentId, content)}
+                  onCancel={() => setEditingCommentId(null)}
+                  initialContent={comment.content}
+                  isEditing={true}
+                  placeholder="댓글을 수정하세요"
+                  userImageUrl={userImageUrl}
+                />
+              ) : (
+                <CommentItem
+                  comment={comment}
+                  currentUserId={currentUserId}
+                  onEdit={() => setEditingCommentId(comment.commentId)}
+                  onDelete={onDelete}
+                  onReply={() => setReplyingTo(comment.commentId)}
+                  onToggleReplies={
+                    replies.length > 0
+                      ? () => handleToggleReplies(comment.commentId)
+                      : undefined
+                  }
+                  repliesCount={replies.length}
+                  isRepliesExpanded={isExpanded}
+                />
+              )}
+
+              {isExpanded && replies.length > 0 && (
+                <div className="space-y-4">
+                  {replies.map((reply) =>
+                    editingCommentId === reply.commentId ? (
+                      <CommentForm
+                        key={reply.commentId}
+                        onSubmit={(content) => onEdit(reply.commentId, content)}
+                        onCancel={() => setEditingCommentId(null)}
+                        initialContent={reply.content}
+                        isEditing={true}
+                        placeholder="답글을 수정하세요"
+                        userImageUrl={userImageUrl}
+                      />
+                    ) : (
                       <CommentItem
                         key={reply.commentId}
                         comment={reply}
                         currentUserId={currentUserId}
-                        onEdit={handleEdit}
+                        onEdit={() => setEditingCommentId(reply.commentId)}
                         onDelete={onDelete}
                         isReply
                       />
-                    ))}
-                  </div>
-                )}
-              </CommentItem>
+                    )
+                  )}
+                </div>
+              )}
 
               {replyingTo === comment.commentId && (
                 <CommentForm
@@ -116,12 +132,13 @@ const DetailComments = ({
         })}
       </div>
 
-      <CommentForm
-        onSubmit={handleSubmit}
-        isVisible={isCommentFormVisible}
-        placeholder="댓글을 입력하세요"
-        userImageUrl={userImageUrl}
-      />
+      {isCommentFormVisible && (
+        <CommentForm
+          onSubmit={handleSubmit}
+          placeholder="댓글을 입력하세요"
+          userImageUrl={userImageUrl}
+        />
+      )}
     </div>
   );
 };

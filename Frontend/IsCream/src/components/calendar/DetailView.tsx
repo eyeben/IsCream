@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { CalendarDetailResponse } from "../../types/calendar";
 import { useCalendar } from "../../hooks/calendar/useCalendar";
 import MemoEditor from "./MemoEditor";
+import { format } from "date-fns";
+import type { DayInfo } from "@/types/calendar";
+import { CalendarResponse } from "../../types/calendar";
 
 interface DetailViewProps {
   childId: number;
@@ -10,9 +13,20 @@ interface DetailViewProps {
     month: number;
     day: number | null;
   };
+  fetchCalendar: (yearMonth: string) => Promise<CalendarResponse>;
+  currentDate: Date;
+  setCalendarData: React.Dispatch<
+    React.SetStateAction<Record<number, DayInfo>>
+  >;
 }
 
-const DetailView: React.FC<DetailViewProps> = ({ childId, selectedDate }) => {
+const DetailView: React.FC<DetailViewProps> = ({
+  childId,
+  selectedDate,
+  fetchCalendar,
+  currentDate,
+  setCalendarData
+}) => {
   const [activeTab, setActiveTab] = useState<"htp" | "memo">("htp");
   const [detail, setDetail] = useState<CalendarDetailResponse["data"] | null>(
     null
@@ -33,12 +47,22 @@ const DetailView: React.FC<DetailViewProps> = ({ childId, selectedDate }) => {
     fetchDetail();
   }, [selectedDate, childId, fetchCalendarDetail]);
 
-  const handleMemoSave = async (/*memo: string, memoId?: string*/) => {
+  const handleMemoSave = async (memo: string) => {
     if (selectedDate.day) {
+      // 메모 저장 후 상세 정보 업데이트
+      console.log("Saving memo:", memo);
+
       const formattedDate = `${selectedDate.year}-${String(selectedDate.month).padStart(2, "0")}-${String(selectedDate.day).padStart(2, "0")}`;
       const response = await fetchCalendarDetail(formattedDate);
       if (response && response.data) {
         setDetail(response.data);
+      }
+
+      // 달력 데이터 업데이트
+      const yearMonth = format(currentDate, "yyyy-MM");
+      const calendarResponse = await fetchCalendar(yearMonth);
+      if (calendarResponse?.code === "S0000" && calendarResponse.data) {
+        setCalendarData(calendarResponse.data);
       }
     }
   };
@@ -116,9 +140,9 @@ const DetailView: React.FC<DetailViewProps> = ({ childId, selectedDate }) => {
                   )}
                 </div>
                 {detail.report && (
-                  <div className="h-[100px]">
+                  <div className="h-[300px] mb-1">
                     <h4 className="font-medium mb-2">검사 결과</h4>
-                    <div className="h-full overflow-y-auto pr-2">
+                    <div className="h-full overflow-y-auto pb-10 pr-2">
                       <p className="whitespace-pre-line text-gray-600">
                         {detail.report}
                       </p>
