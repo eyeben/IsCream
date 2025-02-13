@@ -2,10 +2,10 @@ package com.ssafy.iscream.common.config;
 
 import com.ssafy.iscream.auth.exception.JwtAccessDeniedHandler;
 import com.ssafy.iscream.auth.exception.JwtAuthenticationEntryPoint;
-import com.ssafy.iscream.auth.jwt.TokenProvider;
-import com.ssafy.iscream.auth.jwt.JwtFilter;
-import com.ssafy.iscream.auth.filter.LoginFilter;
 import com.ssafy.iscream.auth.filter.AuthLogoutFilter;
+import com.ssafy.iscream.auth.filter.LoginFilter;
+import com.ssafy.iscream.auth.jwt.JwtFilter;
+import com.ssafy.iscream.auth.jwt.TokenProvider;
 import com.ssafy.iscream.auth.service.TokenService;
 import com.ssafy.iscream.auth.service.UserDetailsServiceImpl;
 import com.ssafy.iscream.oauth.AuthSuccessHandler;
@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,6 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,12 +73,12 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://70.12.60.176:5173"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173", "https://i12a407.p.ssafy.io"));
+                        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
-                        configuration.setExposedHeaders(Arrays.asList("x-access-token", "Set-Cookie"));
+                        configuration.setExposedHeaders(Arrays.asList("access", "Set-Cookie"));
 
                         return configuration;
                     }
@@ -101,8 +103,19 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
                         .requestMatchers("/users/email/check", "/users/nickname/check").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/board/post/{postId}", "/board/main").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/board").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/comments/{postId}").permitAll()
+                        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .requestMatchers("/ws/**").permitAll()// 웹소켓은 이거 해야함
                         .anyRequest().authenticated());
+
+        // 예외 처리
+        http.exceptionHandling((exceptionConfig) ->
+                exceptionConfig
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+        );
 
         http
                 .oauth2Login((oauth2) -> oauth2
@@ -110,13 +123,6 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler(customSuccessHandler)
                 );
-
-        // 예외 처리
-        http.exceptionHandling((exceptionConfig) ->
-            exceptionConfig
-                    .authenticationEntryPoint(authenticationEntryPoint)
-                    .accessDeniedHandler(accessDeniedHandler)
-        );
 
         http
                 .addFilterBefore(new JwtFilter(tokenProvider, userDetailsService), LoginFilter.class);
@@ -132,7 +138,6 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션 관리
-
 
         return http.build();
     }
