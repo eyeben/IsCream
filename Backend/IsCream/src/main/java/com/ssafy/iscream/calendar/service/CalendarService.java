@@ -28,8 +28,14 @@ public class CalendarService {
     private final MemoRepository memoRepository;
 
     public void createMemo(Integer userId, MemoCreateReq memoCreateReq) {
+        // 메모길이 0일때 아무것도 안함
+        if(memoCreateReq.getMemo().isEmpty())
+            return;
+
         if (memoRepository.existsByChildIdAndSelectedDate(memoCreateReq.getChildId(), memoCreateReq.getSelectedDate()))
             throw new BadRequestException(new ResponseData<>(ErrorCode.DATA_SAVE_FAILED.getCode(), ErrorCode.DATA_SAVE_FAILED.getMessage(),null));
+
+
 
         Memo memo = Memo.builder()
                 .userId(userId)
@@ -46,9 +52,18 @@ public class CalendarService {
                 .orElseThrow(() -> new NotFoundException(
                         new ResponseData<>(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getMessage(), null)));
 
+
+
+
         // 권한 없는 경우
         if (!memo.getUserId().equals(userId)) {
             throw new UnauthorizedException(new ResponseData<>(ErrorCode.DATA_FORBIDDEN_ACCESS.getCode(), ErrorCode.DATA_FORBIDDEN_ACCESS.getMessage(), null));
+        }
+
+        // 길이 0일 때 삭제 해줌
+        if(memoUpdateReq.getMemo().isEmpty()){
+            memoRepository.deleteById(memoUpdateReq.getMemoId());
+            return;
         }
 
         memo.updateContent(memoUpdateReq.getMemo());
