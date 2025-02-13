@@ -4,6 +4,8 @@ import defaultImage from "../../assets/image/챗봇_곰.png";
 
 const CommentForm = ({
   onSubmit,
+  isEditing = false,
+  initialContent = "",
   isVisible = true,
   parentId,
   onCancel,
@@ -11,20 +13,24 @@ const CommentForm = ({
   imageUrl = defaultImage,
   userImageUrl
 }: CommentFormProps) => {
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(initialContent);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (content.trim()) {
       onSubmit(content, parentId);
-      setContent("");
+      if (!isEditing) {
+        setContent("");
+      }
       onCancel?.();
     }
   };
 
-  const formClasses = parentId
-    ? "ml-8 mb-4"
-    : "fixed left-0 right-0 bottom-[80px] bg-white rounded-t-[15px] border-t border-[#BEBEBE] p-2";
+  const formClasses = isEditing
+    ? "px-2" // 수정 폼일 때는 인라인으로
+    : parentId
+      ? "ml-8 mb-4" // 답글일 때
+      : "fixed left-0 right-0 bottom-[80px] bg-white rounded-t-[15px] border-t border-[#BEBEBE] p-2"; // 일반 댓글 작성
 
   if (!isVisible && !parentId) return null;
 
@@ -45,7 +51,7 @@ const CommentForm = ({
             onChange={(e) => setContent(e.target.value)}
             placeholder={placeholder}
             className="flex-1 px-4 py-2 border border-[#BEBEBE] rounded-full focus:outline-none focus:ring-1 focus:ring-green-600"
-            autoFocus={!!parentId}
+            autoFocus={!!parentId || isEditing}
           />
           <button
             type="submit"
@@ -56,7 +62,7 @@ const CommentForm = ({
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >
-            작성
+            {isEditing ? "수정" : "작성"}
           </button>
           {onCancel && (
             <button
