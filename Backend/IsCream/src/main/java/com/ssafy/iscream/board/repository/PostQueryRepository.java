@@ -1,6 +1,7 @@
 package com.ssafy.iscream.board.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.iscream.board.domain.Post;
@@ -10,7 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
+
 import static com.ssafy.iscream.board.domain.QPost.post;
 import static com.ssafy.iscream.board.domain.QPostLike.postLike;
 
@@ -39,21 +42,26 @@ public class PostQueryRepository {
 
         JPAQuery<Post> query = queryFactory
                 .selectFrom(post)
-                .leftJoin(postLike).on(postLike.postId.eq(post.postId))
+                .leftJoin(postLike).on(postLike.id.postId.eq(post.postId))
                 .where(predicate)
                 .groupBy(post.postId);
 
+        NumberExpression<Long> likeCount = postLike.count().coalesce(0L);
+
         if ("like".equals(sort)) {
-            if (lastLikeCount != null) {
-                query.having(postLike.count().loe(Long.valueOf(lastLikeCount)));
-            }
+//            if (lastLikeCount != null) {
+//                query.having(postLike.count().loe(Long.valueOf(lastLikeCount)));
+//            }
+//
+//            if (lastId != null && lastLikeCount != null) {
+//                query.where(
+//                        likeCount.eq(Long.valueOf(lastLikeCount))
+//                                .and(post.postId.lt(lastId))
+//                                .or(likeCount.lt(Long.valueOf(lastLikeCount)))
+//                );
+//            }
 
-            if (lastId != null) {
-                query.having(postLike.count().eq(postLike.count())
-                        .and(post.postId.lt(lastId)));
-            }
-
-            query.orderBy(postLike.count().desc(), post.createdAt.desc(), post.postId.desc());
+            query.orderBy(likeCount.desc(), post.createdAt.desc(), post.postId.desc());
         } else {
             query.orderBy(post.createdAt.desc(), post.postId.desc());
         }
@@ -67,7 +75,7 @@ public class PostQueryRepository {
         return queryFactory
                 .select(post)
                 .from(post)
-                .leftJoin(postLike).on(postLike.postId.eq(post.postId))
+                .leftJoin(postLike).on(postLike.id.postId.eq(post.postId))
                 .groupBy(post.postId)
                 .orderBy(postLike.count().desc(), post.createdAt.desc())
                 .limit(5)

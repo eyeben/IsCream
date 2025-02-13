@@ -87,6 +87,9 @@ public class PostService {
     // 게시글 목록 조회
     public Page<Post> getPostPage(PostReq req) {
         Pageable pageable = PageRequest.of(0, req.getSize());
+
+//        Integer likes = getPostLikes(req.get)
+
         return postQueryRepository.searchPosts(req, pageable);
     }
 
@@ -106,8 +109,8 @@ public class PostService {
     }
 
     // 게시글 좋아요
-    public void addPostLike(Integer postId, User user) {
-        postLikeService.addPostLike(postId, user);
+    public void addPostLike(Integer postId, Integer userId) {
+        postLikeService.addPostLike(postId, userId);
     }
 
     // 게시글 좋아요 취소
@@ -117,8 +120,8 @@ public class PostService {
     }
 
     // 사용자 좋아요 여부 확인
-    public boolean isUserLiked(Post post, User user) {
-        return postLikeService.isUserLiked(post, user);
+    public boolean isUserLiked(Integer postId, Integer userId) {
+        return postLikeService.isUserLiked(postId, userId);
     }
 
     // 게시글 조회수
