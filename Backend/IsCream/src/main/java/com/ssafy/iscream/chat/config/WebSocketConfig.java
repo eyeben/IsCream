@@ -17,23 +17,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
 
-        registry.enableSimpleBroker("/sub"); // 클라이언트가 구독할 엔드포인트
-        registry.setApplicationDestinationPrefixes("/pub");
-//        registry.enableStompBrokerRelay("/sub")
-//                .setRelayHost("localhost")
-//                .setRelayPort(6379)
-//                .setTaskScheduler(heartBeatScheduler());
+        registry.setApplicationDestinationPrefixes("/pub"); // 클라이언트가 메시지를 발행하는 경로
+
+        registry.enableSimpleBroker("/sub") // ✅ STOMP 자체 브로커 사용
+                .setTaskScheduler(heartBeatScheduler()); // ✅ Heartbeat 감지용 TaskScheduler 추가
 
     }
 
-//    @Bean
-//    public ThreadPoolTaskScheduler heartBeatScheduler() {
-//        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-//        scheduler.setPoolSize(1);
-//        scheduler.setThreadNamePrefix("wss-heartbeat-");
-//        scheduler.initialize();
-//        return scheduler;
-//    }
+    @Bean
+    public ThreadPoolTaskScheduler heartBeatScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(1);
+        scheduler.initialize();
+        return scheduler;
+    }
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         log.info("🟢 WebSocket 엔드포인트 등록됨: /ws"); // ✅ 엔드포인트 등록 확인 로그 추가
