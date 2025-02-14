@@ -22,6 +22,7 @@ import java.util.List;
 
 @Slf4j
 @Controller
+@RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -48,6 +49,7 @@ public class ChatController {
      * ✅ 특정 채팅방의 메시지 불러오기 (페이지네이션)
      */
     @GetMapping("/{roomId}/messages")
+    @Operation(summary = "채팅방 입장", tags = "채팅방 입장")
     public ResponseEntity<?> getChatMessages(@Login User user, @PathVariable String roomId, @RequestParam(defaultValue = "0") int page) {
 
         List<ChatMessage> messages = chatService.getChatMessages(String.valueOf(user.getUserId()), roomId, page);

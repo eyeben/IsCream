@@ -82,10 +82,18 @@ public class SwaggerConfig {
                 .build();
     }
     @Bean
-    GroupedOpenApi chatApi() {
+    GroupedOpenApi chatRoomApi() {
         return GroupedOpenApi.builder()
                 .group("chatrooms")
                 .pathsToMatch("/chatrooms/**")
+                .build();
+    }
+
+    @Bean
+    GroupedOpenApi chatApi() {
+        return GroupedOpenApi.builder()
+                .group("chat")
+                .pathsToMatch("/chat/**")
                 .build();
     }
 
