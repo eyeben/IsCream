@@ -41,8 +41,8 @@ public class ChatRoomController {
      */
     @PostMapping("/create")
     @Operation(summary = "채팅방 생성", tags = "채팅방 생성")
-    public ResponseEntity<?> createChatRoom(@Login User user, @Parameter String receiveId) {
-        ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(String.valueOf(user.getUserId()) , receiveId);
+    public ResponseEntity<?> createChatRoom(@Login User user, @Parameter String receiverId) {
+        ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(String.valueOf(user.getUserId()) , receiverId);
         return ResponseUtil.success(chatRoom);
     }
 
