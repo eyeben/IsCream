@@ -1,7 +1,9 @@
 package com.ssafy.iscream.chat.listener;
 
+import com.ssafy.iscream.auth.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -16,7 +18,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WebSocketEventListener {
 
-    private final RedisTemplate redisTemplate;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    private final String AUTHORIZATION_HEADER = "Authorization";
+
+    @Autowired
+    private TokenProvider tokenProvider;
 
     /**
      * ✅ 클라이언트가 WebSocket에 연결할 때 로그 출력
@@ -27,8 +34,24 @@ public class WebSocketEventListener {
         String sessionId = headerAccessor.getSessionId();
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
 
+        // ✅ STOMP 헤더에서 JWT 토큰 가져오기
+        String token = headerAccessor.getFirstNativeHeader(AUTHORIZATION_HEADER);
+        log.info("🛠 Received Authorization Header: {}", token);
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7); // "Bearer " 제거
+        }
+
+        Integer userId = null;
+        if (token != null && tokenProvider.validateToken(token)) {
+            userId = tokenProvider.getUserId(token); // ✅ 기존 TokenProvider 활용
+            log.info("🛠 Extracted Token: {}", token);
+        }else {
+            log.warn("🚨 No valid Authorization token found in headers");
+        }
+
         // ✅ STOMP 헤더에서 userId와 roomId 가져오기
-        String userId = headerAccessor.getFirstNativeHeader("userId");
+//        String userId = headerAccessor.getFirstNativeHeader("userId");
         String roomId = headerAccessor.getFirstNativeHeader("roomId");
 
         // ✅ 가져온 값들을 세션 속성에 저장
