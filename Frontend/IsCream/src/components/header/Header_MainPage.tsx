@@ -3,6 +3,8 @@ import { useChild } from "../../hooks/child/useChild";
 import { useAuth } from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   onNotificationClick?: () => void;
@@ -10,11 +12,13 @@ interface HeaderProps {
 }
 
 const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
-  const [hasUnreadNotification /*setHasUnreadNotification*/] = useState(false);
+  const navigate = useNavigate();
+  const [hasUnreadNotification] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
+  const location = useLocation();
   const { isAuthenticated } = useAuth();
   const { children, loading, handleChildSelect } = useChild(onChildSelect);
   const selectedChild = useSelector(
@@ -22,7 +26,12 @@ const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
   );
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    // 로그인 페이지에서는 헤더를 숨김
+    if (location.pathname === "/login") {
+      return;
+    }
+
+    // if (!isAuthenticated) return;
 
     // 알림 fetch 로직은 기존과 동일
     // const fetchNotifications = async () => {
@@ -45,9 +54,8 @@ const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
     // };
 
     // fetchNotifications();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, location.pathname]);
 
-  // 스크롤 이벤트 로직은 기존과 동일
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -72,26 +80,30 @@ const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
       }`}
     >
       <div className="flex items-center justify-between h-[52px] px-4 w-full">
-        {/* 뒤로가기 버튼 */}
-        <button
-          type="button"
-          onClick={() => window.history.back()}
-          className="p-2 w-[40px] h-[40px] rounded-bl-[10px]"
-          aria-label="뒤로가기"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        {/* 메인 페이지가 아닐 때만 뒤로가기 버튼 표시 */}
+        {location.pathname !== "/" && (
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="p-2 w-[40px] h-[40px] rounded-bl-[10px]"
+            aria-label="뒤로가기"
           >
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+        )}
+        {/* 메인 페이지일 때는 빈 div로 레이아웃 유지 */}
+        {location.pathname === "/" && <div className="w-[40px]"></div>}
 
         {/* 중앙 자녀 선택 드롭다운 */}
         <div className="relative flex justify-center items-center ml-4">
