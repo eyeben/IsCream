@@ -6,6 +6,7 @@ import com.ssafy.iscream.chat.dto.req.ChatRoomCreateReq;
 import com.ssafy.iscream.chat.dto.res.ChatRoomsGetRes;
 import com.ssafy.iscream.chat.service.ChatRoomFacade;
 import com.ssafy.iscream.chat.service.ChatRoomService;
+import com.ssafy.iscream.common.response.ResponseData;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
 import com.ssafy.iscream.user.service.UserService;
@@ -31,8 +32,8 @@ public class ChatRoomController {
      */
     @GetMapping()
     @Operation(summary = "목록 불러오기", tags = "목록불러")
-    public List<ChatRoomsGetRes> getUserChatRooms(@Login User user) {
-        return chatRoomFacade.getChatRooms(user.getUserId());
+    public ResponseEntity<?> getUserChatRooms(@Login User user) {
+        return ResponseUtil.success(chatRoomFacade.getChatRooms(user.getUserId()));
     }
 
     /**
@@ -40,9 +41,9 @@ public class ChatRoomController {
      */
     @PostMapping("/create")
     @Operation(summary = "채팅방 생성", tags = "채팅방 생성")
-    public ResponseEntity<ChatRoom> createChatRoom(@Login User user, @Parameter String receiveId) {
+    public ResponseEntity<?> createChatRoom(@Login User user, @Parameter String receiveId) {
         ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(String.valueOf(user.getUserId()) , receiveId);
-        return ResponseEntity.ok(chatRoom);
+        return ResponseUtil.success(chatRoom);
     }
 
     /**
