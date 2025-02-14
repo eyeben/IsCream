@@ -1,3 +1,4 @@
+import LongButton from "@/components/button/LongButton";
 import { api } from "../utils/common/axiosInstance";
 
 interface GetChatListResponse {
@@ -31,11 +32,25 @@ export const chatApi = {
     // 채팅방 목록 불러오기
     async getChatList(): Promise<GetChatListResponse> {
         try{
+            
             const response = await api.get("/chatrooms");
-            if(response.data.code === 'S0000'){
-                return response.data;
-            }
-            throw new Error(response.data.message || "채팅방방 목록 조회 실패");
+            console.log("ChapPage.txs 여기까지 오니?");
+            console.log(response);
+            
+            const formattedData: GetChatListResponse = {
+                code: 'S0000',
+                message: 'Success',
+                data: response.data.map((room: any) => ({
+                    roomId: room.id,
+                    opponentName: `User ${room.participantIds.find((id: string) => id !== '1')}`, // 임시로 상대방 ID 표시
+                    newMessageCount: 0,
+                    lastMessageTime: room.lastMessageTimestamp,
+                    lastMessageUnread: ''
+                }))
+            };
+            console.log("프론트엔드에 맞춘 형식 변환 데이터" ,formattedData);
+            
+            return formattedData;
         } catch (error) {
           console.error("채팅방 목록 조회 실패:", error);
           throw error;
