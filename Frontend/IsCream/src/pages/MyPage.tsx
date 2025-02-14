@@ -82,7 +82,7 @@ const MyPage: React.FC = () => {
     };
 
     fetchUserData();
-  });
+  }, [userData.profileImage]);
 
   const handleEditChild = (index: number) => {
     setEditingChildIndex(index); // 수정할 자녀의 인덱스 저장
