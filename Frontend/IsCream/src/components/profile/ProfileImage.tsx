@@ -1,4 +1,5 @@
 import { useRef, useState, forwardRef } from "react";
+import defaultImg from '../../assets/image/character2.png';
 
 interface ProfileImageProps{
   initialProfileImage?: string;
@@ -6,7 +7,7 @@ interface ProfileImageProps{
 }
 
 const ProfileImage = forwardRef<{ uploadImage: () => Promise<File | null> }, ProfileImageProps>(({
-  initialProfileImage = '/profile-placeholder.jpg',
+  initialProfileImage = defaultImg,
   onImageUpload
 }, ref) => {
   

@@ -43,8 +43,8 @@ interface GetTestListResponse {
     }[]
 }
 
-export const patApi = {
-    // PAT 질문 목록 조회
+export const bigFiveApi = {
+    // bigFive 질문 목록 조회
     async getQuestionList(): Promise<GetQuestionListResponse> {
         try {
           const response = await api.get("/big-five-tests/questions");
@@ -59,7 +59,7 @@ export const patApi = {
         }
     },
 
-    // PAT 검사 결과 제출
+    // bigFive 검사 결과 제출
     async postTest(): Promise<PostTestResultRequest> {
         try{
             const response = await api.post("/big-five-tests");
@@ -67,14 +67,14 @@ export const patApi = {
             if(response.data.code === "S0000"){
                 return response.data;
             }
-            throw new Error(response.data.message || "PAT 검사 결과 제출 실패");
+            throw new Error(response.data.message || "bigFive 검사 결과 제출 실패");
         }catch (error) {
-            console.error("검사 결과 제출 실패", error);
+            console.error("bigFive 검사 결과 제출 실패", error);
             throw error;
         }
     },
 
-    // PAT 검사 결과 조회 (1개)
+    // bigFive 검사 결과 조회 (1개)
     async getRecentResult() : Promise<GetRecentTestResponse> {
         try{
             const response = await api.get("/big-five-tests/recent")
@@ -84,14 +84,14 @@ export const patApi = {
                 
                 return response.data;
             }
-            throw new Error(response.data.message || "PAT 검사 조회 실패");
+            throw new Error(response.data.message || "bigFive 검사 조회 실패");
         }catch (error) {
-            console.error("검사 결과 조회 실패", error);
+            console.error("bigFive 검사 결과 조회 실패", error);
             throw error;
         }
     },
 
-    // PAT 검사 결과 목록 조회
+    // bigFive 검사 결과 목록 조회
     async getResultList() : Promise<GetTestListResponse> {
         try{
             const response = await api.get("/big-five-tests")
@@ -99,9 +99,9 @@ export const patApi = {
             if(response.data.code === "S0000"){
                 return response.data;
             }
-            throw new Error(response.data.message || "PAT 검사 목록 조회 실패");
+            throw new Error(response.data.message || "bigFive 검사 목록 조회 실패");
         }catch (error) {
-            console.error("검사 결과 목록 조회 실패", error);
+            console.error("bigFive 검사 결과 목록 조회 실패", error);
             throw error;
         }
     }
