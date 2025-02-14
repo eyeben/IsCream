@@ -1,20 +1,25 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
-import characterImage from "../../../assets/image/character2.png"; // 이미지 파일 import
+import characterImage from "../../../assets/image/character2.png";
+import { useUploadDrawing } from "../../../hooks/htp/useUploadDrawing";
+import { DrawingType } from "../../../types/htp";
+import { createUploadFormData } from "../../../utils/common/formDataHelper";
 
 interface CanvasProps {
-  type: "house" | "tree" | "person";
-  gender?: "male" | "female"; // 선택적 성별 값 추가
+  type: DrawingType;
+  gender?: "male" | "female";
   index: number;
   childId: number;
   onSaveComplete: () => void;
 }
-
 const HEADER_HEIGHT = 60; // 헤더 높이 (px)
+
 
 const Canvas: React.FC<CanvasProps> = ({ type, gender, index, childId, onSaveComplete }) => {
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
   const [startTime, setStartTime] = useState<number | null>(null);
+
+  const { mutate: uploadDrawing } = useUploadDrawing();
 
   useEffect(() => {
     setStartTime(Date.now());
@@ -32,36 +37,23 @@ const Canvas: React.FC<CanvasProps> = ({ type, gender, index, childId, onSaveCom
     const response = await fetch(dataUrl);
     const blob = await response.blob();
     const file = new File([blob], `drawing_${type}_${index}.png`, { type: "image/png" });
+    
+    const formData = createUploadFormData({ file, time: timeTaken, childId, type, index, gender });
 
-    await uploadDrawing(file, timeTaken);
-  };
+    console.log("📤 전송할 FormData:", formData);
 
-  const uploadDrawing = async (file: File, time: string) => {
-    const formData = new FormData();
-    formData.append("htp[time]", time);
-    formData.append("htp[chidiId]", String(childId));
-    formData.append("htp[type]", type);
-    formData.append("htp[index]", String(index));
-    if (type === "person" && gender) {
-      formData.append("htp[gender]", gender); // 성별 값 추가
-    }
-    formData.append("file", file);
-
-    try {
-      const res = await fetch("/htp-tests/img", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (res.ok) {
+    uploadDrawing(formData, {
+      onSuccess: () => {
+        console.log("✅ 저장 성공!");
         onSaveComplete();
-      } else {
+      },
+      onError: (error) => {
+        console.error("❌ 저장 오류 발생:", error);
         alert("저장 실패! 다시 시도해주세요.");
-      }
-    } catch (error) {
-      console.error("업로드 오류:", error);
-    }
+      },
+    });
   };
+
 
   return (
     <div

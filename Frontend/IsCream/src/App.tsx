@@ -29,8 +29,8 @@ import {
   CenterPage,
   CanvasPage,
   AiAnalysisPage,
-  // CameraPage,
-  // PhotoCapturePage,
+  CameraPage,
+  PhotoCapturePage,
   // HTPResultsPage,
   Education
 } from "./pages";
@@ -159,7 +159,23 @@ function App() {
                 </ProtectedRoute>
               }
             />
-
+                        <Route 
+              path="/photo-capture" 
+              element={
+                <ProtectedRoute>
+                  <PhotoCapturePage />
+                </ProtectedRoute>
+              } 
+            />
+            {/* CameraPage 라우트 추가 */}
+            <Route
+              path="/camera"
+              element={
+                <ProtectedRoute>
+                  <CameraPage />
+                </ProtectedRoute>
+              }
+            />
             {/* 기타 기능 */}
             <Route
               path="/ai-analysis"
