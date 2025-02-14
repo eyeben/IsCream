@@ -12,11 +12,14 @@ const LoginPage: React.FC = () => {
       document.body.classList.remove("no-navbar"); // 페이지 벗어나면 네비게이션 복구
     };
   }, []);
+  const handleLoginSuccess = () => {
+    console.log("Login successful!");
+  };
 
   return (
     <GoogleOAuthProvider clientId="500251459785-jt83i1u8dq66ecvjr6it8mc6orcj40m7.apps.googleusercontent.com">
       <div className="flex flex-col items-center justify-center min-h-screen w-full">
-        <LoginForm />
+        <LoginForm onLoginSuccess={handleLoginSuccess} />
       </div>
     </GoogleOAuthProvider>
   );

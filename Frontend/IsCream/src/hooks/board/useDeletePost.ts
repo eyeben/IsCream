@@ -13,7 +13,8 @@ export const useDeletePost = () => {
           lastId: null,
           lastLikeCount: null,
           size: 10,
-          sort: "create"
+          sort: "create",
+          keyword: ""
         })
       });
     }
