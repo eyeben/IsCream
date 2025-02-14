@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+// import NotificationModal from "../notification/NotificationModal"; // 추가
+// import { useNotification } from "../../hooks/notification/useNotification"; // 추가
 
 interface HeaderProps {
   onNotificationClick?: () => void;
@@ -24,6 +26,12 @@ const Header = ({ onNotificationClick, onChildSelect }: HeaderProps) => {
   const selectedChild = useSelector(
     (state: RootState) => state.child.selectedChild
   );
+  // const { requestNotificationPermission } = useNotification();
+
+  // const handleNotificationClick = () => {
+  //   setIsNotificationModalOpen(true);
+  //   requestNotificationPermission(); // 알림 권한 요청
+  // };
 
   useEffect(() => {
     // 로그인 페이지에서는 헤더를 숨김
