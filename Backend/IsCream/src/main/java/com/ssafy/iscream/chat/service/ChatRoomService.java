@@ -1,6 +1,7 @@
 package com.ssafy.iscream.chat.service;
 
 import com.ssafy.iscream.chat.domain.ChatRoom;
+import com.ssafy.iscream.chat.dto.res.ChatRoomsGetRes;
 import com.ssafy.iscream.chat.repository.ChatMessageRepository;
 import com.ssafy.iscream.chat.repository.ChatRoomRepository;
 import jakarta.transaction.Transactional;
@@ -10,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

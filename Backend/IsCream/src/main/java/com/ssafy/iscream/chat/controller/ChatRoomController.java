@@ -3,10 +3,15 @@ package com.ssafy.iscream.chat.controller;
 import com.ssafy.iscream.auth.user.Login;
 import com.ssafy.iscream.chat.domain.ChatRoom;
 import com.ssafy.iscream.chat.dto.req.ChatRoomCreateReq;
+import com.ssafy.iscream.chat.dto.res.ChatRoomsGetRes;
+import com.ssafy.iscream.chat.service.ChatRoomFacade;
 import com.ssafy.iscream.chat.service.ChatRoomService;
 import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
+import com.ssafy.iscream.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +24,15 @@ import java.util.List;
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
-
+    private final ChatRoomFacade chatRoomFacade;
 
     /**
      * ✅ 목록 불러오기
      */
     @GetMapping()
     @Operation(summary = "목록 불러오기", tags = "목록불러")
-    public List<ChatRoom> getUserChatRooms(@Login User user) {
-        return chatRoomService.getUserChatRooms(user.getUserId());
+    public List<ChatRoomsGetRes> getUserChatRooms(@Login User user) {
+        return chatRoomFacade.getChatRooms(user.getUserId());
     }
 
     /**
@@ -35,8 +40,8 @@ public class ChatRoomController {
      */
     @PostMapping("/create")
     @Operation(summary = "채팅방 생성", tags = "채팅방 생성")
-    public ResponseEntity<ChatRoom> createChatRoom(@RequestBody ChatRoomCreateReq chatRoomCreateReq) {
-        ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(chatRoomCreateReq.getSenderId(), chatRoomCreateReq.getReceiverId());
+    public ResponseEntity<ChatRoom> createChatRoom(@Login User user, @Parameter String receiveId) {
+        ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(String.valueOf(user.getUserId()) , receiveId);
         return ResponseEntity.ok(chatRoom);
     }
 
