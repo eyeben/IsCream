@@ -72,21 +72,26 @@ const MemoEditor: React.FC<MemoEditorProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-[#ffffff] p-4 rounded-lg drop-shadow-sm">
+    <div className="w-full h-[300px] bg-[#ffffff] p-4 rounded-lg drop-shadow-sm">
       <textarea
         ref={textareaRef}
         value={memoText}
         onChange={(e) => setMemoText(e.target.value)}
         onBlur={handleSave}
-        className="w-full h-full bg-transparent resize-none focus:outline-none text-gray-800 leading-relaxed"
+        className="w-full h-full bg-transparent resize-none focus:outline-none text-gray-800 overflow-y-auto"
         placeholder="메모를 입력하세요..."
         maxLength={500}
         style={{
+          backgroundAttachment: "local",
           backgroundImage:
             "repeating-linear-gradient(transparent, transparent 31px, #ccc 31px, #ccc 32px)",
           lineHeight: "32px",
+          fontSize: "20px",
           padding: "0 10px",
-          border: "none"
+          border: "none",
+          // fontFamily:
+          //   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          wordBreak: "break-all"
         }}
       />
     </div>

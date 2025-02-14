@@ -5,11 +5,11 @@ import personImage from "../../../assets/image/person.png";
 import characterImage from "../../../assets/image/character2.png";
 
 interface DrawingIntroProps {
-  type: "house" | "tree" | "person";
+  type: "house" | "tree" | "male" | "female";
   onStart: () => void;
 }
 
-const DRAWING_GUIDE: Record<string, string[]> = {
+const DRAWING_GUIDE: Record<"house" | "tree" | "person", string[]> = {
   house: [
     "✅ 휴대폰을 <span class='text-green-600 font-bold'>가로</span>로 두고 그림을 그려주세요!",
     "✅ 도구를 이용하지 않고 <span class='text-green-600 font-bold'>손가락</span>만 사용해 주세요!",
@@ -33,13 +33,16 @@ const DRAWING_GUIDE: Record<string, string[]> = {
   ]
 };
 
-const DRAWING_IMAGES: Record<string, string> = {
+const DRAWING_IMAGES: Record<"house" | "tree" | "person", string> = {
   house: houseImage,
   tree: treeImage,
   person: personImage,
 };
 
 const DrawingIntro: React.FC<DrawingIntroProps> = ({ type, onStart }) => {
+  // 🏷 `male`과 `female`은 `person`과 동일하게 처리
+  const displayType = type === "male" || type === "female" ? "person" : type;
+
   return (
     <div className="flex flex-col items-center justify-center w-full min-h-screen bg-white px-4">
       {/* 🏷 제목 (고정 없이 자연스럽게 배치) */}
@@ -54,11 +57,11 @@ const DrawingIntro: React.FC<DrawingIntroProps> = ({ type, onStart }) => {
       {/* 💡 내용 박스 */}
       <div className="w-full max-w-lg bg-[#EAF8E6] p-6 rounded-[15px] shadow-md flex flex-col items-center border border-green-300">
         {/* ✨ 그림 이미지 (크기를 더 키움) */}
-        <img src={DRAWING_IMAGES[type]} alt={type} className="h-[250px] object-contain mb-4" />
+        <img src={DRAWING_IMAGES[displayType]} alt={type} className="h-[250px] object-contain mb-4" />
 
         {/* 🔹 가이드 텍스트 */}
         <div className="text-lg text-gray-700 text-left mb-6 w-full">
-          {DRAWING_GUIDE[type].map((guide, index) => (
+          {DRAWING_GUIDE[displayType].map((guide, index) => (
             <p key={index} className="mb-2" dangerouslySetInnerHTML={{ __html: guide }}></p>
           ))}
         </div>

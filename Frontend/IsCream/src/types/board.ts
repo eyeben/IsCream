@@ -77,7 +77,7 @@ export interface BoardListRequest {
   lastLikeCount: number | null;
   size: number;
   sort: "create" | "like";
-  keyword: string;
+  keyword?: string;
 }
 
 export interface BoardListResponse {

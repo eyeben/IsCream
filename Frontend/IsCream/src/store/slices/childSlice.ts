@@ -29,10 +29,16 @@ const childSlice = createSlice({
     clearSelectedChild: (state) => {
       state.selectedChild = null;
       localStorage.removeItem("selectedChild");
+    },
+    // 모든 child 상태를 초기화하는 리듀서 추가
+    resetChild: (state) => {
+      state.selectedChild = null;
+      state.children = [];
+      localStorage.removeItem("selectedChild");
     }
   }
 });
 
-export const { setChildren, selectChild, clearSelectedChild } =
+export const { setChildren, selectChild, clearSelectedChild, resetChild } =
   childSlice.actions;
 export default childSlice.reducer;

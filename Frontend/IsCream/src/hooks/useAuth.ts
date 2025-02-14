@@ -8,6 +8,9 @@ import type {
 } from "../types/auth";
 import { ERROR_CODES } from "../types/auth";
 import { AxiosError } from "axios";
+import { resetChild } from "../store/slices/childSlice";
+import { clearAccessToken } from "../store/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 interface User {
   id?: string;
@@ -23,6 +26,7 @@ interface AuthHook {
 }
 
 export const useAuth = (): AuthHook => {
+  const dispatch = useDispatch();
   const isAuthenticated = !!localStorage.getItem("accessToken");
 
   const login = async (loginData: LoginRequest): Promise<LoginResponse> => {
@@ -53,6 +57,9 @@ export const useAuth = (): AuthHook => {
       if (response.data.code === ERROR_CODES.SUCCESS) {
         localStorage.removeItem("accessToken");
         delete api.defaults.headers.common["access"];
+
+        dispatch(resetChild());
+        dispatch(clearAccessToken());
       }
 
       return response.data;

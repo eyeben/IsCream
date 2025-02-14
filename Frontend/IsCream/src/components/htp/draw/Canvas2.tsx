@@ -1,18 +1,24 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
 import characterImage from "../../../assets/image/character2.png"; // 캐릭터 이미지 import
+import { useUploadDrawing } from "../../../hooks/htp/useUploadDrawing";
+import { DrawingType } from "../../../types/htp";
+import { createUploadFormData } from "../../../utils/common/formDataHelper"; // ✅ FormData 변환 함수 임포트
 
-interface NewCanvasProps {
-  type: "tree" | "person"; // 세로형 그림판은 나무/사람 전용
+interface Canvas2Props {
+  type: DrawingType;
   gender?: "male" | "female";
   index: number;
   childId: number;
   onSaveComplete: () => void;
 }
 
-const Canvas2: React.FC<NewCanvasProps> = ({ type, gender, index, childId, onSaveComplete }) => {
+const Canvas2: React.FC<Canvas2Props> = ({ type, gender, index, childId, onSaveComplete }) => {
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
   const [startTime, setStartTime] = useState<number | null>(null);
+
+  // ✅ useUploadDrawing 훅 사용
+  const { mutate: uploadDrawing } = useUploadDrawing();
 
   useEffect(() => {
     setStartTime(Date.now());
@@ -25,40 +31,27 @@ const Canvas2: React.FC<NewCanvasProps> = ({ type, gender, index, childId, onSav
   const handleSave = async () => {
     if (!canvasRef.current || !startTime) return;
 
-    const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
+    const time = ((Date.now() - startTime) / 1000).toFixed(2);
     const dataUrl = await canvasRef.current.exportImage("png");
     const response = await fetch(dataUrl);
     const blob = await response.blob();
     const file = new File([blob], `drawing_${type}_${index}.png`, { type: "image/png" });
 
-    await uploadDrawing(file, timeTaken);
-  };
+    console.log("📤 저장 요청 데이터:", { file, time, childId, type, index, gender });
 
-  const uploadDrawing = async (file: File, time: string) => {
-    const formData = new FormData();
-    formData.append("htp[time]", time);
-    formData.append("htp[chidiId]", String(childId));
-    formData.append("htp[type]", type);
-    formData.append("htp[index]", String(index));
-    if (type === "person" && gender) {
-      formData.append("htp[gender]", gender); // 성별 값 추가
-    }
-    formData.append("file", file);
+    // ✅ FormData 변환 후 API 요청
+    const formData = createUploadFormData({ file, time: time, childId, type, index, gender });
 
-    try {
-      const res = await fetch("/htp-tests/img", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (res.ok) {
+    uploadDrawing(formData, {
+      onSuccess: () => {
+        console.log("✅ 저장 성공!");
         onSaveComplete();
-      } else {
+      },
+      onError: (error) => {
+        console.error("❌ 저장 오류 발생:", error);
         alert("저장 실패! 다시 시도해주세요.");
-      }
-    } catch (error) {
-      console.error("업로드 오류:", error);
-    }
+      },
+    });
   };
 
   return (
