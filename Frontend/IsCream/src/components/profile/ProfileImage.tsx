@@ -61,7 +61,6 @@ const ProfileImage = forwardRef<{ uploadImage: () => Promise<File | null> }, Pro
         <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200">
           <img
             src={preview}
-            alt="프로필"
             className="w-full h-full object-cover"
           />
         </div>
