@@ -73,7 +73,7 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173", "https://i12a407.p.ssafy.io"));
+                        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173", "https://i12a407.p.ssafy.io", "http://localhost:8080"));
                         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -99,6 +99,7 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
+                        //.requestMatchers("/").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/users/join/**", "/users/login/**", "/oauth2/**").permitAll()
@@ -107,7 +108,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/board").permitAll()
                         .requestMatchers(HttpMethod.GET, "/comments/{postId}").permitAll()
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers("/ws/**").permitAll()// 웹소켓은 이거 해야함
+                        .requestMatchers("/api/ws/**").permitAll()// 웹소켓은 이거 해야함
                         .anyRequest().authenticated());
 
         // 예외 처리
@@ -124,15 +125,15 @@ public class SecurityConfig {
                         .successHandler(customSuccessHandler)
                 );
 
-        http
-                .addFilterBefore(new JwtFilter(tokenProvider, userDetailsService), LoginFilter.class);
-
-        // 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
-        http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), tokenProvider, tokenService), UsernamePasswordAuthenticationFilter.class);
-
-        http
-                .addFilterBefore(new AuthLogoutFilter(tokenService), LogoutFilter.class);
+//        http
+//                .addFilterBefore(new JwtFilter(tokenProvider, userDetailsService), LoginFilter.class);
+//
+//        // 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
+//        http
+//                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), tokenProvider, tokenService), UsernamePasswordAuthenticationFilter.class);
+//
+//        http
+//                .addFilterBefore(new AuthLogoutFilter(tokenService), LogoutFilter.class);
 
         // 세션 설정
         http
