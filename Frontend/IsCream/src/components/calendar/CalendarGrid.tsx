@@ -58,7 +58,6 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
 
   return (
     <>
-      {/* 요일 헤더 */}
       <div className="grid grid-cols-7 gap-4 mb-4">
         {weekDays.map(({ day, className }) => (
           <div key={day} className={`text-center font-medium ${className}`}>
@@ -67,7 +66,6 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
         ))}
       </div>
 
-      {/* 날짜 그리드 */}
       <div className="grid grid-cols-7 gap-2">
         {getDaysInMonth().map((day, index) => {
           const dayData = day ? calendarData[day] : null;
@@ -76,30 +74,28 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
             <div
               key={index}
               className={`
-              ${!day ? "bg-white" : " cursor-pointer"}
-              aspect-square border text-[#333333] rounded-[15px] p-1 
+              aspect-square rounded-[15px] p-1 
+              ${!day ? "border-white" : "border text-[#333333] cursor-pointer"}
               ${isSunday(index) ? "text-red-400" : ""}
               ${isSaturday(index) ? "text-blue-400" : ""}
               relative
-              ${selectedDay === day ? "bg-green-700 text-white" : ""}
+              ${selectedDay === day ? "border-2 border-green-700" : ""}
             `}
               onClick={() => day && onSelectDay(day)}
             >
-              <div className="relative w-full h-full flex items-start">
-                {/* 날짜 표시 */}
+              <div className={`relative w-full h-full flex items-start`}>
                 <span
-                  className="absolute top-0 left-0 
+                  className={`absolute top-0 left-0 
                   text-xs 
                   sm:text-sm 
                   md:text-base 
                   lg:text-lg 
                   xl:text-xl
-                "
+                `}
                 >
                   {day}
                 </span>
 
-                {/* HTP 검사가 있을 때 이모지 표시 */}
                 {dayData?.isHtp && dayData.emoji && (
                   <div
                     className="absolute bottom-0 right-0 
@@ -116,7 +112,6 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
                   </div>
                 )}
 
-                {/* 메모가 있을 때 빨간 점 표시 */}
                 <div className="absolute top-1 right-1 flex gap-1">
                   {dayData?.isMemo && (
                     <div className="w-2 h-2 bg-red-500 rounded-full" />
