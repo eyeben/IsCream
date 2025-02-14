@@ -5,6 +5,7 @@ import com.ssafy.iscream.chat.domain.ChatMessage;
 import com.ssafy.iscream.chat.dto.ChatMessageDto;
 import com.ssafy.iscream.chat.dto.MessageAckDto;
 import com.ssafy.iscream.chat.service.ChatService;
+import com.ssafy.iscream.common.util.ResponseUtil;
 import com.ssafy.iscream.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,6 @@ public class ChatController {
     public ResponseEntity<?> getChatMessages(@Login User user, @PathVariable String roomId, @RequestParam(defaultValue = "0") int page) {
 
         List<ChatMessage> messages = chatService.getChatMessages(String.valueOf(user.getUserId()), roomId, page);
-        return ResponseEntity.ok(messages);
+        return ResponseUtil.success(messages);
     }
 }
