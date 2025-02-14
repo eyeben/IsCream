@@ -16,6 +16,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/sub"); // 클라이언트가 구독할 엔드포인트
         registry.setApplicationDestinationPrefixes("/pub"); // 클라이언트가 메시지를 발행하는 엔드포인트
+        registry.enableSimpleBroker("/topic")
+                .setHeartbeatValue(new long[]{10000, 10000}); // ✅ 서버가 클라이언트의 heartbeat을 감지하도록 설정
     }
 
     @Override
