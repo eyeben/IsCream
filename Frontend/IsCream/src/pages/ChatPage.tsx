@@ -1,21 +1,31 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import ChatRoomItem from "../components/chat/ChatRoomItem";
-import { chatApi } from "../api/chat";
-
-interface ChatRoom {
-  roomId: number;
-  profileUrl: string;
-  opponentName: string;
-  newMessageCount: number;
-  lastMessageTime: string;
-}
 
 const ChatPage = () => {
+  return(
+    <div>
+      채팅페이지
+    </div>
+  );
+};
+export default ChatPage;
+
+// import { useNavigate } from "react-router-dom";
+// import { useEffect, useState } from "react";
+// import ChatRoomItem from "../components/chat/ChatRoomItem";
+// import { chatApi } from "../api/chat";
+
+// interface ChatRoom {
+//   roomId: number;
+//   profileUrl: string;
+//   opponentName: string;
+//   newMessageCount: number;
+//   lastMessageTime: string;
+// }
+
+// const ChatPage = () => {
   
-  const navigate = useNavigate();
-  const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+//   const navigate = useNavigate();
+  // const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+  // const [isLoading, setIsLoading] = useState(true);
 
   // const fetchChatRooms = async () => {
   //   try{
@@ -61,29 +71,29 @@ const ChatPage = () => {
   
   
   
-  return (
-    <div className="flex flex-col h-screen bg-white">
-      <div className="flex-1 overflow-y-auto">
-        수정중...
-      {/* {chatRooms.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            채팅방이 없습니다.
-          </div>
-        ) : (
-          chatRooms.map((room) => (
-            <ChatRoomItem
-              key={room.roomId}
-              {...room}
-              onClick={() => navigate(`/chat/room/${room.roomId}`)}
-            />
-          ))
-        )} */}
-      </div>
-    </div>
-  );
-};
+  // return (
+  //   <div className="flex flex-col h-screen bg-white">
+  //     <div className="flex-1 overflow-y-auto">
+  //       수정중...
+  //     {chatRooms.length === 0 ? (
+  //         <div className="flex items-center justify-center h-full text-gray-500">
+  //           채팅방이 없습니다.
+  //         </div>
+  //       ) : (
+  //         chatRooms.map((room) => (
+  //           <ChatRoomItem
+  //             key={room.roomId}
+  //             {...room}
+  //             onClick={() => navigate(`/chat/room/${room.roomId}`)}
+  //           />
+  //         ))
+  //       )}
+  //     </div>
+  //   </div>
+//   );
+// };
 
-export default ChatPage;
+// export default ChatPage;
 
 // const dummyChatRooms: ChatRoom[] = [
 //   {
