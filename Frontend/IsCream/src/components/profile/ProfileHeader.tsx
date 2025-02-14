@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import defaultImg from '../../assets/image/character2.png';
 
 interface ProfileHeaderProps{
     profileImage?: string;
@@ -38,7 +39,7 @@ const ProfileHeader = ({
                     <div className="flex justify-between text-xl">
                         <div className='flex items-center'>
                             <img 
-                                src={profileImage} 
+                                src={profileImage || defaultImg} 
                                 alt="Profile"
                                 className="w-12 h-12 rounded-full w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200" />
                             <span className="ml-4 text-[25px]">{nickname}님</span>
