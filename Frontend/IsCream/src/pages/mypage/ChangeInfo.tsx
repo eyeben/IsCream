@@ -3,7 +3,6 @@ import ProfileForm from "../../components/profile/ProfileForm";
 import {useState, useRef} from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateUserInfoAPI } from "../../api/userAPI";
-import defaultImg from '../../assets/image/character2.png';
 
 interface LocationState  {
     profileImage: string;
@@ -25,7 +24,7 @@ const ChangeInfo = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const userData = location.state as LocationState;
-  const profileImageRef = useRef<{ uploadImage: () => Promise<File | null> }>(defaultImg);
+  const profileImageRef = useRef<{ uploadImage: () => Promise<File | null> }>(null);
 
   const [birthDate, setBirthDate] = useState(userData?.birthDate || '');
 
