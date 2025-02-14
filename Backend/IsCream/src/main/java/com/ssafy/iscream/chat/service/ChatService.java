@@ -17,16 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.RedisServerCommands;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -80,6 +76,11 @@ public class ChatService {
 
         if (chatMessage == null) {
             log.warn("❌ 메시지를 찾을 수 없음: {}", ackDto.getMessageId());
+            return;
+        }
+
+        if (!chatMessage.getReceiver().equals(ackDto.getReaderId())) {
+            log.info("❌ 읽음 요청한 사람 = 보낸사람 : {}", ackDto.getMessageId());
             return;
         }
 

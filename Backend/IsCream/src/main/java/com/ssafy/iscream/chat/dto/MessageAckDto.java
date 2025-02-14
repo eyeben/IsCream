@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MessageAckDto {
     private String messageId; // 읽은 메시지의 ID
-    private String reader;    // 읽은 사람 (B)
+    private String readerId;    // 읽은 사람 (B)
 }
