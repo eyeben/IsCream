@@ -1,9 +1,12 @@
+import { useState } from "react";
+
 interface ChatRoomProps {
-  roomId: number;
+  roomId: string;
   profileUrl: string;
   opponentName: string;
   newMessageCount: number;
   lastMessageTime: string;
+  onDelete: () => void;
   onClick: () => void;
 }
 
@@ -13,8 +16,11 @@ const ChatRoomItem = ({
   opponentName,
   newMessageCount,
   lastMessageTime,
+  onDelete,
   onClick
 }: ChatRoomProps) => {
+  const [showOptions, setShowOptions] = useState(false);
+
   const formatRelativeTime = (lastMessageTime: string) => {
     const now = new Date();
     const messageTime = new Date(lastMessageTime);
@@ -76,6 +82,30 @@ const ChatRoomItem = ({
           </div>
         )}
       </div>
+      <button
+        onClick={(e) => {
+          e.stopPropagation(); // 채팅방 클릭 이벤트 전파 방지
+          setShowOptions(!showOptions);
+        }}  
+        className="ml-4 p-2 hover:bg-red-50 rounded"
+      >
+        ⋮
+      </button>
+      {/* 드롭다운 메뉴 */}
+      {showOptions && (
+        <div className="absolute right-0 top-12 bg-white shadow-lg rounded-lg py-2 z-10">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+              setShowOptions(false);
+            }}
+            className="w-full px-4 py-2 text-left text-red-500 hover:bg-gray-50"
+          >
+            나가기
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -14,11 +14,12 @@ import ChatRoomItem from "../components/chat/ChatRoomItem";
 import { chatApi } from "../api/chat";
 
 interface ChatRoom {
-  roomId: number;
-  profileUrl: string;
+  roomId: string;
+  // profileUrl: string;
   opponentName: string;
   newMessageCount: number;
   lastMessageTime: string;
+  lastMessageUnread: string;
 }
 
 const ChatPage = () => {
@@ -34,14 +35,26 @@ const ChatPage = () => {
       setIsLoading(true);
       const response = await chatApi.getChatList();
       console.log("프론트엔드데이터: ",response);
-      console.log("채팅목록길이: ",response.data.length);
+      console.log("채팅목록길이: ",response);
       
       setChatRooms(response.data);
+      console.log(chatRooms);
+      
 
     }catch (error) {
       console.log("채팅방 목록을 불러오는데 실패했습니다.");
     }finally{
       setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (roomId: string) => {
+    try{
+      const response = await chatApi.deleteChatroom(roomId);
+      console.log(response)
+      fetchChatRooms();
+    } catch(error) {
+      console.log("채팅방을 삭제하는데 실패했습니다.")
     }
   };
 
@@ -69,11 +82,21 @@ const ChatPage = () => {
             <ChatRoomItem
               key={room.roomId}
               {...room}
+              onDelete={() => handleDelete(room.roomId)}
               onClick={() => navigate(`/chat/room/${room.roomId}`)}
             />
           ))
         )}
       </div>
+      <button
+        onClick={(e) => {
+          e.stopPropagation(); // 채팅방 클릭 이벤트 전파 방지
+          onDelete();
+        }}  
+        className="ml-4 p-2 text-red-500 hover:bg-red-50 rounded"
+      >
+        나가기
+      </button>
     </div>
   );
 };
