@@ -92,7 +92,6 @@ const ChatPage = () => {
     </div>
   );
 };
-
 export default ChatPage;
 
 // const dummyChatRooms: ChatRoom[] = [

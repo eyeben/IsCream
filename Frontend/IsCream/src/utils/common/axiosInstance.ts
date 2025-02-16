@@ -1,4 +1,3 @@
-// utils/common/axiosInstance.ts
 import axios from "axios";
 import { queryClient } from "./queryClient";
 
@@ -16,32 +15,44 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
-
     if (token) {
-      // Authorization 대신 access 헤더로 변경
       config.headers["access"] = token;
-      config.headers["Authorization"] = `Bearer ${token}`;
-    } else {
-      console.log("No token found in localStorage");
     }
-
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// 응답 인터셉터는 간단하게 유지
+// 응답 인터셉터: 401 에러 발생 시 토큰 재발급
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("accessToken");
-      queryClient.setQueryData(["auth"], { isAuthenticated: false });
+    const originalRequest = error.config;
 
-      console.log("Response data:", error.response.data);
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // 무한 루프 방지
+
+      try {
+        // 🔹 토큰 재발급 요청
+        const refreshResponse = await api.post("/users/reissue"); // 쿠키 기반이므로 자동으로 Refresh Token 전송됨
+
+        // 🔹 새로운 Access Token을 저장
+        const newAccessToken = refreshResponse.headers["access"];
+        if (newAccessToken) {
+          localStorage.setItem("accessToken", newAccessToken);
+          api.defaults.headers.common["access"] = newAccessToken;
+        }
+
+        // 🔹 실패했던 요청을 새로운 Access Token으로 재시도
+        originalRequest.headers["access"] = newAccessToken;
+        return api(originalRequest);
+      } catch (reissueError) {
+        console.error("토큰 재발급 실패, 로그아웃 처리", reissueError);
+        localStorage.removeItem("accessToken");
+        queryClient.setQueryData(["auth"], { isAuthenticated: false });
+      }
     }
+
     return Promise.reject(error);
   }
 );

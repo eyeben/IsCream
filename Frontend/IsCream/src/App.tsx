@@ -34,6 +34,7 @@ import {
   // HTPResultsPage,
   Education
 } from "./pages";
+import { useFCM } from "./hooks/notification/useFCM";
 
 // 앱 시작시 인증 설정
 const setupAxiosInterceptors = () => {
@@ -44,9 +45,12 @@ const setupAxiosInterceptors = () => {
 };
 
 function App() {
+  const { initializeFCM } = useFCM();
+
   useEffect(() => {
     setupAxiosInterceptors();
-  }, []);
+    initializeFCM();
+  }, [initializeFCM]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -159,13 +163,13 @@ function App() {
                 </ProtectedRoute>
               }
             />
-                        <Route 
-              path="/photo-capture" 
+            <Route
+              path="/photo-capture"
               element={
                 <ProtectedRoute>
                   <PhotoCapturePage />
                 </ProtectedRoute>
-              } 
+              }
             />
             {/* CameraPage 라우트 추가 */}
             <Route
