@@ -47,23 +47,25 @@ const PDFDownload = () => {
           console.log("API 호출 시작:", test.id);
 
           switch(test.id) {
+            case 'HTP':
+              response = await htpGetResultList(
+                dateRange.startDate,
+                dateRange.endDate
+              );
+                break;
+
               case 'PAT':
                   response = await patApi.getResultList(
                       dateRange.startDate,
                       dateRange.endDate
                   );
                   break;
+
               case 'BFI':
                   response = await bigFiveApi.getResultList(
                       dateRange.startDate,
                       dateRange.endDate
                   );
-                  break;
-              case 'HTP':
-                response = await htpGetResultList(
-                  dateRange.startDate,
-                  dateRange.endDate
-                );
                   break;
           }
 
@@ -77,15 +79,26 @@ const PDFDownload = () => {
                   testId: item.testId,
                   title: item.title,
                   date: item.date,        // HTP는 date 필드 사용
-                  childName: item.childName
+                  childName: item.childName,
+                  type: 'HTP'
                 }));
               
-              default:  // PAT와 BFI는 testDate 사용
+              case 'PAT':  // PAT와 BFI는 testDate 사용
                 return response.data.map((item: any) => ({
                   testId: item.testId,
                   title: item.title,
                   date: item.testDate,    // 나머지는 testDate 사용
-                  childName: item.childName
+                  childName: item.childName,
+                  type: 'PAT'  
+                }));
+
+                case 'BFI':  // PAT와 BFI는 testDate 사용
+                return response.data.map((item: any) => ({
+                  testId: item.testId,
+                  title: item.title,
+                  date: item.testDate,    // 나머지는 testDate 사용
+                  childName: item.childName,
+                  type: 'BFI'  
                 }));
             }
           }

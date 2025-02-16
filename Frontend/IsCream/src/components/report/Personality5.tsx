@@ -12,6 +12,7 @@ interface BigFiveData {
     emotionalStability: number;
     extraversion: number;
     openness: number;
+    analysis: string;
 }
 
 const Personality5 = () => {
@@ -68,7 +69,7 @@ const Personality5 = () => {
                     </div>
                     <div>
                         <Report
-                            text={bigFiveData?.date || "보고서가 없습니다."}
+                            text={bigFiveData?.analysis || "보고서가 없습니다."}
                         />
                     </div>
                 </div>

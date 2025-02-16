@@ -15,4 +15,5 @@ export interface TestResult {
   title: string;
   date: string;
   childName: string;
+  type: 'HTP' | 'PAT' | 'BFI';
   }

@@ -1,7 +1,7 @@
 import { TestResult } from "./types";
-// import { FileText } from 'lucide-react';
 import { Download } from "lucide-react";
 import { useState } from "react";
+import { pdfApi } from "../../api/pdf";
 
 // 스타일 추가
 const checkboxStyle = {
@@ -41,6 +41,62 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickna
     );
   };
 
+  const handleDownloadPDFs = async () => {
+    try {
+      const downloadPromises = selectedItems.map(async (testIdStr) => {
+        const testId = parseInt(testIdStr);
+        const test = testResults.find(r => r.testId === testId);
+        
+        if (!test) return;
+
+        // 테스트 타입에 따른 API 호출
+        switch(test.type) {
+          case 'HTP':
+            return await pdfApi.pdfHTP(testId);
+          case 'PAT':
+            return await pdfApi.pdfPat(testId);
+          case 'BFI':
+            return await pdfApi.pdfBigFive(testId);
+        }
+      });
+
+      const responses = await Promise.all(downloadPromises);
+      
+      // 각 URL로 PDF 다운로드
+      responses.forEach(response => {
+        if (response?.data?.url) {
+          window.open(response.data.url, '_blank');
+        }
+      });
+    } catch (error) {
+      console.error("PDF 다운로드 실패:", error);
+    }
+  };
+
+  const handleSingleDownload = async (testId: number, type: string) => {
+    try {
+      let response;
+      switch(type) {
+        case 'HTP':
+          response = await pdfApi.pdfHTP(testId);
+          break;
+        case 'PAT':
+          response = await pdfApi.pdfPat(testId);
+          break;
+        case 'BFI':
+          response = await pdfApi.pdfBigFive(testId);
+          break;
+      }
+      
+      if (response?.data?.url) {
+        window.open(response.data.url, '_blank');
+      }
+    } catch (error) {
+      console.error("PDF 다운로드 실패:", error);
+    }
+  };
+
+
   return (
     <div className="my-5">
       {/* 전체 선택 헤더 */}
@@ -55,7 +111,13 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickna
         <div className="font-medium text-gray-900 flex-1 cursor-pointer">
           전체선택
         </div>
-        <button className="text-gray-400 hover:text-[#009E28] active:text-[#009E28] transition-colors">
+        <button 
+          onClick={handleDownloadPDFs}
+          disabled={selectedItems.length === 0}
+          className={`text-gray-400 hover:text-[#009E28] active:text-[#009E28] transition-colors"${
+            selectedItems.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          >
           <Download className="w-4 h-4" />
         </button>
       </div>
@@ -75,7 +137,7 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickna
           />
           <div
             className="flex-1 cursor-pointer"
-            onClick={() => onResultSelect(result.title)}
+            onClick={() => handleSingleDownload(result.testId, result.type) }
           >
             <div className="font-medium text-gray-900">
               {result.title}
@@ -88,7 +150,7 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickna
             </div>
           </div>
           <button
-            onClick={() => onResultSelect(result.id)}
+            onClick={() => handleSingleDownload(result.testId, result.type)}
             className="text-gray-400 hover:text-[#009E28] active:text-[#009E28] transition-colors"
           >
             <Download className="w-4 h-4" />
