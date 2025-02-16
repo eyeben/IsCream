@@ -33,11 +33,10 @@ interface GetTestListResponse {
     code: 'S0000' | 'E4001';
     message: string;
     data: {
-        testDate: string;
-        scoreA: number;
-        scoreB: number;
-        scoreC: number;
-        result: string;
+        date: string;
+        id: string;
+        status: string;
+        testType: string;
     }[]
 }
 
@@ -76,10 +75,11 @@ export const patApi = {
     // PAT 검사 결과 조회 (1개)
     async getRecentResult() : Promise<GetRecentTestResponse> {
         try{
+            console.log("pat api 조회 시작")
             const response = await api.get("/pat-tests/recent")
 
+            console.log("pat검사결과조회", response);
             if(response.data.code === "S0000"){
-                console.log(response.data.data);
                 
                 return response.data;
             }
@@ -91,9 +91,9 @@ export const patApi = {
     },
 
     // PAT 검사 결과 목록 조회
-    async getResultList() : Promise<GetTestListResponse> {
+    async getResultList(startDate: string, endDate: string) : Promise<GetTestListResponse> {
         try{
-            const response = await api.get("/pat-tests")
+            const response = await api.get(`/pat-tests?startDate=${startDate}&endDate=${endDate}`,)
 
             if(response.data.code === "S0000"){
                 return response.data;
@@ -104,6 +104,5 @@ export const patApi = {
             throw error;
         }
     }
-
 
 }

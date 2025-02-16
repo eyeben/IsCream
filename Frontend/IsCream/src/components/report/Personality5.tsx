@@ -2,8 +2,9 @@ import RadarChart from "../chart/RadarChart";
 import Report from "../../components/report/Report";
 import { bigFiveApi } from '../../api/bigFive';
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
-// BigFive 데이터 타입 정의
 interface BigFiveData {
     date: string;
     conscientiousness: number;
@@ -11,32 +12,41 @@ interface BigFiveData {
     emotionalStability: number;
     extraversion: number;
     openness: number;
+    analysis: string;
 }
 
 const Personality5 = () => {
-    // BigFive 데이터를 저장할 state
     const [bigFiveData, setBigFiveData] = useState<BigFiveData | null>(null);
-    // 로딩 상태
     const [isLoading, setIsLoading] = useState(true);
-    // 에러 상태
     const [error, setError] = useState<string | null>(null);
 
-    // 컴포넌트가 마운트될 때 BigFive 데이터를 가져옴
+    const { selectedChild } = useSelector((state: RootState) => state.child);
+
     useEffect(() => {
         const fetchBigFiveData = async () => {
+            if (!selectedChild) {
+                setError("선택된 자녀가 없습니다.");
+                setIsLoading(false);
+                return;
+            }
             try {
                 setIsLoading(true);
-                const response = await bigFiveApi.getRecentResult();
+                console.log("빅파이브검사 api 불러오기 전단계", selectedChild.childId);
+                
+                const response = await bigFiveApi.getRecentResult(selectedChild.childId);
                 console.log("성격 5요인 검사결과 데이터", response);
                 setBigFiveData(response.data);
+                console.log(bigFiveData);
+                
             } catch (err) {
                 setError('성격 5요인 결과를 불러오는데 실패했습니다.');
+                console.error(err);
             } finally {
                 setIsLoading(false);
             }
         };
         fetchBigFiveData();
-    }, []); // 빈 배열을 의존성 배열로 추가
+    }, [selectedChild]); // selectedChild를 의존성 배열에 추가
 
     return (
         <div className='w-full flex justify-center'>
@@ -45,31 +55,23 @@ const Personality5 = () => {
                     <div className="m-3 text-xl">
                         성격 5요인 검사(BFI)
                     </div>
-                    {isLoading ? (
-                        <div>로딩 중...</div>
-                    ) : error ? (
-                        <div>{error}</div>
-                    ) : (
-                        <>
-                            <div>
-                                <RadarChart
-                                    data={bigFiveData ? [
-                                        bigFiveData.conscientiousness,
-                                        bigFiveData.agreeableness,
-                                        bigFiveData.emotionalStability,
-                                        bigFiveData.extraversion,
-                                        bigFiveData.openness
-                                    ] : []}
-                                    title={bigFiveData?.date || '날짜 없음'}
-                                />
-                            </div>
-                            <div>
-                                <Report
-                                    text="일단은 텍스트로 박아두고, 나중에 마크다운으로 바꿀수도 있음"
-                                />
-                            </div>
-                        </>
-                    )}
+                    <div>
+                        <RadarChart
+                            data={bigFiveData ? [
+                                bigFiveData.conscientiousness,
+                                bigFiveData.agreeableness,
+                                bigFiveData.emotionalStability,
+                                bigFiveData.extraversion,
+                                bigFiveData.openness
+                            ] : [-5,-5,-5,-5,-5]}
+                            title={bigFiveData?.testDate || '날짜 없음'}
+                        />
+                    </div>
+                    <div>
+                        <Report
+                            text={bigFiveData?.analysis || "보고서가 없습니다."}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

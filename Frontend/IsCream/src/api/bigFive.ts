@@ -35,11 +35,9 @@ interface GetTestListResponse {
     message: string;
     data: {
         date: string;
-        conscientiousness: number;
-        agreeableness: number;
-        emotionalStability: number;
-        extraversion: number;
-        openness: number;
+        id: string;
+        status: string;
+        testType: string;
     }[]
 }
 
@@ -47,6 +45,8 @@ export const bigFiveApi = {
     // bigFive 질문 목록 조회
     async getQuestionList(): Promise<GetQuestionListResponse> {
         try {
+            console.log("빅파이브 검사 조회");
+            
           const response = await api.get("/big-five-tests/questions");
     
           if (response.data.code === "S0000") {
@@ -75,10 +75,11 @@ export const bigFiveApi = {
     },
 
     // bigFive 검사 결과 조회 (1개)
-    async getRecentResult() : Promise<GetRecentTestResponse> {
+    async getRecentResult(childId: number) : Promise<GetRecentTestResponse> {
         try{
-            const response = await api.get("/big-five-tests/recent")
-
+            const response = await api.get(`/big-five-tests/recent/${childId}`)
+            console.log(response);
+            
             if(response.data.code === "S0000"){
                 console.log(response.data.data);
                 
@@ -92,11 +93,13 @@ export const bigFiveApi = {
     },
 
     // bigFive 검사 결과 목록 조회
-    async getResultList() : Promise<GetTestListResponse> {
+    async getResultList(startDate: string, endDate: string) : Promise<GetTestListResponse> {
         try{
-            const response = await api.get("/big-five-tests")
-
+            const response = await api.get(`/big-five-tests?startDate=${startDate}&endDate=${endDate}`)
+            console.log("빅파이스 결과 목록 조회:", response);
+            
             if(response.data.code === "S0000"){
+                console.log("빅파이스 결과 목록 조회:", response.data);
                 return response.data;
             }
             throw new Error(response.data.message || "bigFive 검사 목록 조회 실패");
