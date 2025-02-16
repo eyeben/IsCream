@@ -35,7 +35,7 @@ const Header = ({ onChildSelect }: HeaderProps) => {
     if (location.pathname === "/login") {
       return;
     }
-  }, [location.pathname]);
+  });
 
   useEffect(() => {
     const handleScroll = () => {
