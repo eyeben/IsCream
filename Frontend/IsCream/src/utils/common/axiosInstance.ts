@@ -20,6 +20,7 @@ api.interceptors.request.use(
     if (token) {
       // Authorization 대신 access 헤더로 변경
       config.headers["access"] = token;
+      config.headers["Authorization"] = `Bearer ${token}`;
     } else {
       console.log("No token found in localStorage");
     }

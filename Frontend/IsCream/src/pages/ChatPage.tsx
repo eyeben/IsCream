@@ -31,14 +31,15 @@ const ChatPage = () => {
   const fetchChatRooms = async () => {
     try{
       console.log("채팅방 목록 조회하러간당");
-      
+      console.log("chatRooms: ",chatRooms);
+
       setIsLoading(true);
       const response = await chatApi.getChatList();
       console.log("프론트엔드데이터: ",response);
       console.log("채팅목록길이: ",response);
       
       setChatRooms(response.data);
-      console.log(chatRooms);
+      console.log("chatRooms: ",chatRooms);
       
 
     }catch (error) {
@@ -73,7 +74,7 @@ const ChatPage = () => {
   return (
     <div className="flex flex-col h-screen bg-white">
       <div className="flex-1 overflow-y-auto">
-      {chatRooms.length === 0 ? (
+      {chatRooms.length == 0 ? (
           <div className="flex items-center justify-center h-full text-gray-500">
             채팅방이 없습니다.
           </div>
@@ -88,15 +89,6 @@ const ChatPage = () => {
           ))
         )}
       </div>
-      <button
-        onClick={(e) => {
-          e.stopPropagation(); // 채팅방 클릭 이벤트 전파 방지
-          onDelete();
-        }}  
-        className="ml-4 p-2 text-red-500 hover:bg-red-50 rounded"
-      >
-        나가기
-      </button>
     </div>
   );
 };

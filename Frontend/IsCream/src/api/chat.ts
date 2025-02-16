@@ -1,4 +1,3 @@
-import LongButton from "@/components/button/LongButton";
 import { api } from "../utils/common/axiosInstance";
 
 interface GetChatListResponse {
@@ -52,9 +51,9 @@ export const chatApi = {
             if(response.data.code === 'S0000'){
                 return response.data;
             }
-            throw new Error(response.data.message || "채팅방 목록 조회 실패");
+            throw new Error(response.data.message || "채팅방 생성 실패");
         } catch (error) {
-          console.error("채팅방 목록 조회 실패:", error);
+          console.error("채팅방 생성 실패:", error);
           throw error;
         }
     },
@@ -66,9 +65,9 @@ export const chatApi = {
             if(response.data.code === 'S0000'){
                 return response.data;
             }
-            throw new Error(response.data.message || "채팅방 목록 조회 실패");
+            throw new Error(response.data.message || "채팅방 삭제 실패");
         } catch (error) {
-          console.error("채팅방 목록 조회 실패:", error);
+          console.error("채팅방 삭제 실패:", error);
           throw error;
         }
     }
