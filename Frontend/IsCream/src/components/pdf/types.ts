@@ -11,8 +11,8 @@ export interface TestType {
   }
   
 export interface TestResult {
-    id: string;
-    testType: string;
-    date: string;
-    status: string;
+  testId: number;
+  title: string;
+  date: string;
+  childName: string;
   }

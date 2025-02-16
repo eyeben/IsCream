@@ -13,9 +13,10 @@ const checkboxStyle = {
 interface TestListProps {
   testResults: TestResult[];
   onResultSelect: (resultId: string) => void;
+  nickname?: string;
 }
 
-const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect }) => {
+const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickname }) => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const formatDate = (dateString: string) => {
@@ -27,13 +28,16 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect }) => {
     if (selectedItems.length === testResults.length) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(testResults.map((result) => result.id));
+      setSelectedItems(testResults.map((result) => result.testId.toString()));
     }
   };
 
-  const handleSelectItem = (id: string) => {
+  const handleSelectItem = (testId: number) => {  // 매개변수 타입을 number로 변경
+    const testIdStr = testId.toString();
     setSelectedItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(testIdStr)
+        ? prev.filter(item => item !== testIdStr)
+        : [...prev, testIdStr]
     );
   };
 
@@ -59,27 +63,27 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect }) => {
       {/* 검사 결과 목록 */}
       {testResults.map((result) => (
         <div
-          key={result.id}
+          key={result.testId}
           className="flex items-center p-4 border-b border-gray-200"
         >
           <input
             type="checkbox"
-            checked={selectedItems.includes(result.id)}
-            onChange={() => handleSelectItem(result.id)}
+            checked={selectedItems.includes(result.testId.toString())}  // testId 사용
+            onChange={() => handleSelectItem(result.testId)}  // testId 전달
             style={checkboxStyle}
             className="w-4 h-4 border-gray-300 rounded mr-4"
           />
           <div
             className="flex-1 cursor-pointer"
-            onClick={() => onResultSelect(result.id)}
+            onClick={() => onResultSelect(result.title)}
           >
             <div className="font-medium text-gray-900">
-              {formatDate(result.date)}
+              {result.title}
             </div>
             <div className="gap-2 items-center mt-2">
-              <div className="text-sm text-gray-600">{result.testType}</div>
+              <div className="text-sm text-gray-600">{formatDate(result.date)}</div>
               <div className="text-sm text-gray-500">
-                대상 - {result.status}
+                검사자 : {result.childName?.trim() ? result.childName : nickname}
               </div>
             </div>
           </div>
