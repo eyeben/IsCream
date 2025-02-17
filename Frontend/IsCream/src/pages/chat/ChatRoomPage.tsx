@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { chatApi } from "../../api/chat";
+import { Client } from '@stomp/stompjs';
+
+let stompClient: Client | null = null;
 
 interface ChatMessage {
-  messageId: number;
-  senderId: number;
-  message: string;
+  id: string;
+  roodId: string;
+  sender: string;
+  receiver: string;
+  content: string;
   timestamp: string;
+  read: boolean;
 }
 
 interface ChatRoomData {
-  profileUrl: string;
   chats: ChatMessage[];
 }
 
@@ -29,20 +34,31 @@ const ChatRoomPage = () => {
 
   useEffect(() => {
     const initializeChatRoom = async () => {
+      if(!roomId) return;
+
       try {
         // 1. 채팅방 입장 및 초기 메시지 로드
-        const response = await chatApi.openChatroom(roomId, 1);
+        const response = await chatApi.openChatroom(roomId, 0);
         setChatData(response.data);
-
+        console.log("ChatRoomPage / 챗데이터: ", chatData);
+        
         // 2. 웹소켓 연결
-        await chatApi.connectChatroom();
+        await chatApi.connectChatroom(roomId);
         setIsConnected(true);
 
         // 3. 채팅방 구독
-        await chatApi.subscribeChatroom();
+        await chatApi.subscribeChatroom(roomId, (message) => {
+          setChatData(prevData => {
+            if (!prevData) return { chats: [message], profileUrl: '' };
+            return {
+              ...prevData,
+              chats: [...prevData.chats, message]
+            };
+          });
+        });
 
         // 4. 읽지 않은 메시지 처리
-        await chatApi.ackMessage();
+        // await chatApi.ackMessage();
 
       } catch (error) {
         console.error("채팅방 초기화 실패:", error);
@@ -54,59 +70,27 @@ const ChatRoomPage = () => {
 
     // 컴포넌트 언마운트 시 cleanup
     return () => {
-      // 웹소켓 연결 해제 등의 cleanup 로직
-    };
-  }, [roomId]);
-  console.log(roomId);
-  // 더미 데이터
-  // const dummyData: ChatApiResponse = {
-  //   code: "S0000",
-  //   message: "success",
-  //   data: {
-  //     profileUrl: "/default-profile.png",
-  //     chats: [
-  //       {
-  //         messageId: 1,
-  //         senderId: 1,
-  //         message: "안녕하세요~~",
-  //         timestamp: "2024-02-10T10:00:00Z"
-  //       },
-  //       {
-  //         messageId: 2,
-  //         senderId: 2,
-  //         message: "안녕하세요^~^",
-  //         timestamp: "2024-02-10T10:01:00Z"
-  //       },
-  //       {
-  //         messageId: 3,
-  //         senderId: 1,
-  //         message: "작성하신 글 보고 연락드려요~~",
-  //         timestamp: "2024-02-10T10:02:00Z"
-  //       },
-  //       {
-  //         messageId: 4,
-  //         senderId: 2,
-  //         message:
-  //           "아 그러시군요~~ HTTP 강사 해봤는데, 재미도 있고 도움도 되고 좋았어요 ^^",
-  //         timestamp: "2024-02-10T10:03:00Z"
-  //       }
-  //     ]
-  //   }
-  // };
-
-  // // 테스트를 위해 더미 데이터 사용
-  // useEffect(() => {
-  //   setChatData(dummyData.data);
-  // }, []);
-
-  const handleSendMessage = async () => {
-    if (newMessage.trim() && isConnected) {
-      try {
-        await chatApi.sendMessage(roomId, newMessage);
-        setNewMessage("");
-      } catch (error) {
-        console.error("메시지 전송 실패:", error);
+      if (stompClient) {
+        stompClient.deactivate();
       }
+    };
+  }, [roomId, navigate]);
+  
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !isConnected || !roomId) return;
+    
+    try {
+      await chatApi.sendMessage(roomId, newMessage);
+      setNewMessage("");
+    } catch (error) {
+      console.error("메시지 전송 실패:", error);
+      alert("메시지 전송에 실패했습니다.");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
     }
   };
 
@@ -173,6 +157,7 @@ const ChatRoomPage = () => {
         />
         <button
           onClick={handleSendMessage}
+          disabled={!isConnected}
           className="bg-green-500 text-white px-4 py-2 rounded-lg"
         >
           전송

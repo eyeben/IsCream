@@ -1,5 +1,6 @@
-import { connect } from "react-redux";
 import { api } from "../utils/common/axiosInstance";
+import { Client } from '@stomp/stompjs';
+
 
 interface GetChatListResponse {
     code: 'S0000' | 'E4001';
@@ -31,15 +32,17 @@ interface DeleteChatroomRespone {
 interface openChatroomResponse {
     code: 'S0000' | 'E4001';
     message: string;
-    data: {
-        id: string;
-        roomId: string;
-        sender: string;
-        receiver: string;
-        content: string;
-        timestamp: string;
-        read: boolean;
-    }[]
+    data: ChatMessage[];  // 배열 형태로 변경
+}
+
+interface ChatMessage {
+    id: string;
+    roomId: string;
+    sender: string;
+    receiver: string;
+    content: string;
+    timestamp: string;
+    read: boolean;
 }
 
 // interface sendMessageProps {
@@ -48,6 +51,8 @@ interface openChatroomResponse {
 //     sender: string;
     
 // }
+
+let stompClient: Client | null = null;
 
 export const chatApi = {
     // 채팅방 목록 불러오기
@@ -67,9 +72,11 @@ export const chatApi = {
     },
 
     // 채팅방 생성하기
-    async createChatroom(): Promise<CreateChatroomResponse>{
+    async createChatroom(receiverId: string): Promise<CreateChatroomResponse>{
+        console.log("receiverId ----> ", receiverId);
         try{
-            const response = await api.post("/chatrooms/create");
+            const response = await api.post(`/chatrooms/create?receiverId=${receiverId}`);
+            
             if(response.data.code === 'S0000'){
                 return response.data;
             }
@@ -98,8 +105,10 @@ export const chatApi = {
     // 채팅방 입장하기
     async openChatroom(roomId: string, page: number): Promise<openChatroomResponse> {
         try{
-            const response = await api.get(`/chat/${roomId}/message/${page}`);
+            const response = await api.get(`/chat/${roomId}/messages?page=${page}`);
             if(response.data.code === 'S0000'){
+                console.log("채팅방 입장 성공");
+                
                 return response.data;
             }
             throw new Error(response.data.massage || "채팅방 입장 실패");
@@ -109,23 +118,66 @@ export const chatApi = {
         }
     },
 
-    // // 메시지 보내기
-    // async sendMessage(): Promise<> {
-
-    // },
-
     // // 채팅방 입장시, 소켓 통신 연결
-    // async connectChatroom(): Promise<> {
-
-    // },
+    async connectChatroom(roomId: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            stompClient = new Client({
+                brokerURL: 'ws://localhost:8080/ws',
+                connectHeaders: {
+                    roomId: roomId,
+                    'accpet-version': '1.2, 1.1, 1.0'
+                },
+                onConnect: () => {
+                    console.log('WebSocket 연결 성공');
+                    resolve();
+                },
+                onError: (error) => {
+                    console.log('Websket 에러: ', error);
+                    reject(error);
+                }
+            });
+            stompClient.activate();
+        });
+    },
 
     // // 채팅방 입장시 연결 성공 직후후, 구독
-    // async subscribeChatroom(): Promise<> {
+    async subscribeChatroom(roomId: string, onMessageReceived: (message: any) => void): Promise<void> {
+        if (!stompClient) throw new Error('WebSocket이 연결되지 않았습니다.');
+        
+        stompClient.subscribe(`/sub/chat/room/${roomId}`, (message) => {
+            const receivedMessage = JSON.parse(message.body);
+            onMessageReceived(receivedMessage);
+        });
+    },
 
-    // }, 
+    // // 메시지 보내기
+    async sendMessage(roomId: string, content: string): Promise<void> {
+        if (!stompClient) throw new Error('WebSocket이 연결되지 않았습니다.');
+
+        const messageData = {
+            roomId: roomId,
+            content: content,
+            // sender와 receiver는 실제 구현시 추가 필요
+        };
+
+        stompClient.publish({
+            destination: '/pub/chat/send',
+            body: JSON.stringify(messageData)
+        });
+    },
 
     // // 채팅방 안에서, 메시지 읽음 처리
-    // async ackMessage(): Promist<> {
+    async ackMessage(messageId: string, readerId: string): Promise<void> {
+        if (!stompClient) throw new Error('WebSocket이 연결되지 않았습니다.');
 
-    // }
+        const ackData = {
+            messageId: messageId,
+            readerId: readerId
+        };
+
+        stompClient.publish({
+            destination: '/api/chat/ack',
+            body: JSON.stringify(ackData)
+        });
+    }
 }
