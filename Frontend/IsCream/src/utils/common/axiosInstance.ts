@@ -29,27 +29,31 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // 무한 루프 방지
+    // reissue 요청 자체가 실패하면 더 이상 재시도하지 않음
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/users/reissue")
+    ) {
+      // 여기를 수정
+      originalRequest._retry = true;
 
       try {
-        // 🔹 토큰 재발급 요청
-        const refreshResponse = await api.post("/users/reissue"); // 쿠키 기반이므로 자동으로 Refresh Token 전송됨
-
-        // 🔹 새로운 Access Token을 저장
+        const refreshResponse = await api.post("/users/reissue");
         const newAccessToken = refreshResponse.headers["access"];
+
         if (newAccessToken) {
           localStorage.setItem("accessToken", newAccessToken);
           api.defaults.headers.common["access"] = newAccessToken;
+          originalRequest.headers["access"] = newAccessToken;
+          return api(originalRequest);
         }
-
-        // 🔹 실패했던 요청을 새로운 Access Token으로 재시도
-        originalRequest.headers["access"] = newAccessToken;
-        return api(originalRequest);
       } catch (reissueError) {
-        console.error("토큰 재발급 실패, 로그아웃 처리", reissueError);
+        // 토큰 재발급 실패시 로그아웃 처리
         localStorage.removeItem("accessToken");
         queryClient.setQueryData(["auth"], { isAuthenticated: false });
+        // 로그인 페이지로 리다이렉트 하는 로직 추가
+        return Promise.reject(reissueError);
       }
     }
 
