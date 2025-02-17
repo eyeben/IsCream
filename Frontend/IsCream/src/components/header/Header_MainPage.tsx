@@ -5,8 +5,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import NotificationModal from "../notification/NotificationModal";
-import { useNotification } from "../../hooks/notification/useNotification";
+// 알림 모달 컴포넌트 (현재 미사용)
+// import NotificationModal from "../notification/NotificationModal";
+// 알림 훅 (현재 미사용)
+// import { useNotification } from "../../hooks/notification/useNotification";
 
 interface HeaderProps {
   onChildSelect: (childName: string) => void;
@@ -17,7 +19,8 @@ const Header = ({ onChildSelect }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  // 알림 모달 상태 (현재 미사용)
+  // const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   const location = useLocation();
   const { isAuthenticated } = useAuth();
@@ -26,11 +29,13 @@ const Header = ({ onChildSelect }: HeaderProps) => {
     (state: RootState) => state.child.selectedChild
   );
 
-  const { notifications, hasUnread, markAsRead } = useNotification();
+  // 알림 상태 (현재 미사용)
+  // const { notifications, hasUnread, markAsRead } = useNotification();
 
-  const handleNotificationClick = () => {
-    setIsNotificationModalOpen(true);
-  };
+  // 알림 클릭 핸들러 (현재 미사용)
+  // const handleNotificationClick = () => {
+  //   setIsNotificationModalOpen(true);
+  // };
 
   useEffect(() => {
     if (location.pathname === "/login") {
@@ -80,14 +85,13 @@ const Header = ({ onChildSelect }: HeaderProps) => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-
                 <polyline points="15 18 9 12 15 6"></polyline>
               </svg>
             </button>
           )}
           {location.pathname === "/" && <div className="w-[40px]"></div>}
 
-          <div className="relative flex justify-center items-center ml-4">
+          <div className="absolute left-1/2 transform -translate-x-1/2 flex justify-center items-center">
             {isAuthenticated ? (
               <button
                 onClick={() => setIsOpen(!isOpen)}
@@ -139,9 +143,10 @@ const Header = ({ onChildSelect }: HeaderProps) => {
             )}
           </div>
 
+          {/* 알림 버튼 (현재 비활성화)
           <button
             type="button"
-            onClick={handleNotificationClick}
+            // onClick={handleNotificationClick}
             className="p-2 w-[40px] h-[40px] relative flex items-center justify-center"
             aria-label="알림"
           >
@@ -166,17 +171,18 @@ const Header = ({ onChildSelect }: HeaderProps) => {
                 />
               )}
             </div>
-          </button>
+          </button> */}
         </div>
       </header>
 
+      {/* 알림 모달 (현재 비활성화)
       {isNotificationModalOpen && (
         <NotificationModal
           notifications={notifications}
           onClose={() => setIsNotificationModalOpen(false)}
           onMarkAsRead={markAsRead}
         />
-      )}
+      )} */}
     </>
   );
 };

@@ -11,8 +11,6 @@ const HeaderController = () => {
 
   if (location.pathname === "/" || location.pathname === "/mypage") {
     return <HeaderMain onChildSelect={handleChildSelect} />;
-  } else if (location.pathname.startsWith("/board")) {
-    return null; // 게시판 페이지에서는 헤더를 렌더링하지 않음
   } else {
     return <HeaderNormal />;
   }
