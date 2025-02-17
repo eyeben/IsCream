@@ -22,7 +22,7 @@ const Chatbot: React.FC = () => {
   };
 
   return (
-    <div className="fixed right-3 bottom-24 sm:right-6 sm:bottom-24 z-50 flex flex-col items-center">
+    <div className="fixed right-3 bottom-24 sm:right-6 sm:bottom-24 z-10 flex flex-col items-center">
       {/* 말풍선 (작은 화면에서는 숨김) */}
       {!isOpen && (
         <div className="relative mb-2 sm:mb-3 hidden sm:block">

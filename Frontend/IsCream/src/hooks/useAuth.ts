@@ -13,7 +13,6 @@ import { clearAccessToken } from "../store/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { useFCM } from "./notification/useFCM";
 
-
 interface User {
   id?: string;
   name?: string;

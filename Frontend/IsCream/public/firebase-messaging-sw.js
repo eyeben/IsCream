@@ -1,75 +1,65 @@
-/* eslint-env serviceworker */
-/* global importScripts, firebase, self, console */
-importScripts(
-<<<<<<< HEAD
-  "https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"
-);
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js"
-);
+import { getMessaging, getToken } from "firebase/messaging";
+import { app } from "../firebase";
 
-firebase.initializeApp({
-  apiKey: "AIzaSyCP8mGauQdHF9Wb6_r6ZDH7CcANiOEmjE",
-=======
-  "https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"
-);
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"
-);
+export const registerServiceWorker = async () => {
+  if ("serviceWorker" in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register(
+        "/firebase-messaging-sw.js",
+        { scope: "/" }
+      );
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCP8mGauQdH-F9Wb6_r6ZDH7CcANiOEmjE",
->>>>>>> fa2add1caeb37543dadd3fd78c24d38a22c2d140
-  authDomain: "ssafy-449307.firebaseapp.com",
-  projectId: "ssafy-449307",
-  storageBucket: "ssafy-449307.firebasestorage.app",
-  messagingSenderId: "500251459785",
-  appId: "1:500251459785:web:957c50a189ad224f450d18"
-<<<<<<< HEAD
-});
+      console.log("Service Worker 등록 성공:", {
+        scope: registration.scope,
+        active: !!registration.active
+      });
 
-const messaging = firebase.messaging();
+      return registration;
+    } catch (error) {
+      console.error("Service Worker 등록 실패:", error);
+      throw error; // 에러 던지기
+    }
+  }
 
-messaging.onBackgroundMessage((payload) => {
-  console.log("Background message received:", payload);
-
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body
-  };
-
-  self.registration.showNotification(notificationTitle, notificationOptions);
-=======
+  throw new Error("Service Worker를 지원하지 않는 브라우저입니다.");
 };
 
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
+export const requestNotificationPermission = async () => {
+  try {
+    // 알림 권한 요청
+    const permission = await Notification.requestPermission();
 
-self.addEventListener("push", function (event) {
-  if (event.data) {
-    const data = event.data.json();
-    const options = {
-      body: data.notification.body,
-      icon: "/firebase-logo.png",
-      badge: "/firebase-logo.png"
+    if (permission !== "granted") {
+      console.warn("알림 권한이 거부되었습니다.");
+      return null;
+    }
+
+    // 서비스워커 등록 확인
+    const registration = await registerServiceWorker();
+    const messaging = getMessaging(app);
+
+    // 토큰 요청 옵션
+    const tokenOptions = {
+      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+      serviceWorkerRegistration: registration
     };
-    event.waitUntil(
-      self.registration.showNotification(data.notification.title, options)
-    );
+
+    try {
+      const token = await getToken(messaging, tokenOptions);
+
+      if (!token) {
+        console.warn("유효한 토큰을 받을 수 없습니다.");
+        return null;
+      }
+
+      console.log("FCM 토큰 성공적으로 획득:", token);
+      return token;
+    } catch (tokenError) {
+      console.error("FCM 토큰 생성 중 에러:", tokenError);
+      return null;
+    }
+  } catch (error) {
+    console.error("알림 권한 요청 중 에러:", error);
+    return null;
   }
-});
-
-messaging.onBackgroundMessage(function (payload) {
-  console.log("Received background message:", payload);
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: "/firebase-logo.png"
-  };
-
-  return self.registration.showNotification(
-    notificationTitle,
-    notificationOptions
-  );
->>>>>>> fa2add1caeb37543dadd3fd78c24d38a22c2d140
-});
+};

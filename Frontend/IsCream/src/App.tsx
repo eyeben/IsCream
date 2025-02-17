@@ -34,8 +34,8 @@ import {
   HTPResultsPage,
   Education,
   ParentingTestPage,
-  PatTestResultPage 
-
+  PatTestResultPage,
+  BigFivePage
 } from "./pages";
 import { useFCM } from "./hooks/notification/useFCM";
 
@@ -43,12 +43,11 @@ import { useFCM } from "./hooks/notification/useFCM";
 const setupAxiosInterceptors = () => {
   const token = localStorage.getItem("accessToken");
   if (token) {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    api.defaults.headers.common["access"] = token;
   }
 };
 
 function App() {
-
   const { initializeFCM } = useFCM();
 
   useEffect(() => {
@@ -173,7 +172,7 @@ function App() {
                 <ProtectedRoute>
                   <PhotoCapturePage />
                 </ProtectedRoute>
-              } 
+              }
             />
             {/* CameraPage 라우트 추가 */}
             <Route
@@ -221,7 +220,7 @@ function App() {
               path="/big5-test"
               element={
                 <ProtectedRoute>
-                  <div>성격5요인 검사</div>
+                  <BigFivePage />
                 </ProtectedRoute>
               }
             />

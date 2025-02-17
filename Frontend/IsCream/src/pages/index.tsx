@@ -37,8 +37,10 @@ export { default as AiAnalysisPage } from "./htp/AiAnalysisPage";
 
 export { default as CameraPage } from "./htp/PhotoCapturePage";
 export { default as PhotoCapturePage } from "./htp/PhotoCapturePage";
-export { default as HTPResultsPage   } from "./htp/HTPResultsPage";
+export { default as HTPResultsPage } from "./htp/HTPResultsPage";
 // 🌟 부모 양육 태도 검사 (Parenting Test)
 export { default as ParentingTestPage } from "./pat/ParentingTest"; // ✅ 추가
-export { default as PatTestResultPage } from "./pat/PatTestResultPage"
+export { default as PatTestResultPage } from "./pat/PatTestResultPage";
 
+// 🌟 BIG5 검사
+export { default as BigFivePage } from "./bigfive/BigFivePage";
