@@ -31,8 +31,11 @@ import {
   AiAnalysisPage,
   CameraPage,
   PhotoCapturePage,
-  // HTPResultsPage,
-  Education
+  HTPResultsPage,
+  Education,
+  ParentingTestPage,
+  PatTestResultPage 
+
 } from "./pages";
 import { useFCM } from "./hooks/notification/useFCM";
 
@@ -45,6 +48,7 @@ const setupAxiosInterceptors = () => {
 };
 
 function App() {
+
   const { initializeFCM } = useFCM();
 
   useEffect(() => {
@@ -169,7 +173,7 @@ function App() {
                 <ProtectedRoute>
                   <PhotoCapturePage />
                 </ProtectedRoute>
-              }
+              } 
             />
             {/* CameraPage 라우트 추가 */}
             <Route
@@ -177,6 +181,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <CameraPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/htp-results/:htpTestId"
+              element={
+                <ProtectedRoute>
+                  <HTPResultsPage />
                 </ProtectedRoute>
               }
             />
@@ -193,7 +205,15 @@ function App() {
               path="/parenting-test"
               element={
                 <ProtectedRoute>
-                  <div>부모양육태도 검사</div>
+                  <ParentingTestPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pat-test-result"
+              element={
+                <ProtectedRoute>
+                  <PatTestResultPage />
                 </ProtectedRoute>
               }
             />

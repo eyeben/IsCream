@@ -96,7 +96,6 @@ const TestList: React.FC<TestListProps> = ({ testResults, onResultSelect, nickna
     }
   };
 
-
   return (
     <div className="my-5">
       {/* 전체 선택 헤더 */}
