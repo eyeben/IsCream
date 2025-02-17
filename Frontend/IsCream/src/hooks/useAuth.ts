@@ -38,7 +38,7 @@ export const useAuth = (): AuthHook => {
       const accessToken = response.headers["access"];
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken);
-        api.defaults.headers.common["access"] = `Bearer ${accessToken}`;
+        api.defaults.headers.common["access"] = accessToken;
       } else {
         console.error("Access token이 응답 헤더에 없습니다.");
       }
