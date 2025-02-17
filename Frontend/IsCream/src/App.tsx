@@ -34,8 +34,10 @@ import {
   HTPResultsPage,
   Education,
   ParentingTestPage,
-  PatTestResultPage 
-
+  PatTestResultPage,
+  BigFivePage,
+  BigFiveQuestionPage,
+  BigFiveResultPage
 } from "./pages";
 import { useFCM } from "./hooks/notification/useFCM";
 
@@ -43,12 +45,11 @@ import { useFCM } from "./hooks/notification/useFCM";
 const setupAxiosInterceptors = () => {
   const token = localStorage.getItem("accessToken");
   if (token) {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    api.defaults.headers.common["access"] = token;
   }
 };
 
 function App() {
-
   const { initializeFCM } = useFCM();
 
   useEffect(() => {
@@ -173,7 +174,7 @@ function App() {
                 <ProtectedRoute>
                   <PhotoCapturePage />
                 </ProtectedRoute>
-              } 
+              }
             />
             {/* CameraPage 라우트 추가 */}
             <Route
@@ -192,6 +193,33 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* BIG 5 */}
+            <Route
+              path="/big5-test"
+              element={
+                <ProtectedRoute>
+                  <BigFivePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/big-five/question"
+              element={
+                <ProtectedRoute>
+                  <BigFiveQuestionPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/big-five/result"
+              element={
+                <ProtectedRoute>
+                  <BigFiveResultPage />
+                </ProtectedRoute>
+              }
+            />
+
             {/* 기타 기능 */}
             <Route
               path="/ai-analysis"
@@ -214,14 +242,6 @@ function App() {
               element={
                 <ProtectedRoute>
                   <PatTestResultPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/big5-test"
-              element={
-                <ProtectedRoute>
-                  <div>성격5요인 검사</div>
                 </ProtectedRoute>
               }
             />
