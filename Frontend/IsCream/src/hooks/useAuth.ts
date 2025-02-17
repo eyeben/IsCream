@@ -13,6 +13,7 @@ import { clearAccessToken } from "../store/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { useFCM } from "./notification/useFCM";
 
+
 interface User {
   id?: string;
   name?: string;
@@ -38,7 +39,7 @@ export const useAuth = (): AuthHook => {
       const accessToken = response.headers["access"];
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken);
-        api.defaults.headers.common["access"] = accessToken;
+        api.defaults.headers.common["access"] = `Bearer ${accessToken}`;
       } else {
         console.error("Access token이 응답 헤더에 없습니다.");
       }

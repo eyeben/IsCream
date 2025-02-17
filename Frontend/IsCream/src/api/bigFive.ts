@@ -45,8 +45,10 @@ export const bigFiveApi = {
     // bigFive 질문 목록 조회
     async getQuestionList(): Promise<GetQuestionListResponse> {
         try {
+
             console.log("빅파이브 검사 조회");
             
+
           const response = await api.get("/big-five-tests/questions");
     
           if (response.data.code === "S0000") {

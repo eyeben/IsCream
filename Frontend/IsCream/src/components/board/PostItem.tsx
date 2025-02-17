@@ -79,7 +79,7 @@ const PostItem = ({ post }: PostItemProps) => {
                 </span>
               </div>
             </div>
-            <div className="flex flex-1">
+            <div className="w-45">
               <span className="mx-3"> | </span>
               <span>{createdAt}</span>
               <span className="mx-3"> | </span>

@@ -111,8 +111,8 @@ const handleSingleDownload = async (testId: number, type: string, childName: str
       }
   } catch (error) {
       console.error("PDF 다운로드 실패:", error);
-  }
-};
+    }
+  };
 
   return (
     <div className="my-5">
