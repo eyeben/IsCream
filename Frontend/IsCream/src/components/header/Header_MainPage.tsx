@@ -25,6 +25,7 @@ const Header = ({ onChildSelect }: HeaderProps) => {
   const selectedChild = useSelector(
     (state: RootState) => state.child.selectedChild
   );
+
   const { notifications, hasUnread, markAsRead } = useNotification();
 
   const handleNotificationClick = () => {
@@ -79,6 +80,7 @@ const Header = ({ onChildSelect }: HeaderProps) => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
+
                 <polyline points="15 18 9 12 15 6"></polyline>
               </svg>
             </button>

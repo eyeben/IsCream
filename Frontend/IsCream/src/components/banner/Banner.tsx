@@ -3,15 +3,13 @@ import { Link } from "react-router-dom";
 import HTPimage from "../../assets/image/HTP검사.png";
 import ParentingAttitude from "../../assets/image/육아양육태도검사.png";
 import Big5 from "../../assets/image/성격5요인검사.png";
-import HTP from "../../assets/image/htp.jpg";
 
 //123123
 const Banner = () => {
   const slides = [
     { image: HTPimage, to: "/ai-analysis" },
     { image: ParentingAttitude, to: "/parenting-test" },
-    { image: Big5, to: "/big5-test" },
-    { image: HTP, to: "/ai-analysis" }
+    { image: Big5, to: "/big5-test" }
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);

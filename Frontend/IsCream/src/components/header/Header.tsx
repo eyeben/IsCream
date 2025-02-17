@@ -5,7 +5,6 @@ import HeaderNormal from "./Header_Normal";
 
 const HeaderController = () => {
   const location = useLocation();
-
   const handleChildSelect = useCallback((selectedItem: string) => {
     console.log("선택된 아이:", selectedItem);
   }, []);
