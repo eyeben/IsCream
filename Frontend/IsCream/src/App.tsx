@@ -35,7 +35,9 @@ import {
   Education,
   ParentingTestPage,
   PatTestResultPage,
-  BigFivePage
+  BigFivePage,
+  BigFiveQuestionPage,
+  BigFiveResultPage
 } from "./pages";
 import { useFCM } from "./hooks/notification/useFCM";
 
@@ -191,6 +193,33 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* BIG 5 */}
+            <Route
+              path="/big5-test"
+              element={
+                <ProtectedRoute>
+                  <BigFivePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/big-five/question"
+              element={
+                <ProtectedRoute>
+                  <BigFiveQuestionPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/big-five/result"
+              element={
+                <ProtectedRoute>
+                  <BigFiveResultPage />
+                </ProtectedRoute>
+              }
+            />
+
             {/* 기타 기능 */}
             <Route
               path="/ai-analysis"
@@ -213,14 +242,6 @@ function App() {
               element={
                 <ProtectedRoute>
                   <PatTestResultPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/big5-test"
-              element={
-                <ProtectedRoute>
-                  <BigFivePage />
                 </ProtectedRoute>
               }
             />

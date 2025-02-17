@@ -44,3 +44,5 @@ export { default as PatTestResultPage } from "./pat/PatTestResultPage";
 
 // 🌟 BIG5 검사
 export { default as BigFivePage } from "./bigfive/BigFivePage";
+export { default as BigFiveQuestionPage } from "./bigfive/BigFiveQuestionPage";
+export { default as BigFiveResultPage } from "./bigfive/BigFiveResultPage";
